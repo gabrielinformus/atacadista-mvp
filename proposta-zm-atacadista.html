@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Proposta Comercial — ZM Atacadista</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}
+@page{size:1920px 1080px;margin:0;}
+body{
+  width:1920px;height:1080px;
+  font-family:'Inter',system-ui,sans-serif;
+  background:#0A0A0F;color:#F5F5F7;
+  overflow:hidden;position:relative;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* BG PATTERN */
+body::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 800px 600px at 15% 50%, rgba(59,91,255,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 85% 30%, rgba(255,214,10,0.04) 0%, transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* GRID LINES */
+body::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+}
+
+.page{
+  width:1920px;height:1080px;
+  padding:60px 80px;
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto 1fr auto;
+  gap:0 60px;
+}
+
+/* HEADER */
+.header{
+  grid-column:1/-1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:32px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  margin-bottom:40px;
+}
+.logo-informus{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:28px;font-weight:500;
+  color:#F5F5F7;letter-spacing:-0.05em;
+}
+.logo-informus .dot{color:#FFD60A;}
+.header-right{text-align:right;}
+.header-right .label{font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#5C5C6B;font-weight:600;}
+.header-right .value{font-size:14px;color:#8A8A99;margin-top:2px;}
+
+/* LEFT SIDE */
+.left{display:flex;flex-direction:column;gap:28px;}
+
+.client-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,214,10,0.08);
+  border:1px solid rgba(255,214,10,0.15);
+  padding:6px 16px;border-radius:99px;
+  font-size:11px;font-weight:600;color:#FFD60A;
+  text-transform:uppercase;letter-spacing:0.1em;
+  width:fit-content;
+}
+
+.title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:42px;font-weight:700;
+  letter-spacing:-0.03em;line-height:1.15;
+  color:#F5F5F7;
+}
+.title span{color:#FFD60A;}
+
+.subtitle{
+  font-size:15px;color:#8A8A99;line-height:1.7;
+  max-width:520px;
+}
+
+/* DELIVERABLES */
+.del-label{
+  font-size:11px;text-transform:uppercase;letter-spacing:0.1em;
+  font-weight:700;color:#FFD60A;margin-bottom:4px;
+}
+.deliverables{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-top:4px;
+}
+.del-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:10px;
+  font-size:13px;font-weight:500;color:#C4C4CF;
+  transition:all 0.2s;
+}
+.del-item .check{
+  width:20px;height:20px;
+  background:rgba(255,214,10,0.12);
+  border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  color:#FFD60A;font-size:11px;font-weight:800;
+  flex-shrink:0;
+}
+
+/* RIGHT SIDE */
+.right{display:flex;flex-direction:column;gap:24px;}
+
+/* PRICING CARDS */
+.price-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  padding:28px 32px;
+  position:relative;overflow:hidden;
+}
+.price-card.featured{
+  background:linear-gradient(135deg, rgba(255,214,10,0.08), rgba(59,91,255,0.04));
+  border-color:rgba(255,214,10,0.2);
+}
+.price-card.featured::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg, #FFD60A, #3B5BFF);
+}
+.price-tag{
+  font-size:11px;text-transform:uppercase;letter-spacing:0.1em;
+  font-weight:700;margin-bottom:12px;
+}
+.price-tag.lime{color:#FFD60A;}
+.price-tag.blue{color:#6B82FF;}
+
+.price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+.price-main{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:40px;font-weight:700;
+  color:#F5F5F7;letter-spacing:-0.03em;
+}
+.price-period{font-size:14px;color:#5C5C6B;font-weight:500;}
+.price-or{
+  font-size:13px;color:#5C5C6B;margin:6px 0;
+}
+.price-alt{
+  font-size:18px;font-weight:600;color:#8A8A99;
+}
+.price-desc{
+  font-size:13px;color:#5C5C6B;line-height:1.6;
+  margin-top:14px;padding-top:14px;
+  border-top:1px solid rgba(255,255,255,0.04);
+}
+.price-desc strong{color:#8A8A99;}
+
+
+/* OBS */
+.obs{
+  font-size:12px;color:#F5F5F7;line-height:1.6;
+  padding:16px 20px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:10px;
+}
+
+/* FOOTER */
+.footer{
+  grid-column:1/-1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:28px;
+  border-top:1px solid rgba(255,255,255,0.04);
+  margin-top:auto;
+}
+.footer-left{font-size:11px;color:#5C5C6B;}
+.footer-right{display:flex;gap:24px;}
+.footer-right a{font-size:11px;color:#5C5C6B;text-decoration:none;letter-spacing:0.02em;}
+.footer-right a:hover{color:#8A8A99;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-informus">informus<span class="dot">.</span></div>
+    <div class="header-right">
+      <div class="label">Proposta Comercial</div>
+      <div class="value">Maio 2026</div>
+    </div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="title"><span>Projeto exclusivo — ZM Atacadista</span></div>
+
+    <div class="subtitle">
+      Sistema completo de vendas online desenvolvido exclusivamente para a ZM Atacadista e Material de Construção. Do catálogo ao checkout, do estoque à nota fiscal.
+    </div>
+    <div class="deliverables">
+      <div class="del-item"><div class="check">✓</div>Catálogo com +2.000 produtos</div>
+      <div class="del-item"><div class="check">✓</div>Busca e filtros por categoria</div>
+      <div class="del-item"><div class="check">✓</div>Login PF (CPF) e PJ (CNPJ)</div>
+      <div class="del-item"><div class="check">✓</div>Carrinho + Checkout completo</div>
+      <div class="del-item"><div class="check">✓</div>Pagamento: Pix, Cartão, Boleto</div>
+      <div class="del-item"><div class="check">✓</div>Cálculo de frete (Correios/Sedex)</div>
+      <div class="del-item"><div class="check">✓</div>Área do cliente + Meus Pedidos</div>
+      <div class="del-item"><div class="check">✓</div>Emissão de Nota Fiscal (NF-e)</div>
+      <div class="del-item"><div class="check">✓</div>Painel Administrativo completo</div>
+      <div class="del-item"><div class="check">✓</div>Controle de estoque + alertas</div>
+      <div class="del-item"><div class="check">✓</div>Dashboard de vendas em tempo real</div>
+      <div class="del-item"><div class="check">✓</div>Design responsivo (mobile + desktop)</div>
+      <div class="del-item"><div class="check">✓</div>Sistema de Cashback</div>
+      <div class="del-item"><div class="check">✓</div>Suporte diário via WhatsApp</div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+
+    <!-- IMPLEMENTATION -->
+    <div class="price-card featured">
+      <div class="price-tag lime">Investimento de Implementação</div>
+      <div class="price-row">
+        <div class="price-main">R$ 5.000</div>
+        <div class="price-period">à vista</div>
+      </div>
+      <div class="price-or">ou</div>
+      <div class="price-alt">5x de R$ 1.096,49</div>
+      <div class="price-desc">
+        <strong>Pago somente uma vez.</strong> Inclui o desenvolvimento completo da plataforma do zero, personalizada para a ZM. Layout, catálogo, integrações, painel administrativo e todos os módulos listados. Prazo de entrega: até 10 dias úteis após aprovação e pagamento.
+      </div>
+    </div>
+
+    <!-- MONTHLY -->
+    <div class="price-card">
+      <div class="price-tag blue">Investimento Mensal de Suporte</div>
+      <div class="price-row">
+        <div class="price-main">R$ 350</div>
+        <div class="price-period">/mês</div>
+      </div>
+      <div class="price-desc">
+        Manutenção dos códigos ativos, atualização da plataforma, suporte técnico contínuo e ajustes sob demanda. Inclui alterações de produtos, preços, categorias e qualquer adaptação que a operação e o cliente necessitar.
+      </div>
+    </div>
+
+    <!-- OBS -->
+    <div class="obs">
+      Obs: além do investimento mensal, existem custos fixos de terceiros referentes a hospedagem, domínio, gateway de pagamento, API de frete e emissão de notas fiscais. Esses valores são cobrados diretamente pelas integrações e não são repassados à Informus. São custos operacionais baixos e necessários para manter a plataforma ativa.
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">© 2026 Informus — Assessoria Comercial + Marketing para empresas que querem escalar.</div>
+    <div class="footer-right">
+      <a>informus.com.br</a>
+      <a>@informus</a>
+      <a>contato@informus.com.br</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
