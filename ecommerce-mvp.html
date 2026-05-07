@@ -330,6 +330,208 @@ img{max-width:100%;display:block;}
 .frete-opcao .frete-preco.gratis{color:var(--green);}
 .frete-endereco{font-size:12px;color:var(--gray-500);margin-top:10px;padding:8px 12px;background:#fff;border-radius:var(--radius-xs);border:1px solid var(--gray-100);}
 
+/* CATALOG WITH FILTERS */
+.catalog-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:flex-start;}
+.filters-sidebar{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;position:sticky;top:120px;}
+.filters-title{font-size:14px;font-weight:800;letter-spacing:-0.01em;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.filters-title a{font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;}
+.filter-group{padding:14px 0;border-top:1px solid var(--gray-100);}
+.filter-group:first-of-type{border-top:0;padding-top:0;}
+.filter-group h4{font-size:12px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+.filter-group select,.filter-group input{width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:var(--radius-xs);font-size:12px;background:#fff;}
+.filter-group select:focus,.filter-group input:focus{border-color:var(--blue);}
+.price-range{display:flex;gap:6px;align-items:center;}
+.price-range input{flex:1;font-size:12px;}
+.price-range span{font-size:11px;color:var(--gray-400);}
+.filter-check{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;color:var(--gray-700);cursor:pointer;}
+.filter-check input{width:auto;margin:0;accent-color:var(--blue);}
+.filter-clear{width:100%;margin-top:10px;padding:8px;background:var(--gray-100);color:var(--gray-700);border-radius:var(--radius-xs);font-size:12px;font-weight:600;}
+.filter-clear:hover{background:var(--gray-200);}
+.catalog-layout .product-grid{grid-template-columns:repeat(4,1fr);}
+.no-results{text-align:center;padding:60px 20px;color:var(--gray-400);background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);}
+.no-results .icon{font-size:48px;margin-bottom:12px;}
+
+/* PODIUM (VENDEDORES) */
+.podium-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:end;margin-bottom:32px;}
+.podium-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 20px;text-align:center;position:relative;overflow:hidden;}
+.podium-card.gold{background:linear-gradient(180deg,#FFFBEB 0%,#fff 100%);border:2px solid #F59E0B;transform:scale(1.05);box-shadow:0 8px 24px rgba(245,158,11,0.25);}
+.podium-card.silver{background:linear-gradient(180deg,#F3F4F6 0%,#fff 100%);border:2px solid #9CA3AF;}
+.podium-card.bronze{background:linear-gradient(180deg,#FFEDD5 0%,#fff 100%);border:2px solid #EA580C;}
+.podium-medal{position:absolute;top:-2px;right:14px;font-size:32px;}
+.podium-avatar{width:72px;height:72px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 12px;border:3px solid #fff;box-shadow:var(--shadow-md);}
+.podium-name{font-size:15px;font-weight:800;margin-bottom:2px;}
+.podium-role{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px;}
+.podium-value{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-0.02em;}
+.podium-meta{font-size:11px;color:var(--gray-500);margin-top:4px;}
+.podium-progress{height:6px;background:var(--gray-100);border-radius:99px;margin-top:10px;overflow:hidden;}
+.podium-progress-bar{height:100%;background:linear-gradient(90deg,var(--green),#34D399);border-radius:99px;transition:width 0.6s;}
+.seller-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 18px;display:grid;grid-template-columns:auto 1fr auto auto auto;gap:18px;align-items:center;margin-bottom:8px;transition:var(--transition);}
+.seller-card:hover{box-shadow:var(--shadow-md);transform:translateX(2px);}
+.seller-rank{font-size:18px;font-weight:900;color:var(--gray-300);width:28px;text-align:center;}
+.seller-info{display:flex;align-items:center;gap:10px;}
+.seller-avatar{width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.seller-name{font-size:13px;font-weight:700;}
+.seller-meta{font-size:11px;color:var(--gray-400);}
+.seller-bar{width:140px;}
+.seller-bar-track{height:6px;background:var(--gray-100);border-radius:99px;overflow:hidden;}
+.seller-bar-fill{height:100%;background:var(--blue);border-radius:99px;}
+.seller-pct{font-size:11px;font-weight:700;color:var(--gray-600);text-align:right;margin-top:2px;}
+.seller-vendas{font-size:14px;font-weight:800;color:var(--gray-900);text-align:right;}
+.seller-comm{font-size:11px;color:var(--green);font-weight:600;text-align:right;}
+
+/* CHART */
+.chart-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.chart-header h3{font-size:15px;font-weight:700;}
+.chart-tabs{display:flex;gap:4px;background:var(--gray-100);padding:3px;border-radius:var(--radius-xs);}
+.chart-tab{padding:6px 14px;font-size:11px;font-weight:600;border-radius:6px;color:var(--gray-500);cursor:pointer;}
+.chart-tab.active{background:#fff;color:var(--gray-900);box-shadow:var(--shadow);}
+.bar-chart{display:flex;align-items:flex-end;gap:14px;height:180px;padding-top:16px;border-bottom:1px solid var(--gray-100);}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.bar-vis{width:100%;background:linear-gradient(180deg,#E20031,#F75263);border-radius:6px 6px 0 0;position:relative;transition:all 0.4s;min-height:8px;}
+.bar-vis:hover{background:linear-gradient(180deg,#B8002A,#E20031);}
+.bar-vis .bar-tooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--gray-900);color:#fff;font-size:11px;padding:4px 8px;border-radius:4px;white-space:nowrap;margin-bottom:4px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.bar-vis:hover .bar-tooltip{opacity:1;}
+.bar-label{font-size:11px;color:var(--gray-500);font-weight:600;}
+.bar-value{font-size:11px;font-weight:700;color:var(--gray-900);}
+
+/* CASHBACK */
+.cashback-banner{background:linear-gradient(135deg,#059669 0%,#10B981 100%);color:#fff;border-radius:var(--radius);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;box-shadow:0 8px 20px rgba(5,150,105,0.25);}
+.cashback-banner .cb-info .label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;opacity:0.85;}
+.cashback-banner .cb-info .value{font-size:32px;font-weight:900;letter-spacing:-0.02em;margin:4px 0;}
+.cashback-banner .cb-info .sub{font-size:12px;opacity:0.9;}
+.cashback-banner .cb-icon{font-size:48px;}
+.cb-toggle{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(135deg,rgba(5,150,105,0.08),rgba(16,185,129,0.04));border:1px solid rgba(5,150,105,0.2);border-radius:var(--radius-sm);margin:14px 0;}
+.cb-toggle input{accent-color:var(--green);width:18px;height:18px;}
+.cb-toggle .cb-text{flex:1;font-size:13px;color:var(--gray-700);}
+.cb-toggle .cb-text strong{color:var(--green);font-weight:700;}
+.cb-history-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:13px;}
+.cb-history-row .cb-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:0.06em;}
+.cb-tag.in{background:var(--green-light);color:var(--green);}
+.cb-tag.out{background:#FEF2F2;color:var(--red);}
+
+/* CUPONS */
+.coupon-row{display:flex;gap:8px;margin:14px 0;}
+.coupon-row input{flex:1;padding:12px 14px;border:2px solid var(--gray-200);border-radius:var(--radius-xs);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;background:#fff;}
+.coupon-row input:focus{border-color:var(--blue);}
+.coupon-row button{padding:12px 22px;background:var(--gray-900);color:#fff;border-radius:var(--radius-xs);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.coupon-row button:hover{background:var(--blue);}
+.coupon-applied{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(135deg,rgba(5,150,105,0.08),rgba(16,185,129,0.04));border:1px dashed var(--green);border-radius:var(--radius-sm);font-size:13px;}
+.coupon-applied .left{display:flex;align-items:center;gap:10px;}
+.coupon-applied .code{background:var(--green);color:#fff;font-weight:800;padding:4px 10px;border-radius:4px;font-size:12px;letter-spacing:0.05em;}
+.coupon-applied .desc{font-weight:600;color:var(--gray-700);}
+.coupon-applied .remove{font-size:11px;color:var(--red);cursor:pointer;font-weight:600;}
+.coupon-error{padding:10px 14px;background:#FEF2F2;color:var(--red);border-radius:var(--radius-xs);font-size:12px;font-weight:600;margin-top:8px;}
+.coupon-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;border-left:4px solid var(--blue);margin-bottom:10px;display:grid;grid-template-columns:1fr auto auto auto auto;gap:16px;align-items:center;transition:var(--transition);}
+.coupon-card:hover{box-shadow:var(--shadow-md);transform:translateX(2px);}
+.coupon-card.inactive{opacity:0.5;border-left-color:var(--gray-400);}
+.coupon-card.inactive .badge-status{background:var(--gray-200);color:var(--gray-600);}
+.coupon-code-pill{font-family:'Courier New',monospace;font-size:14px;font-weight:800;background:var(--gray-900);color:#FFD60A;padding:8px 14px;border-radius:6px;letter-spacing:0.08em;}
+.coupon-info .desc{font-size:13px;font-weight:700;color:var(--gray-900);}
+.coupon-info .meta{font-size:11px;color:var(--gray-400);margin-top:2px;}
+.coupon-discount{font-size:18px;font-weight:900;color:var(--green);text-align:right;}
+.coupon-discount .sub{font-size:10px;color:var(--gray-400);font-weight:500;text-transform:uppercase;}
+.coupon-uses{font-size:12px;font-weight:700;color:var(--gray-700);text-align:center;}
+.coupon-uses .sub{font-size:10px;color:var(--gray-400);font-weight:500;text-transform:uppercase;}
+.badge-status{padding:4px 10px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.badge-status.active{background:var(--green-light);color:var(--green);}
+
+/* INDICAÇÃO */
+.referral-banner{background:linear-gradient(135deg,#7C3AED 0%,#A855F7 50%,#EC4899 100%);color:#fff;border-radius:var(--radius);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;box-shadow:0 12px 28px rgba(124,58,237,0.3);}
+.referral-banner::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);}
+.referral-banner h3{font-size:24px;font-weight:900;letter-spacing:-0.02em;margin-bottom:8px;position:relative;}
+.referral-banner p{font-size:14px;opacity:0.9;max-width:480px;line-height:1.5;position:relative;}
+.referral-code-box{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);border-radius:var(--radius);padding:18px 22px;margin-top:18px;display:flex;align-items:center;gap:14px;position:relative;}
+.referral-code-box .label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;opacity:0.85;font-weight:700;margin-bottom:4px;}
+.referral-code-box .code{font-family:'Courier New',monospace;font-size:22px;font-weight:900;letter-spacing:0.1em;}
+.referral-code-box button{background:#fff;color:#7C3AED;border-radius:var(--radius-xs);padding:10px 18px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;transition:var(--transition);}
+.referral-code-box button:hover{transform:scale(1.05);}
+.referral-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.referral-stat{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;}
+.referral-stat .label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:700;}
+.referral-stat .value{font-size:26px;font-weight:900;letter-spacing:-0.02em;margin-top:4px;}
+.referral-stat .sub{font-size:11px;color:var(--gray-500);margin-top:2px;}
+.share-buttons{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.share-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--radius-xs);font-size:12px;font-weight:700;letter-spacing:0.04em;cursor:pointer;transition:var(--transition);}
+.share-btn.wpp{background:#25D366;color:#fff;}
+.share-btn.wpp:hover{background:#128C7E;}
+.share-btn.copy{background:var(--gray-100);color:var(--gray-700);}
+.share-btn.copy:hover{background:var(--gray-200);}
+.indicado-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--gray-100);}
+.indicado-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.indicado-info .name{font-size:13px;font-weight:700;}
+.indicado-info .date{font-size:11px;color:var(--gray-400);margin-top:2px;}
+.indicado-status{padding:4px 10px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
+.indicado-bonus{font-size:14px;font-weight:800;color:var(--green);}
+
+/* PIX BANCO */
+.bank-card{background:linear-gradient(135deg,#0F172A 0%,#1E293B 50%,#334155 100%);color:#fff;border-radius:var(--radius);padding:28px 32px;position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,0.35);}
+.bank-card::before{content:'';position:absolute;top:-30%;right:-10%;width:280px;height:280px;background:radial-gradient(circle,rgba(34,211,238,0.18) 0%,transparent 70%);}
+.bank-card .bank-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;position:relative;}
+.bank-card .bank-name{font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;font-weight:700;}
+.bank-card .bank-title{font-size:22px;font-weight:900;letter-spacing:-0.02em;margin-top:4px;}
+.bank-card .bank-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:99px;font-size:11px;font-weight:700;color:#22C55E;text-transform:uppercase;letter-spacing:0.06em;}
+.bank-card .bank-status::before{content:'';width:7px;height:7px;background:#22C55E;border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.bank-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;position:relative;}
+.bank-item .label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#94A3B8;font-weight:700;margin-bottom:4px;}
+.bank-item .value{font-size:14px;font-weight:700;font-family:'Courier New',monospace;}
+.zero-fee{display:inline-block;padding:4px 10px;background:rgba(34,197,94,0.2);color:#22C55E;font-size:11px;font-weight:800;border-radius:4px;letter-spacing:0.04em;}
+
+/* PIX TRANSACTIONS */
+.pix-tx-row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:14px;align-items:center;padding:14px 18px;background:#fff;border-bottom:1px solid var(--gray-100);transition:var(--transition);}
+.pix-tx-row:hover{background:var(--gray-50);}
+.pix-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.pix-status-dot.pago{background:var(--green);box-shadow:0 0 0 4px rgba(5,150,105,0.15);}
+.pix-status-dot.aguardando{background:var(--yellow);}
+.pix-status-dot.expirado{background:var(--gray-400);}
+.pix-tx-info .tx-id{font-family:'Courier New',monospace;font-size:11px;color:var(--gray-400);letter-spacing:0.04em;}
+.pix-tx-info .tx-meta{font-size:13px;font-weight:700;}
+.pix-tx-valor{font-size:15px;font-weight:800;color:var(--green);}
+.pix-tx-tempo{font-size:11px;color:var(--gray-400);text-align:right;}
+.pix-tx-acao{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+.tx-acao-pago{color:var(--green);}
+.tx-acao-aguardando{color:var(--yellow);}
+.tx-acao-expirado{color:var(--gray-400);}
+
+.pix-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px;}
+.pix-step{text-align:center;position:relative;padding:0 12px;}
+.pix-step:not(:last-child)::after{content:'→';position:absolute;right:-8px;top:18px;color:var(--gray-300);font-size:20px;font-weight:700;}
+.pix-step .step-icon{width:44px;height:44px;border-radius:50%;background:var(--blue-50);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 8px;border:2px solid var(--blue);}
+.pix-step.done .step-icon{background:var(--green-light);color:var(--green);border-color:var(--green);}
+.pix-step .step-title{font-size:12px;font-weight:700;color:var(--gray-900);margin-bottom:2px;}
+.pix-step .step-time{font-size:10px;color:var(--gray-400);}
+
+/* TRIBUTAÇÃO */
+.api-status-card{background:linear-gradient(135deg,#0EA5E9 0%,#0284C7 100%);color:#fff;border-radius:var(--radius);padding:24px 28px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;margin-bottom:24px;box-shadow:0 8px 24px rgba(14,165,233,0.3);position:relative;overflow:hidden;}
+.api-status-card::before{content:'';position:absolute;top:-50%;right:0;width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);}
+.api-status-card .api-info{position:relative;}
+.api-status-card .label{font-size:11px;text-transform:uppercase;letter-spacing:0.12em;opacity:0.85;font-weight:700;}
+.api-status-card .name{font-size:24px;font-weight:900;letter-spacing:-0.02em;margin:4px 0 8px;}
+.api-status-card .meta{font-size:13px;opacity:0.9;}
+.api-sync-btn{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:14px 24px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:var(--transition);}
+.api-sync-btn:hover{background:rgba(255,255,255,0.25);transform:translateY(-2px);}
+.api-sync-btn.loading{opacity:0.6;pointer-events:none;}
+.api-sync-btn.loading::after{content:'';width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.tax-breakdown{background:var(--gray-50);border-radius:var(--radius-sm);padding:14px 18px;margin:14px 0;}
+.tax-breakdown h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-700);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.tax-line{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;color:var(--gray-600);}
+.tax-line.st{color:var(--orange);font-weight:700;}
+.tax-total{display:flex;justify-content:space-between;font-size:13px;font-weight:800;padding-top:8px;margin-top:6px;border-top:1px solid var(--gray-200);color:var(--gray-900);}
+.fiscal-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;}
+.fiscal-pill.ncm{background:#EFF6FF;color:#1E40AF;font-family:'Courier New',monospace;}
+.fiscal-pill.cst{background:#FEF3C7;color:#92400E;}
+.fiscal-pill.st{background:#FFE4E6;color:#9F1239;}
+
+.alert-card{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;background:#FFFBEB;border-left:4px solid #F59E0B;border-radius:var(--radius-sm);margin-bottom:10px;}
+.alert-card.critical{background:#FEF2F2;border-color:#DC2626;}
+.alert-card .alert-icon{font-size:20px;flex-shrink:0;}
+.alert-card .alert-content{flex:1;}
+.alert-card .alert-title{font-size:13px;font-weight:800;margin-bottom:2px;}
+.alert-card .alert-meta{font-size:11px;color:var(--gray-500);}
+
 /* VIEWS */
 .view{display:none;}
 .view.active{display:block;}
@@ -345,6 +547,13 @@ img{max-width:100%;display:block;}
   .admin-wrap{grid-template-columns:1fr;}
   .stat-grid{grid-template-columns:repeat(2,1fr);}
   .footer-grid{grid-template-columns:1fr 1fr;}
+  .catalog-layout{grid-template-columns:1fr;}
+  .filters-sidebar{position:relative;top:auto;}
+  .catalog-layout .product-grid{grid-template-columns:repeat(2,1fr);}
+  .podium-wrap{grid-template-columns:1fr;}
+  .podium-card.gold{transform:none;}
+  .seller-card{grid-template-columns:auto 1fr;gap:10px;}
+  .seller-bar,.seller-vendas{grid-column:1/-1;}
 }
 </style>
 </head>
@@ -369,6 +578,90 @@ var CATEGORIES = [
   {id:'eletroport',label:'Eletroportáteis',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',subs:['Liquidificador','Cafeteira','Ventilador','Ferro','Aspirador','Batedeira','Fritadeira','Mixer']},
   {id:'automotivo',label:'Automotivo',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M14 16H9m10 0h3v-3.15a1 1 0 00-.84-.99L16 11l-2.7-3.6a1 1 0 00-.8-.4H5.24a1 1 0 00-.98.75L3 11 .5 12.85a1 1 0 00-.5.86V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>',subs:['Óleos','Pneus','Acessórios','Lâmpadas','Ferramentas','Limpeza','Som','Câmeras']}
 ];
+
+var VENDEDORES = [
+  {id:1,nome:'Carlos Silva',inicial:'CS',cor:'#E20031',meta:35000,vendas:42850,pedidos:78,role:'Sênior'},
+  {id:2,nome:'Mariana Costa',inicial:'MC',cor:'#7C3AED',meta:30000,vendas:38420,pedidos:65,role:'Sênior'},
+  {id:3,nome:'Rafael Oliveira',inicial:'RO',cor:'#0891B2',meta:30000,vendas:31180,pedidos:54,role:'Pleno'},
+  {id:4,nome:'Juliana Almeida',inicial:'JA',cor:'#059669',meta:25000,vendas:24960,pedidos:48,role:'Pleno'},
+  {id:5,nome:'Bruno Santos',inicial:'BS',cor:'#D97706',meta:25000,vendas:19340,pedidos:41,role:'Pleno'},
+  {id:6,nome:'Larissa Pereira',inicial:'LP',cor:'#DB2777',meta:20000,vendas:14820,pedidos:32,role:'Júnior'},
+  {id:7,nome:'Diego Martins',inicial:'DM',cor:'#475569',meta:20000,vendas:11500,pedidos:24,role:'Júnior'}
+];
+var COMISSAO_PCT = 0.02;
+var CASHBACK_PCT = 0.03;
+
+var CUPONS = [
+  { codigo:'PRIMEIRA10', tipo:'percent', valor:10, validade:'31/12/2026', minimo:50, usos:47, ativo:true, desc:'Primeira compra' },
+  { codigo:'FRETEGRATIS', tipo:'frete', valor:0, validade:'15/06/2026', minimo:150, usos:134, ativo:true, desc:'Frete grátis' },
+  { codigo:'ATACADO15', tipo:'percent', valor:15, validade:'30/06/2026', minimo:500, usos:23, ativo:true, desc:'Compras acima de R$ 500' },
+  { codigo:'ZM50OFF', tipo:'fixed', valor:50, validade:'31/07/2026', minimo:300, usos:8, ativo:true, desc:'Desconto fixo R$ 50' },
+  { codigo:'BLACKZM', tipo:'percent', valor:25, validade:'30/11/2026', minimo:200, usos:0, ativo:false, desc:'Black Friday (programado)' }
+];
+
+var INDICACOES_MOCK = [
+  { nome:'Pedro Almeida', inicial:'PA', data:'04/05/2026', status:'comprou', bonus:50.00 },
+  { nome:'Ana Beatriz', inicial:'AB', data:'02/05/2026', status:'comprou', bonus:50.00 },
+  { nome:'Lucas Ferreira', inicial:'LF', data:'29/04/2026', status:'pendente', bonus:0 },
+  { nome:'Carolina Reis', inicial:'CR', data:'26/04/2026', status:'comprou', bonus:50.00 },
+  { nome:'Roberto Souza', inicial:'RS', data:'22/04/2026', status:'cadastrou', bonus:0 }
+];
+
+var BONUS_INDICACAO = 50;
+var DESCONTO_INDICADO_PCT = 10;
+
+// =============================================
+// BASE FISCAL (NCMs reais de material de construção)
+// =============================================
+var NCM_DATABASE = {
+  construcao: [
+    {ncm:'25232900',desc:'Cimento Portland',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},
+    {ncm:'25171000',desc:'Areia, brita, pedras',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},
+    {ncm:'32091000',desc:'Tintas e vernizes',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'39172300',desc:'Tubos e canos PVC',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'69072100',desc:'Pisos e azulejos cerâmicos',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'69101000',desc:'Louças sanitárias',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'72142000',desc:'Vergalhões de aço',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'73181500',desc:'Parafusos e ferragens',icms:18,ipi:8,pis:1.65,cofins:7.6,st:false,cst:'00'},
+    {ncm:'82041100',desc:'Chaves e ferramentas manuais',icms:18,ipi:8,pis:1.65,cofins:7.6,st:false,cst:'00'},
+    {ncm:'84672100',desc:'Furadeiras elétricas',icms:18,ipi:12,pis:1.65,cofins:7.6,st:false,cst:'00'},
+    {ncm:'84818090',desc:'Torneiras e registros',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'85444900',desc:'Fios e cabos elétricos',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'85365000',desc:'Interruptores e tomadas',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},
+    {ncm:'94054000',desc:'Luminárias e iluminação',icms:18,ipi:10,pis:1.65,cofins:7.6,st:false,cst:'00'},
+    {ncm:'68101100',desc:'Blocos e tijolos cimento',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'}
+  ],
+  eletronicos:   [{ncm:'85285200',desc:'Smart TVs',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'85171210',desc:'Smartphones',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'84713012',desc:'Notebooks',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'85183000',desc:'Fones de ouvido',icms:18,ipi:15,pis:1.65,cofins:7.6,st:false,cst:'00'}],
+  casa:          [{ncm:'94036000',desc:'Móveis de madeira',icms:18,ipi:5,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'63029100',desc:'Têxteis lar',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'73239900',desc:'Utilidades domésticas',icms:18,ipi:5,pis:1.65,cofins:7.6,st:false,cst:'00'}],
+  higiene:       [{ncm:'33049990',desc:'Cosméticos',icms:18,ipi:22,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'33051000',desc:'Xampus',icms:18,ipi:7,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'34011900',desc:'Sabonetes',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'}],
+  alimentos:     [{ncm:'22021000',desc:'Bebidas',icms:18,ipi:6,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'09011100',desc:'Café',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'10063000',desc:'Arroz, feijão',icms:7,ipi:0,pis:0,cofins:0,st:false,cst:'40'}],
+  escritorio:    [{ncm:'48201000',desc:'Cadernos e papelaria',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'96082000',desc:'Canetas',icms:18,ipi:5,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'84433100',desc:'Impressoras',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'}],
+  eletroport:    [{ncm:'85094000',desc:'Liquidificadores',icms:18,ipi:10,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'85162900',desc:'Aquecedores',icms:18,ipi:10,pis:1.65,cofins:7.6,st:true,cst:'60'}],
+  automotivo:    [{ncm:'27101921',desc:'Óleos lubrificantes',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'40111000',desc:'Pneus',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'85114000',desc:'Bateria automotiva',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'}]
+};
+
+var TRIBUTACAO_API = {
+  provedor: 'Tecnospeed Tax Engine',
+  status: 'conectado',
+  ultimaAtualizacao: new Date().toISOString(),
+  proximaAtualizacao: 'amanhã às 03:00',
+  ncmsAtualizados: 12847,
+  alteracoes24h: 23,
+  versaoTabela: '2026.05.07-001'
+};
+
+var PIX_CONFIG = {
+  banco: 'Sicoob',
+  agencia: '1234',
+  conta: '987654-3',
+  chave: 'pix@zmatacadista.com.br',
+  titular: 'ZM Atacadista e Material de Construção LTDA',
+  cnpj: '25.456.789/0001-90',
+  taxaTransacao: 0,
+  apiStatus: 'conectada',
+  webhookStatus: 'ativo',
+  certificadoVencimento: '15/03/2027'
+};
 
 var PRODUCT_NAMES = {
   construcao:['Torneira Monocomando Inox','Pia Granito 120cm','Chuveiro Elétrico Lorenzetti','Furadeira 750W Bosch','Piso Porcelanato 60x60','Tinta Acrílica 18L Suvinil','Cimento CP-II 50kg','Luminária LED Painel','Registro Esfera 3/4','Tubo PVC 100mm 6m','Caixa D\'Água 1000L','Serra Circular 7"','Argamassa AC-III 20kg','Fio Elétrico 2.5mm 100m','Interruptor Duplo','Fechadura Inox','Porta de Madeira 210x80','Janela Alumínio 120x100','Vaso Sanitário','Cuba Embutir Oval','Chave de Fenda Kit 6pc','Nível Laser','Trena 5m','Martelo Unha','Alicate Universal','Broca Concreto Kit','Rolo de Pintura 23cm','Lixa D\'Água 220','Massa Corrida 25kg','Rejunte 1kg'],
@@ -398,12 +691,14 @@ function generateProducts() {
   CATEGORIES.forEach(function(cat) {
     var names = PRODUCT_NAMES[cat.id];
     var emojis = EMOJIS[cat.id];
+    var ncmList = NCM_DATABASE[cat.id] || NCM_DATABASE.construcao;
     names.forEach(function(name, i) {
       var basePrice = Math.round((Math.random() * 800 + 15) * 100) / 100;
       var hasDiscount = Math.random() > 0.6;
       var discount = hasDiscount ? Math.round(Math.random() * 30 + 5) : 0;
       var price = hasDiscount ? Math.round(basePrice * (1 - discount/100) * 100) / 100 : basePrice;
       var stock = Math.floor(Math.random() * 500) + 1;
+      var fiscal = ncmList[i % ncmList.length];
       products.push({
         id: id++,
         name: name,
@@ -418,7 +713,17 @@ function generateProducts() {
         sold: Math.floor(Math.random() * 200),
         rating: (Math.random() * 2 + 3).toFixed(1),
         atacado: Math.random() > 0.5,
-        installment: price > 100 ? Math.ceil(price / 12) : 0
+        installment: price > 100 ? Math.ceil(price / 12) : 0,
+        ncm: fiscal.ncm,
+        ncmDesc: fiscal.desc,
+        cst: fiscal.cst,
+        cfop: '5102',
+        origem: 0,
+        icms: fiscal.icms,
+        ipi: fiscal.ipi,
+        pis: fiscal.pis,
+        cofins: fiscal.cofins,
+        icmsST: fiscal.st
       });
     });
   });
@@ -454,7 +759,12 @@ var state = {
   frete: { cep: '', opcao: '', valor: 0, prazo: '', calculado: false },
   logoSrc: 'logo-zm.png',
   logoZoom: 1,
-  logoEditorOpen: false
+  logoEditorOpen: false,
+  filters: { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false },
+  useCashback: false,
+  cashbackHistory: [],
+  cupomAplicado: null,
+  cupomErro: ''
 };
 
 // =============================================
@@ -581,37 +891,102 @@ function renderHome() {
   return h;
 }
 
-function renderCatalog() {
-  var h = '';
-  var filtered = ALL_PRODUCTS.filter(function(p) {
+function applyFilters(arr) {
+  var f = state.filters;
+  var out = arr.filter(function(p) {
     if (state.catFilter && p.cat !== state.catFilter) return false;
     if (state.search) {
       var s = state.search.toLowerCase();
-      return p.name.toLowerCase().indexOf(s) >= 0 || p.catLabel.toLowerCase().indexOf(s) >= 0 || p.sub.toLowerCase().indexOf(s) >= 0;
+      if (p.name.toLowerCase().indexOf(s) < 0 && p.catLabel.toLowerCase().indexOf(s) < 0 && p.sub.toLowerCase().indexOf(s) < 0) return false;
     }
+    if (f.priceMin !== '' && p.price < parseFloat(f.priceMin)) return false;
+    if (f.priceMax !== '' && p.price > parseFloat(f.priceMax)) return false;
+    if (f.soDesconto && !p.discount) return false;
+    if (f.soAtacado && !p.atacado) return false;
+    if (f.soEstoque && p.stock <= 0) return false;
     return true;
   });
+  if (f.sort === 'priceAsc') out.sort(function(a,b){return a.price - b.price;});
+  else if (f.sort === 'priceDesc') out.sort(function(a,b){return b.price - a.price;});
+  else if (f.sort === 'sold') out.sort(function(a,b){return b.sold - a.sold;});
+  else if (f.sort === 'discount') out.sort(function(a,b){return b.discount - a.discount;});
+  else if (f.sort === 'rating') out.sort(function(a,b){return parseFloat(b.rating) - parseFloat(a.rating);});
+  return out;
+}
+
+function renderCatalog() {
+  var filtered = applyFilters(ALL_PRODUCTS);
   var totalPages = Math.ceil(filtered.length / state.perPage);
   var start = (state.page - 1) * state.perPage;
   var pageItems = filtered.slice(start, start + state.perPage);
 
   var catName = state.catFilter ? CATEGORIES.find(function(c){return c.id===state.catFilter;}).label : 'Todos os Produtos';
-  h += '<div class="section"><div class="section-header"><h2>' + catName + (state.search ? ' — "' + escHtml(state.search) + '"' : '') + '</h2>';
+  var f = state.filters;
+
+  var h = '<div class="section"><div class="section-header"><h2>' + catName + (state.search ? ' — "' + escHtml(state.search) + '"' : '') + '</h2>';
   h += '<span style="font-size:13px;color:var(--gray-400)">' + filtered.length + ' produtos encontrados</span></div>';
-  h += '<div class="product-grid">';
-  pageItems.forEach(function(p) { h += productCard(p); });
+  h += '<div class="catalog-layout">';
+
+  // SIDEBAR FILTROS
+  h += '<aside class="filters-sidebar">';
+  h += '<div class="filters-title">Filtros <a onclick="clearFilters()">Limpar</a></div>';
+
+  h += '<div class="filter-group"><h4>Ordenar por</h4>';
+  h += '<select onchange="state.filters.sort=this.value;state.page=1;render()">';
+  var sortOpts = [['relevance','Relevância'],['priceAsc','Menor preço'],['priceDesc','Maior preço'],['sold','Mais vendidos'],['discount','Maior desconto'],['rating','Melhor avaliado']];
+  sortOpts.forEach(function(o){h += '<option value="' + o[0] + '"' + (f.sort===o[0]?' selected':'') + '>' + o[1] + '</option>';});
+  h += '</select></div>';
+
+  h += '<div class="filter-group"><h4>Faixa de preço</h4>';
+  h += '<div class="price-range">';
+  h += '<input type="number" placeholder="R$ min" value="' + f.priceMin + '" onchange="state.filters.priceMin=this.value;state.page=1;render()">';
+  h += '<span>—</span>';
+  h += '<input type="number" placeholder="R$ máx" value="' + f.priceMax + '" onchange="state.filters.priceMax=this.value;state.page=1;render()">';
+  h += '</div></div>';
+
+  h += '<div class="filter-group"><h4>Categoria</h4>';
+  h += '<select onchange="filterCat(this.value)">';
+  h += '<option value="">Todas</option>';
+  CATEGORIES.forEach(function(c){h += '<option value="' + c.id + '"' + (state.catFilter===c.id?' selected':'') + '>' + c.label + '</option>';});
+  h += '</select></div>';
+
+  h += '<div class="filter-group"><h4>Filtros rápidos</h4>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.soDesconto?' checked':'') + ' onchange="state.filters.soDesconto=this.checked;state.page=1;render()"> Só com desconto</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.soAtacado?' checked':'') + ' onchange="state.filters.soAtacado=this.checked;state.page=1;render()"> Só preço atacado</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.soEstoque?' checked':'') + ' onchange="state.filters.soEstoque=this.checked;state.page=1;render()"> Em estoque</label>';
   h += '</div>';
 
-  if (totalPages > 1) {
-    h += '<div class="pagination">';
-    for (var i = 1; i <= Math.min(totalPages, 10); i++) {
-      h += '<button class="' + (i===state.page?'active':'') + '" onclick="goPage(' + i + ')">' + i + '</button>';
-    }
-    if (totalPages > 10) h += '<button onclick="goPage(' + totalPages + ')">' + totalPages + '</button>';
+  h += '<button class="filter-clear" onclick="clearFilters()">Limpar todos os filtros</button>';
+  h += '</aside>';
+
+  // GRID
+  h += '<div>';
+  if (pageItems.length === 0) {
+    h += '<div class="no-results"><div class="icon">🔍</div><h3 style="font-size:16px;font-weight:700;margin-bottom:6px">Nenhum produto encontrado</h3><p style="font-size:13px;color:var(--gray-400)">Tente ajustar os filtros ou limpar a busca</p><button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="clearFilters()">Limpar filtros</button></div>';
+  } else {
+    h += '<div class="product-grid">';
+    pageItems.forEach(function(p) { h += productCard(p); });
     h += '</div>';
+    if (totalPages > 1) {
+      h += '<div class="pagination">';
+      for (var i = 1; i <= Math.min(totalPages, 10); i++) {
+        h += '<button class="' + (i===state.page?'active':'') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+      }
+      if (totalPages > 10) h += '<button onclick="goPage(' + totalPages + ')">' + totalPages + '</button>';
+      h += '</div>';
+    }
   }
   h += '</div>';
+  h += '</div></div>';
   return h;
+}
+
+function clearFilters() {
+  state.filters = { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false };
+  state.search = '';
+  state.catFilter = '';
+  state.page = 1;
+  render();
 }
 
 function productCard(p) {
@@ -657,6 +1032,24 @@ function renderProductDetail() {
   h += '<div style="font-size:12px;color:var(--gray-500)">🛡️ Garantia do vendedor</div>';
   h += '<div style="font-size:12px;color:var(--gray-500)">💳 Pix, cartão e boleto</div>';
   h += '</div>';
+  // FISCAL DO PRODUTO
+  if (p.ncm) {
+    var totalImposto = p.price * (p.icms + p.ipi + p.pis + p.cofins) / 100;
+    h += '<div class="tax-breakdown" style="margin-top:18px">';
+    h += '<h4>📋 Tributação deste produto</h4>';
+    h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
+    h += '<span class="fiscal-pill ncm">NCM ' + p.ncm + '</span>';
+    h += '<span class="fiscal-pill cst">CST ' + p.cst + '</span>';
+    if (p.icmsST) h += '<span class="fiscal-pill st">ICMS-ST</span>';
+    h += '</div>';
+    h += '<div class="tax-line"><span>ICMS</span><span>' + p.icms + '% · R$ ' + formatMoney(p.price * p.icms/100) + '</span></div>';
+    if (p.ipi > 0) h += '<div class="tax-line"><span>IPI</span><span>' + p.ipi + '% · R$ ' + formatMoney(p.price * p.ipi/100) + '</span></div>';
+    h += '<div class="tax-line"><span>PIS</span><span>' + p.pis + '% · R$ ' + formatMoney(p.price * p.pis/100) + '</span></div>';
+    h += '<div class="tax-line"><span>COFINS</span><span>' + p.cofins + '% · R$ ' + formatMoney(p.price * p.cofins/100) + '</span></div>';
+    h += '<div class="tax-total"><span>Tributos inclusos</span><span>R$ ' + formatMoney(totalImposto) + '</span></div>';
+    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:8px">Lei da Transparência (12.741/2012). Alíquotas via API ' + TRIBUTACAO_API.provedor + '.</div>';
+    h += '</div>';
+  }
   h += renderFreteCalc('produto');
   h += '</div></div></div>';
   return h;
@@ -719,9 +1112,11 @@ function renderCheckout() {
   h += '</div>';
 
   if (state.checkoutPay === 'pix') {
+    h += '<div style="display:flex;gap:8px;align-items:center;justify-content:center;background:linear-gradient(135deg,#0F172A,#334155);color:#fff;padding:8px 14px;border-radius:var(--radius-xs);font-size:11px;font-weight:700;margin-bottom:12px;letter-spacing:0.04em;text-transform:uppercase">⚡ Pix Direto · ' + PIX_CONFIG.banco + ' · Sem taxa de gateway</div>';
     h += '<div class="pix-area"><div class="pix-qr"><div style="width:160px;height:160px;background:url(\'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23000" x="10" y="10" width="10" height="10"/><rect fill="%23000" x="20" y="10" width="10" height="10"/><rect fill="%23000" x="30" y="10" width="10" height="10"/><rect fill="%23000" x="10" y="20" width="10" height="10"/><rect fill="%23000" x="30" y="20" width="10" height="10"/><rect fill="%23000" x="50" y="20" width="10" height="10"/><rect fill="%23000" x="70" y="10" width="10" height="10"/><rect fill="%23000" x="80" y="10" width="10" height="10"/><rect fill="%23000" x="60" y="10" width="10" height="10"/><rect fill="%23000" x="10" y="30" width="10" height="10"/><rect fill="%23000" x="20" y="30" width="10" height="10"/><rect fill="%23000" x="30" y="30" width="10" height="10"/><rect fill="%23000" x="50" y="40" width="10" height="10"/><rect fill="%23000" x="60" y="30" width="10" height="10"/><rect fill="%23000" x="70" y="20" width="10" height="10"/><rect fill="%23000" x="80" y="30" width="10" height="10"/><rect fill="%23000" x="60" y="50" width="10" height="10"/><rect fill="%23000" x="40" y="50" width="10" height="10"/><rect fill="%23000" x="10" y="60" width="10" height="10"/><rect fill="%23000" x="20" y="60" width="10" height="10"/><rect fill="%23000" x="30" y="60" width="10" height="10"/><rect fill="%23000" x="70" y="60" width="10" height="10"/><rect fill="%23000" x="80" y="60" width="10" height="10"/><rect fill="%23000" x="10" y="70" width="10" height="10"/><rect fill="%23000" x="30" y="70" width="10" height="10"/><rect fill="%23000" x="60" y="70" width="10" height="10"/><rect fill="%23000" x="80" y="70" width="10" height="10"/><rect fill="%23000" x="10" y="80" width="10" height="10"/><rect fill="%23000" x="20" y="80" width="10" height="10"/><rect fill="%23000" x="30" y="80" width="10" height="10"/><rect fill="%23000" x="70" y="80" width="10" height="10"/><rect fill="%23000" x="80" y="80" width="10" height="10"/></svg>') + '\') no-repeat center/contain"></div></div>';
     h += '<p style="font-size:14px;font-weight:700;margin-bottom:4px">Escaneie o QR Code</p>';
-    h += '<p style="font-size:12px;color:var(--gray-400);margin-bottom:12px">ou copie o código Pix abaixo</p>';
+    h += '<p style="font-size:12px;color:var(--gray-400);margin-bottom:8px">ou copie o código Pix abaixo</p>';
+    h += '<p style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:12px">✓ Pagamento direto na conta PJ · NF-e emitida automática em ~3s após confirmação</p>';
     h += '<div style="background:var(--gray-100);padding:10px;border-radius:6px;font-family:monospace;font-size:11px;word-break:break-all;margin-bottom:12px">00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540' + formatMoney(total).replace('.','').replace(',','') + '5802BR</div>';
     h += '<button class="btn btn-primary btn-sm" onclick="alert(\'Código Pix copiado!\')">Copiar Código</button></div>';
   } else if (state.checkoutPay === 'cartao') {
@@ -764,8 +1159,53 @@ function renderCheckout() {
   if (state.frete.calculado && state.frete.prazo) {
     h += '<div class="order-line"><span>Prazo estimado</span><span style="font-weight:600;color:var(--blue)">' + state.frete.prazo + '</span></div>';
   }
-  if (state.checkoutPay === 'pix') h += '<div class="order-line"><span>Desconto Pix (5%)</span><span style="color:var(--green)">-R$ ' + formatMoney(total * 0.05) + '</span></div>';
-  h += '<div class="order-line total"><span>Total</span><span>R$ ' + formatMoney(state.checkoutPay==='pix' ? total*0.95 : total) + '</span></div>';
+  // Cupom
+  var descontoCupom = 0;
+  var freteAjustado = frete;
+  if (!state.cupomAplicado) {
+    h += '<div class="coupon-row"><input type="text" id="cupom-input" placeholder="Cupom de desconto" onkeydown="if(event.key===\'Enter\')aplicarCupom()"><button onclick="aplicarCupom()">Aplicar</button></div>';
+    if (state.cupomErro) h += '<div class="coupon-error">⚠️ ' + state.cupomErro + '</div>';
+  } else {
+    var cup = state.cupomAplicado;
+    if (cup.tipo === 'percent') descontoCupom = subtotal * (cup.valor/100);
+    else if (cup.tipo === 'fixed') descontoCupom = cup.valor;
+    else if (cup.tipo === 'frete') { freteAjustado = 0; descontoCupom = 0; }
+    h += '<div class="coupon-applied">';
+    h += '<div class="left"><span class="code">' + cup.codigo + '</span><span class="desc">' + cup.desc + '</span></div>';
+    h += '<span class="remove" onclick="removerCupom()">Remover ×</span>';
+    h += '</div>';
+    if (cup.tipo === 'frete') {
+      h += '<div class="order-line"><span>Cupom: ' + cup.codigo + '</span><span style="color:var(--green);font-weight:600">Frete grátis</span></div>';
+    } else {
+      h += '<div class="order-line"><span>Cupom: ' + cup.codigo + '</span><span style="color:var(--green);font-weight:600">-R$ ' + formatMoney(descontoCupom) + '</span></div>';
+    }
+  }
+  // Cashback toggle
+  var cashbackUso = 0;
+  var saldoCb = (state.logged && state.user && state.user.cashback) ? state.user.cashback : 0;
+  if (saldoCb > 0) {
+    var subAposCupom = subtotal - descontoCupom;
+    var maxUso = Math.min(saldoCb, subAposCupom);
+    if (state.useCashback) cashbackUso = maxUso;
+    h += '<div class="cb-toggle"><input type="checkbox"' + (state.useCashback?' checked':'') + ' onclick="state.useCashback=this.checked;render()">';
+    h += '<div class="cb-text">Usar meu cashback <strong>(R$ ' + formatMoney(saldoCb) + ' disponível)</strong></div></div>';
+    if (state.useCashback) {
+      h += '<div class="order-line"><span>Cashback aplicado</span><span style="color:var(--green);font-weight:600">-R$ ' + formatMoney(cashbackUso) + '</span></div>';
+    }
+  }
+  var totalSemCb = subtotal + freteAjustado - descontoCupom - cashbackUso;
+  if (state.checkoutPay === 'pix') h += '<div class="order-line"><span>Desconto Pix (5%)</span><span style="color:var(--green)">-R$ ' + formatMoney(totalSemCb * 0.05) + '</span></div>';
+  var totalFinal = state.checkoutPay === 'pix' ? totalSemCb * 0.95 : totalSemCb;
+  var cashbackGanho = subtotal * CASHBACK_PCT;
+  // Tributos inclusos (Lei 12.741/2012)
+  var totalTributos = state.cart.reduce(function(s,i){
+    var p = ALL_PRODUCTS.find(function(x){return x.id===i.pid;});
+    if (!p || !p.ncm) return s;
+    return s + (p.price * i.qty * (p.icms + p.ipi + p.pis + p.cofins) / 100);
+  },0);
+  h += '<div class="order-line" style="font-size:11px;color:var(--gray-400)"><span>📋 Tributos inclusos (Lei 12.741)</span><span>R$ ' + formatMoney(totalTributos) + '</span></div>';
+  h += '<div class="order-line"><span>💰 Você ganhará de cashback</span><span style="color:var(--green);font-weight:700">+R$ ' + formatMoney(cashbackGanho) + '</span></div>';
+  h += '<div class="order-line total"><span>Total</span><span>R$ ' + formatMoney(totalFinal) + '</span></div>';
   h += '<button class="btn btn-orange btn-lg btn-block" style="margin-top:16px" onclick="finalizarPedido()">Finalizar Pedido</button>';
   h += '<p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:12px">🔒 Pagamento 100% seguro</p>';
   h += '</div></div>';
@@ -782,6 +1222,8 @@ function renderClientArea() {
   h += '<div class="client-doc">' + state.user.doc + '</div>';
   h += '<ul class="client-menu">';
   h += '<li class="' + (state.clientView==='pedidos'?'active':'') + '" onclick="state.clientView=\'pedidos\';render()">📦 Meus Pedidos</li>';
+  h += '<li class="' + (state.clientView==='cashback'?'active':'') + '" onclick="state.clientView=\'cashback\';render()">💰 Meu Cashback</li>';
+  h += '<li class="' + (state.clientView==='indicacoes'?'active':'') + '" onclick="state.clientView=\'indicacoes\';render()">🤝 Indique e Ganhe</li>';
   h += '<li class="' + (state.clientView==='dados'?'active':'') + '" onclick="state.clientView=\'dados\';render()">👤 Meus Dados</li>';
   h += '<li class="' + (state.clientView==='nf'?'active':'') + '" onclick="state.clientView=\'nf\';render()">📄 Notas Fiscais</li>';
   h += '<li class="' + (state.clientView==='favoritos'?'active':'') + '" onclick="state.clientView=\'favoritos\';render()">❤️ Favoritos</li>';
@@ -833,6 +1275,69 @@ function renderClientArea() {
   } else if (state.clientView === 'favoritos') {
     h += '<h2 style="font-size:20px;font-weight:800;margin-bottom:20px">Favoritos</h2>';
     h += '<div style="text-align:center;padding:40px;color:var(--gray-400)"><p style="font-size:48px;margin-bottom:12px">❤️</p><p>Nenhum favorito salvo</p></div>';
+  } else if (state.clientView === 'cashback') {
+    h += '<h2 style="font-size:20px;font-weight:800;margin-bottom:20px">Meu Cashback</h2>';
+    h += '<div class="cashback-banner">';
+    h += '<div class="cb-info">';
+    h += '<div class="label">Saldo disponível</div>';
+    h += '<div class="value">R$ ' + formatMoney(state.user.cashback || 0) + '</div>';
+    h += '<div class="sub">Use no próximo pedido · ganhe ' + (CASHBACK_PCT*100) + '% em cada compra</div>';
+    h += '</div><div class="cb-icon">💰</div></div>';
+
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">';
+    h += '<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:16px"><div style="font-size:11px;color:var(--gray-500);font-weight:600;text-transform:uppercase">Acumulado total</div><div style="font-size:20px;font-weight:800;margin-top:4px">R$ ' + formatMoney((state.user.cashback||0) * 1.6) + '</div></div>';
+    h += '<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:16px"><div style="font-size:11px;color:var(--gray-500);font-weight:600;text-transform:uppercase">Já resgatado</div><div style="font-size:20px;font-weight:800;margin-top:4px">R$ ' + formatMoney((state.user.cashback||0) * 0.6) + '</div></div>';
+    h += '<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:16px"><div style="font-size:11px;color:var(--gray-500);font-weight:600;text-transform:uppercase">Vence em</div><div style="font-size:20px;font-weight:800;margin-top:4px">90 dias</div></div>';
+    h += '</div>';
+
+    h += '<h3 style="font-size:14px;font-weight:800;margin-bottom:10px">Histórico</h3>';
+    if (state.cashbackHistory.length === 0) {
+      h += '<div style="text-align:center;padding:30px;color:var(--gray-400);font-size:13px">Nenhuma movimentação ainda</div>';
+    } else {
+      state.cashbackHistory.forEach(function(m){
+        h += '<div class="cb-history-row">';
+        h += '<div style="display:flex;align-items:center;gap:10px"><span class="cb-tag ' + m.tipo + '">' + (m.tipo==='in'?'Crédito':'Resgate') + '</span><div><div style="font-weight:600">' + m.desc + '</div><div style="font-size:11px;color:var(--gray-400)">' + m.data + '</div></div></div>';
+        h += '<div style="font-weight:800;color:' + (m.tipo==='in'?'var(--green)':'var(--red)') + '">' + (m.tipo==='in'?'+':'-') + 'R$ ' + formatMoney(Math.abs(m.valor)) + '</div>';
+        h += '</div>';
+      });
+    }
+    h += '<div style="margin-top:20px;padding:16px;background:var(--green-light);border-radius:var(--radius-sm);font-size:13px;color:var(--green);font-weight:600">💡 Use seu cashback no checkout. O desconto é aplicado automaticamente quando você marca a opção.</div>';
+  } else if (state.clientView === 'indicacoes') {
+    var codigo = gerarCodigoIndicacao(state.user.nome);
+    var totalIndicados = INDICACOES_MOCK.length;
+    var compraram = INDICACOES_MOCK.filter(function(i){return i.status==='comprou';}).length;
+    var ganhoTotal = INDICACOES_MOCK.reduce(function(s,i){return s+i.bonus;},0);
+
+    h += '<div class="referral-banner">';
+    h += '<h3>🤝 Indique amigos e ganhe R$ ' + BONUS_INDICACAO + ',00 por cada um</h3>';
+    h += '<p>Compartilhe seu código com amigos. Eles ganham <strong>' + DESCONTO_INDICADO_PCT + '% de desconto</strong> na primeira compra. Você ganha <strong>R$ ' + BONUS_INDICACAO + ' de cashback</strong> assim que eles comprarem.</p>';
+    h += '<div class="referral-code-box">';
+    h += '<div style="flex:1"><div class="label">Seu código de indicação</div><div class="code">' + codigo + '</div></div>';
+    h += '<button onclick="copiarTexto(\'' + codigo + '\')">Copiar</button>';
+    h += '</div>';
+    h += '<div class="share-buttons">';
+    var msg = encodeURIComponent('Olá! Vai comprar na ZM Atacadista? Usa meu código ' + codigo + ' e ganha ' + DESCONTO_INDICADO_PCT + '% de desconto na primeira compra: https://zmatacadista.com.br?ref=' + codigo);
+    h += '<a class="share-btn wpp" href="https://wa.me/?text=' + msg + '" target="_blank">📱 Compartilhar no WhatsApp</a>';
+    h += '<button class="share-btn copy" onclick="copiarTexto(\'https://zmatacadista.com.br?ref=' + codigo + '\')">🔗 Copiar Link</button>';
+    h += '</div></div>';
+
+    h += '<div class="referral-stats">';
+    h += '<div class="referral-stat"><div class="label">Total Indicados</div><div class="value">' + totalIndicados + '</div><div class="sub">' + compraram + ' já compraram</div></div>';
+    h += '<div class="referral-stat"><div class="label">Bônus Recebido</div><div class="value" style="color:var(--green)">R$ ' + formatMoney(ganhoTotal) + '</div><div class="sub">Em cashback</div></div>';
+    h += '<div class="referral-stat"><div class="label">Conversão</div><div class="value">' + Math.round(compraram/totalIndicados*100) + '%</div><div class="sub">Taxa de compra</div></div>';
+    h += '</div>';
+
+    h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:10px">Pessoas que você indicou</h3>';
+    INDICACOES_MOCK.forEach(function(ind) {
+      h += '<div class="indicado-row">';
+      h += '<div class="indicado-avatar">' + ind.inicial + '</div>';
+      h += '<div class="indicado-info"><div class="name">' + ind.nome + '</div><div class="date">Indicado em ' + ind.data + '</div></div>';
+      var statusMap = { comprou: ['Comprou', 'status-green'], pendente: ['Aguardando 1ª compra', 'status-yellow'], cadastrou: ['Cadastrou', 'status-blue'] };
+      var st = statusMap[ind.status];
+      h += '<span class="indicado-status ' + st[1] + '">' + st[0] + '</span>';
+      h += '<div class="indicado-bonus">' + (ind.bonus > 0 ? '+R$ ' + formatMoney(ind.bonus) : '—') + '</div>';
+      h += '</div>';
+    });
   }
   h += '</div></div>';
   return h;
@@ -853,7 +1358,13 @@ function renderAdmin() {
     {id:'pedidos',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',label:'Pedidos'},
     {id:'estoque',icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',label:'Estoque'},
     {id:'pagamentos',icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',label:'Pagamentos'},
-    {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'}
+    {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'},
+    {id:'vendedores',icon:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',label:'Vendedores'},
+    {id:'cashback',icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>',label:'Cashback'},
+    {id:'cupons',icon:'<svg viewBox="0 0 24 24"><path d="M21 5H3a2 2 0 0 0-2 2v3a3 3 0 1 1 0 6v3a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-3a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2z"/><line x1="13" y1="5" x2="13" y2="19"/></svg>',label:'Cupons'},
+    {id:'indicacoes',icon:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',label:'Indicações'},
+    {id:'pix',icon:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',label:'Pix & NF-e'},
+    {id:'tributacao',icon:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',label:'Tributação'}
   ];
   navItems.forEach(function(n) {
     h += '<li class="' + (state.adminView===n.id?'active':'') + '" onclick="state.adminView=\'' + n.id + '\';render()">' + n.icon + ' ' + n.label + '</li>';
@@ -868,19 +1379,87 @@ function renderAdmin() {
   else if (state.adminView === 'estoque') h += renderAdminEstoque();
   else if (state.adminView === 'pagamentos') h += renderAdminPagamentos();
   else if (state.adminView === 'nfs') h += renderAdminNFs();
+  else if (state.adminView === 'vendedores') h += renderAdminVendedores();
+  else if (state.adminView === 'cashback') h += renderAdminCashback();
+  else if (state.adminView === 'cupons') h += renderAdminCupons();
+  else if (state.adminView === 'indicacoes') h += renderAdminIndicacoes();
+  else if (state.adminView === 'pix') h += renderAdminPix();
+  else if (state.adminView === 'tributacao') h += renderAdminTributacao();
   h += '</div></div>';
   return h;
 }
 
 function renderAdminDash() {
   var totalVendas = state.orders.reduce(function(s,o){return s+o.total;},0);
+  var hoje = totalVendas || 12450;
+  var mes = totalVendas + 89340;
+  var ticketMedio = totalVendas > 0 ? totalVendas/state.orders.length : 264.89;
   var h = '<div class="admin-header"><h2>Dashboard</h2><span style="font-size:13px;color:var(--gray-400)">' + new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + '</span></div>';
   h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Vendas Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(totalVendas || 12450) + '</div><div class="stat-change up">↑ 12% vs ontem</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">' + (state.orders.length || 47) + '</div><div class="stat-change up">↑ 8 novos hoje</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Produtos Ativos</div><div class="stat-value">' + ALL_PRODUCTS.length + '</div><div class="stat-change">23 com estoque baixo</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value">R$ ' + formatMoney(totalVendas > 0 ? totalVendas/state.orders.length : 264.89) + '</div><div class="stat-change up">↑ 5% vs semana passada</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Vendas Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(hoje) + '</div><div class="stat-change up">↑ 12% vs ontem</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Vendas Mês</div><div class="stat-value">R$ ' + formatMoney(mes) + '</div><div class="stat-change up">↑ 18% vs mês passado</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">' + (state.orders.length + 142) + '</div><div class="stat-change up">↑ ' + (state.orders.length || 8) + ' hoje</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value">R$ ' + formatMoney(ticketMedio) + '</div><div class="stat-change up">↑ 5% vs semana passada</div></div>';
   h += '</div>';
+
+  // GRÁFICO DE VENDAS
+  h += '<div class="chart-card" style="margin-bottom:24px">';
+  h += '<div class="chart-header"><h3>Faturamento ' + (state.dashChartTab==='mes'?'(últimos 6 meses)':'(últimos 7 dias)') + '</h3>';
+  h += '<div class="chart-tabs">';
+  h += '<div class="chart-tab' + (state.dashChartTab!=='mes'?' active':'') + '" onclick="state.dashChartTab=\'dia\';render()">Diário</div>';
+  h += '<div class="chart-tab' + (state.dashChartTab==='mes'?' active':'') + '" onclick="state.dashChartTab=\'mes\';render()">Mensal</div>';
+  h += '</div></div>';
+
+  var dados, max;
+  if (state.dashChartTab === 'mes') {
+    dados = [
+      {l:'Dez',v:62300},{l:'Jan',v:71850},{l:'Fev',v:68420},{l:'Mar',v:79100},{l:'Abr',v:85240},{l:'Mai',v:mes}
+    ];
+  } else {
+    dados = [
+      {l:'Seg',v:8420},{l:'Ter',v:11250},{l:'Qua',v:9680},{l:'Qui',v:14320},{l:'Sex',v:18750},{l:'Sáb',v:21300},{l:'Hoje',v:hoje}
+    ];
+  }
+  max = Math.max.apply(null, dados.map(function(d){return d.v;}));
+
+  h += '<div class="bar-chart">';
+  dados.forEach(function(d) {
+    var alt = (d.v / max * 160) + 'px';
+    h += '<div class="bar-col">';
+    h += '<div class="bar-value">R$ ' + (d.v >= 1000 ? (d.v/1000).toFixed(1) + 'k' : Math.round(d.v)) + '</div>';
+    h += '<div class="bar-vis" style="height:' + alt + '"><span class="bar-tooltip">R$ ' + formatMoney(d.v) + '</span></div>';
+    h += '<div class="bar-label">' + d.l + '</div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // RANKING TOP 3 VENDEDORES (mini)
+  var sortedSellers = VENDEDORES.slice().sort(function(a,b){return b.vendas - a.vendas;});
+  h += '<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:24px">';
+  h += '<div class="chart-card">';
+  h += '<div class="chart-header"><h3>🏆 Top Vendedores do Mês</h3>';
+  h += '<a onclick="state.adminView=\'vendedores\';render()" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer">Ver ranking completo →</a></div>';
+  sortedSellers.slice(0,5).forEach(function(s, i) {
+    var pct = Math.min(100, (s.vendas / s.meta) * 100);
+    h += '<div class="seller-card" style="margin-bottom:6px">';
+    h += '<div class="seller-rank">' + ['🥇','🥈','🥉','4°','5°'][i] + '</div>';
+    h += '<div class="seller-info"><div class="seller-avatar" style="background:' + s.cor + '">' + s.inicial + '</div>';
+    h += '<div><div class="seller-name">' + s.nome + '</div><div class="seller-meta">' + s.pedidos + ' pedidos</div></div></div>';
+    h += '<div class="seller-bar"><div class="seller-bar-track"><div class="seller-bar-fill" style="width:' + pct + '%;background:' + s.cor + '"></div></div><div class="seller-pct">' + Math.round(pct) + '% da meta</div></div>';
+    h += '<div><div class="seller-vendas">R$ ' + formatMoney(s.vendas) + '</div><div class="seller-comm">+R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + ' comissão</div></div>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // ESTOQUE BAIXO
+  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">⚠️ Estoque Baixo</h3>';
+  ALL_PRODUCTS.filter(function(p){return p.stock < 10;}).slice(0,7).forEach(function(p){
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray-100)">';
+    h += '<span style="font-size:12px;font-weight:600">' + p.emoji + ' ' + escHtml(p.name.substring(0,22)) + '</span>';
+    h += '<span class="stock-low" style="font-size:12px">' + p.stock + ' un</span></div>';
+  });
+  h += '</div></div>';
+
   h += '<div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">';
   h += '<div style="background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)"><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">Últimos Pedidos</h3>';
   h += '<table class="data-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Total</th><th>Status</th></tr></thead><tbody>';
@@ -892,11 +1471,22 @@ function renderAdminDash() {
     h += '<tr><td><strong>#' + o.id + '</strong></td><td>' + (o.items[0].name||'') + '</td><td>R$ ' + formatMoney(o.total) + '</td><td><span class="order-status ' + o.statusClass + '">' + o.status + '</span></td></tr>';
   });
   h += '</tbody></table></div>';
-  h += '<div style="background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)"><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">Estoque Baixo ⚠️</h3>';
-  ALL_PRODUCTS.filter(function(p){return p.stock < 10;}).slice(0,6).forEach(function(p){
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray-100)">';
-    h += '<span style="font-size:12px;font-weight:600">' + p.emoji + ' ' + escHtml(p.name.substring(0,25)) + '</span>';
-    h += '<span class="stock-low" style="font-size:12px">' + p.stock + ' un</span></div>';
+  // Categorias mais vendidas
+  h += '<div style="background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)"><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">📊 Categorias Top</h3>';
+  var catVendas = [
+    {l:'Construção',v:28450,c:'#E20031'},
+    {l:'Eletrônicos',v:21340,c:'#7C3AED'},
+    {l:'Casa',v:14820,c:'#0891B2'},
+    {l:'Higiene',v:11200,c:'#059669'},
+    {l:'Alimentos',v:8940,c:'#D97706'}
+  ];
+  var maxCat = catVendas[0].v;
+  catVendas.forEach(function(c){
+    var pct = (c.v / maxCat) * 100;
+    h += '<div style="margin-bottom:14px">';
+    h += '<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:5px"><span>' + c.l + '</span><span>R$ ' + formatMoney(c.v) + '</span></div>';
+    h += '<div style="height:6px;background:var(--gray-100);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + c.c + ';border-radius:99px"></div></div>';
+    h += '</div>';
   });
   h += '</div></div>';
   return h;
@@ -1014,6 +1604,481 @@ function renderAdminNFs() {
   });
   h += '</tbody></table></div>';
   return h;
+}
+
+function renderAdminVendedores() {
+  var sorted = VENDEDORES.slice().sort(function(a,b){return b.vendas - a.vendas;});
+  var totalVendas = VENDEDORES.reduce(function(s,v){return s+v.vendas;},0);
+  var totalComissao = totalVendas * COMISSAO_PCT;
+  var totalPedidos = VENDEDORES.reduce(function(s,v){return s+v.pedidos;},0);
+  var bateramMeta = VENDEDORES.filter(function(v){return v.vendas >= v.meta;}).length;
+
+  var h = '<div class="admin-header"><h2>🏆 Competição de Vendedores</h2><span style="font-size:13px;color:var(--gray-400)">Ranking do mês — ' + new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) + '</span></div>';
+
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Vendas Totais</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(totalVendas) + '</div><div class="stat-change up">↑ Equipe ' + VENDEDORES.length + ' vendedores</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Comissão a Pagar</div><div class="stat-value">R$ ' + formatMoney(totalComissao) + '</div><div class="stat-change">' + (COMISSAO_PCT*100) + '% sobre vendas</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pedidos da Equipe</div><div class="stat-value">' + totalPedidos + '</div><div class="stat-change up">Ticket médio R$ ' + formatMoney(totalVendas/totalPedidos) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Bateram a Meta</div><div class="stat-value" style="color:var(--green)">' + bateramMeta + '/' + VENDEDORES.length + '</div><div class="stat-change">' + Math.round(bateramMeta/VENDEDORES.length*100) + '% da equipe</div></div>';
+  h += '</div>';
+
+  // PÓDIO TOP 3
+  h += '<h3 style="font-size:16px;font-weight:800;margin-bottom:14px;letter-spacing:-0.01em">Pódio do Mês</h3>';
+  h += '<div class="podium-wrap">';
+  var medals = ['🥇','🥈','🥉'];
+  var classes = ['gold','silver','bronze'];
+  var ordem = [1,0,2]; // visual: 2º à esquerda, 1º centro, 3º direita
+  ordem.forEach(function(idx) {
+    var s = sorted[idx];
+    if (!s) return;
+    var pct = Math.min(100, (s.vendas / s.meta) * 100);
+    h += '<div class="podium-card ' + classes[idx] + '">';
+    h += '<div class="podium-medal">' + medals[idx] + '</div>';
+    h += '<div class="podium-avatar" style="background:' + s.cor + '">' + s.inicial + '</div>';
+    h += '<div class="podium-name">' + s.nome + '</div>';
+    h += '<div class="podium-role">' + s.role + ' · ' + s.pedidos + ' pedidos</div>';
+    h += '<div class="podium-value">R$ ' + formatMoney(s.vendas) + '</div>';
+    h += '<div class="podium-meta">Meta R$ ' + formatMoney(s.meta) + ' · ' + Math.round(pct) + '%</div>';
+    h += '<div class="podium-progress"><div class="podium-progress-bar" style="width:' + pct + '%"></div></div>';
+    h += '<div style="font-size:12px;color:var(--green);font-weight:700;margin-top:10px">+ R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + ' comissão</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // RANKING COMPLETO
+  h += '<h3 style="font-size:16px;font-weight:800;margin-bottom:14px;letter-spacing:-0.01em">Ranking Completo</h3>';
+  h += '<div>';
+  sorted.forEach(function(s, i) {
+    var pct = Math.min(100, (s.vendas / s.meta) * 100);
+    var bateu = s.vendas >= s.meta;
+    h += '<div class="seller-card">';
+    h += '<div class="seller-rank">' + (i < 3 ? medals[i] : (i+1) + 'º') + '</div>';
+    h += '<div class="seller-info"><div class="seller-avatar" style="background:' + s.cor + '">' + s.inicial + '</div>';
+    h += '<div><div class="seller-name">' + s.nome + (bateu ? ' <span style="font-size:10px;color:var(--green);background:var(--green-light);padding:2px 8px;border-radius:99px;margin-left:6px;font-weight:700">META BATIDA</span>' : '') + '</div>';
+    h += '<div class="seller-meta">' + s.role + ' · ' + s.pedidos + ' pedidos</div></div></div>';
+    h += '<div class="seller-bar"><div class="seller-bar-track"><div class="seller-bar-fill" style="width:' + pct + '%;background:' + s.cor + '"></div></div><div class="seller-pct">' + Math.round(pct) + '% de R$ ' + (s.meta/1000) + 'k</div></div>';
+    h += '<div><div class="seller-vendas">R$ ' + formatMoney(s.vendas) + '</div><div class="seller-comm">+R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + ' comissão</div></div>';
+    h += '<div><button class="btn btn-outline btn-sm" onclick="alert(\'Detalhes de ' + s.nome + ' — em desenvolvimento\')">Detalhes</button></div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function renderAdminCashback() {
+  var totalDistribuido = 14580.40;
+  var totalResgatado = 6240.10;
+  var saldoAtivo = totalDistribuido - totalResgatado;
+  var clientesAtivos = 287;
+
+  var h = '<div class="admin-header"><h2>💰 Programa de Cashback</h2><span style="font-size:13px;color:var(--gray-400)">' + (CASHBACK_PCT*100) + '% de retorno em cada compra</span></div>';
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Distribuído (Mês)</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(totalDistribuido) + '</div><div class="stat-change up">↑ 22% vs mês passado</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Resgatado</div><div class="stat-value">R$ ' + formatMoney(totalResgatado) + '</div><div class="stat-change">' + Math.round(totalResgatado/totalDistribuido*100) + '% do total</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Saldo Ativo</div><div class="stat-value" style="color:var(--yellow)">R$ ' + formatMoney(saldoAtivo) + '</div><div class="stat-change">A vencer</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Clientes Ativos</div><div class="stat-value">' + clientesAtivos + '</div><div class="stat-change up">↑ 34 novos no mês</div></div>';
+  h += '</div>';
+
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">';
+  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Configuração</h3>';
+  h += '<div class="form-group"><label class="form-label">% de cashback por compra</label><div style="display:flex;gap:8px"><input class="form-input" value="' + (CASHBACK_PCT*100) + '" style="max-width:80px"><span style="padding:10px;color:var(--gray-500)">%</span></div></div>';
+  h += '<div class="form-group"><label class="form-label">Validade do saldo</label><select class="form-input"><option>30 dias</option><option selected>90 dias</option><option>180 dias</option><option>1 ano</option><option>Sem validade</option></select></div>';
+  h += '<div class="form-group"><label class="form-label">Valor mínimo de compra</label><input class="form-input" value="50,00"></div>';
+  h += '<button class="btn btn-primary btn-sm">Salvar Configurações</button></div>';
+
+  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Top Clientes (Saldo)</h3>';
+  var topCli = [
+    {n:'Construtora ABC',d:'12.345.678/0001-90',s:846.20,inicial:'CA'},
+    {n:'João da Silva',d:'123.456.789-00',s:534.80,inicial:'JS'},
+    {n:'Maria Souza',d:'987.654.321-00',s:421.50,inicial:'MS'},
+    {n:'Reformas RJ ME',d:'45.678.901/0001-23',s:389.10,inicial:'RR'},
+    {n:'Pedro Henrique',d:'456.789.012-34',s:287.90,inicial:'PH'}
+  ];
+  topCli.forEach(function(c){
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)">';
+    h += '<div style="width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">' + c.inicial + '</div>';
+    h += '<div style="flex:1"><div style="font-size:12px;font-weight:700">' + c.n + '</div><div style="font-size:11px;color:var(--gray-400)">' + c.d + '</div></div>';
+    h += '<div style="font-size:14px;font-weight:800;color:var(--green)">R$ ' + formatMoney(c.s) + '</div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // HISTÓRICO DE MOVIMENTAÇÃO
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
+  h += '<h3 style="font-size:15px;font-weight:700">Movimentações Recentes</h3>';
+  h += '<button class="btn btn-outline btn-sm">Exportar</button></div>';
+  h += '<table class="data-table"><thead><tr><th>Data</th><th>Cliente</th><th>Pedido</th><th>Tipo</th><th>Valor</th><th>Saldo Após</th></tr></thead><tbody>';
+  var movs = [
+    {d:'07/05',c:'João da Silva',p:'#1048',t:'Crédito',v:8.69,s:534.80,cls:'in'},
+    {d:'06/05',c:'Construtora ABC',p:'#1047',t:'Resgate',v:-150.00,s:846.20,cls:'out'},
+    {d:'06/05',c:'Maria Souza',p:'#1046',t:'Crédito',v:74.97,s:421.50,cls:'in'},
+    {d:'05/05',c:'Reformas RJ ME',p:'#1045',t:'Crédito',v:10.07,s:389.10,cls:'in'},
+    {d:'05/05',c:'Pedro Henrique',p:'#1044',t:'Resgate',v:-50.00,s:287.90,cls:'out'},
+    {d:'04/05',c:'Construtora ABC',p:'#1043',t:'Crédito',v:116.97,s:996.20,cls:'in'}
+  ];
+  movs.forEach(function(m){
+    h += '<tr><td>' + m.d + '</td><td><strong>' + m.c + '</strong></td><td>' + m.p + '</td>';
+    h += '<td><span class="cb-tag ' + m.cls + '">' + m.t + '</span></td>';
+    h += '<td style="font-weight:700;color:' + (m.v > 0 ? 'var(--green)' : 'var(--red)') + '">' + (m.v > 0 ? '+' : '') + 'R$ ' + formatMoney(Math.abs(m.v)) + '</td>';
+    h += '<td>R$ ' + formatMoney(m.s) + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+function renderAdminCupons() {
+  var ativos = CUPONS.filter(function(c){return c.ativo;});
+  var totalUsos = CUPONS.reduce(function(s,c){return s+c.usos;},0);
+  var descontoConcedido = CUPONS.reduce(function(s,c){
+    if (c.tipo==='percent') return s + (c.usos * 35);
+    if (c.tipo==='fixed') return s + (c.usos * c.valor);
+    return s + (c.usos * 25);
+  },0);
+
+  var h = '<div class="admin-header"><h2>🎟️ Cupons de Desconto</h2><button class="btn btn-primary btn-sm" onclick="abrirCupomNovo()">+ Novo Cupom</button></div>';
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Cupons Ativos</div><div class="stat-value">' + ativos.length + '/' + CUPONS.length + '</div><div class="stat-change up">' + ativos.length + ' válidos hoje</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Usos Totais</div><div class="stat-value">' + totalUsos + '</div><div class="stat-change up">↑ 28 nesta semana</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Desconto Concedido</div><div class="stat-value" style="color:var(--red)">R$ ' + formatMoney(descontoConcedido) + '</div><div class="stat-change">No mês</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Receita Adicional</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(descontoConcedido * 4.2) + '</div><div class="stat-change up">ROI ~4.2x</div></div>';
+  h += '</div>';
+
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:24px">';
+  h += '<h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Lista de Cupons</h3>';
+  CUPONS.forEach(function(c, i) {
+    h += '<div class="coupon-card' + (c.ativo?'':' inactive') + '">';
+    h += '<div class="coupon-info"><span class="coupon-code-pill">' + c.codigo + '</span><div class="desc" style="margin-top:8px">' + c.desc + '</div>';
+    h += '<div class="meta">Mín: R$ ' + formatMoney(c.minimo) + ' · Validade: ' + c.validade + '</div></div>';
+    var descTxt = c.tipo==='percent' ? '-' + c.valor + '%' : (c.tipo==='fixed' ? '-R$ ' + c.valor : 'Frete grátis');
+    h += '<div class="coupon-discount">' + descTxt + '<div class="sub">Desconto</div></div>';
+    h += '<div class="coupon-uses">' + c.usos + '<div class="sub">Usos</div></div>';
+    h += '<span class="badge-status ' + (c.ativo?'active':'') + '">' + (c.ativo?'Ativo':'Inativo') + '</span>';
+    h += '<div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="toggleCupom(' + i + ')">' + (c.ativo?'Pausar':'Ativar') + '</button>';
+    h += '<button class="btn btn-outline btn-sm" onclick="excluirCupom(' + i + ')" style="color:var(--red)">×</button></div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function renderAdminIndicacoes() {
+  var totalIndicacoes = 287;
+  var conversoes = 184;
+  var bonusPago = conversoes * BONUS_INDICACAO;
+  var receitaIndicados = 89420;
+  var topIndicadores = [
+    {n:'Construtora ABC',i:'CA',c:14,b:700},
+    {n:'João da Silva',i:'JS',c:9,b:450},
+    {n:'Maria Souza',i:'MS',c:7,b:350},
+    {n:'Reformas RJ',i:'RR',c:5,b:250},
+    {n:'Pedro Henrique',i:'PH',c:4,b:200}
+  ];
+
+  var h = '<div class="admin-header"><h2>🤝 Programa de Indicação</h2><span style="font-size:13px;color:var(--gray-400)">R$ ' + BONUS_INDICACAO + ' por indicação convertida · ' + DESCONTO_INDICADO_PCT + '% off pra quem chega indicado</span></div>';
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Total Indicações</div><div class="stat-value">' + totalIndicacoes + '</div><div class="stat-change up">↑ 47 no mês</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Conversões</div><div class="stat-value" style="color:var(--green)">' + conversoes + '</div><div class="stat-change up">' + Math.round(conversoes/totalIndicacoes*100) + '% taxa</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Bônus Pago</div><div class="stat-value" style="color:var(--red)">R$ ' + formatMoney(bonusPago) + '</div><div class="stat-change">Em cashback</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Receita de Indicados</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(receitaIndicados) + '</div><div class="stat-change up">CAC R$ ' + Math.round(bonusPago/conversoes) + ',00</div></div>';
+  h += '</div>';
+
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">';
+  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">🏆 Top Indicadores</h3>';
+  topIndicadores.forEach(function(t, i) {
+    h += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)">';
+    h += '<div style="font-size:16px;font-weight:900;color:var(--gray-300);width:24px">' + (i+1) + '°</div>';
+    h += '<div style="width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + t.i + '</div>';
+    h += '<div style="flex:1"><div style="font-size:13px;font-weight:700">' + t.n + '</div><div style="font-size:11px;color:var(--gray-400)">' + t.c + ' indicações</div></div>';
+    h += '<div style="font-weight:800;color:var(--green)">+R$ ' + formatMoney(t.b) + '</div></div>';
+  });
+  h += '</div>';
+
+  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">⚙️ Configuração</h3>';
+  h += '<div class="form-group"><label class="form-label">Bônus por indicação convertida (R$)</label><input class="form-input" value="' + BONUS_INDICACAO + ',00"></div>';
+  h += '<div class="form-group"><label class="form-label">Desconto pro indicado (%)</label><input class="form-input" value="' + DESCONTO_INDICADO_PCT + '"></div>';
+  h += '<div class="form-group"><label class="form-label">Mínimo de compra do indicado</label><input class="form-input" value="100,00"></div>';
+  h += '<div class="form-group"><label class="form-label">Limite de indicações por cliente</label><select class="form-input"><option>Sem limite</option><option selected>20 por mês</option><option>50 por mês</option></select></div>';
+  h += '<button class="btn btn-primary btn-sm">Salvar Configurações</button></div>';
+  h += '</div>';
+
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
+  h += '<h3 style="font-size:15px;font-weight:700">Indicações Recentes</h3>';
+  h += '<button class="btn btn-outline btn-sm">Exportar CSV</button></div>';
+  h += '<table class="data-table"><thead><tr><th>Data</th><th>Indicador</th><th>Indicado</th><th>Status</th><th>Compra</th><th>Bônus</th></tr></thead><tbody>';
+  var movs = [
+    {d:'07/05',ind:'Construtora ABC',novo:'Reformas Total LTDA',st:'Comprou',cls:'status-green',c:'R$ 1.247,50',b:50},
+    {d:'07/05',ind:'João da Silva',novo:'Carlos Mendes',st:'Cadastrou',cls:'status-blue',c:'—',b:0},
+    {d:'06/05',ind:'Maria Souza',novo:'Patrícia Lima',st:'Comprou',cls:'status-green',c:'R$ 458,90',b:50},
+    {d:'06/05',ind:'Construtora ABC',novo:'Edifício Nova Era',st:'Pendente',cls:'status-yellow',c:'—',b:0},
+    {d:'05/05',ind:'Reformas RJ',novo:'José Santos',st:'Comprou',cls:'status-green',c:'R$ 892,00',b:50}
+  ];
+  movs.forEach(function(m){
+    h += '<tr><td>' + m.d + '</td><td><strong>' + m.ind + '</strong></td><td>' + m.novo + '</td>';
+    h += '<td><span class="order-status ' + m.cls + '">' + m.st + '</span></td>';
+    h += '<td style="font-weight:700">' + m.c + '</td>';
+    h += '<td style="font-weight:800;color:' + (m.b>0?'var(--green)':'var(--gray-400)') + '">' + (m.b>0?'+R$ '+formatMoney(m.b):'—') + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+function renderAdminPix() {
+  var recebidoHoje = 12450;
+  var recebidoMes = 89340;
+  var pendentes = 3200;
+  var economiaGateway = recebidoMes * 0.0099;
+
+  var h = '<div class="admin-header"><h2>⚡ Pix Direto + NF-e Automática</h2><span style="font-size:13px;color:var(--green);font-weight:700">Sem gateway · Taxa zero · Direto na conta PJ</span></div>';
+
+  // CARTÃO DO BANCO
+  h += '<div class="bank-card" style="margin-bottom:24px">';
+  h += '<div class="bank-header">';
+  h += '<div><div class="bank-name">Banco Receptor (PJ)</div><div class="bank-title">' + PIX_CONFIG.banco + ' Empresarial</div></div>';
+  h += '<div class="bank-status">API Conectada</div>';
+  h += '</div>';
+  h += '<div class="bank-grid">';
+  h += '<div class="bank-item"><div class="label">Agência</div><div class="value">' + PIX_CONFIG.agencia + '</div></div>';
+  h += '<div class="bank-item"><div class="label">Conta</div><div class="value">' + PIX_CONFIG.conta + '</div></div>';
+  h += '<div class="bank-item"><div class="label">CNPJ</div><div class="value">' + PIX_CONFIG.cnpj + '</div></div>';
+  h += '<div class="bank-item"><div class="label">Taxa por transação</div><div class="value"><span class="zero-fee">R$ 0,00</span></div></div>';
+  h += '<div class="bank-item"><div class="label">Chave Pix</div><div class="value" style="font-size:12px">' + PIX_CONFIG.chave + '</div></div>';
+  h += '<div class="bank-item"><div class="label">Webhook</div><div class="value" style="font-size:12px;color:#22C55E">● Ativo</div></div>';
+  h += '<div class="bank-item"><div class="label">Certificado</div><div class="value" style="font-size:12px">Vence ' + PIX_CONFIG.certificadoVencimento + '</div></div>';
+  h += '<div class="bank-item"><div class="label">Última transação</div><div class="value" style="font-size:12px">há 2 minutos</div></div>';
+  h += '</div></div>';
+
+  // STATS
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Recebido Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(recebidoHoje) + '</div><div class="stat-change up">23 transações Pix</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Recebido Mês</div><div class="stat-value">R$ ' + formatMoney(recebidoMes) + '</div><div class="stat-change up">↑ 18% vs mês passado</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value" style="color:var(--yellow)">R$ ' + formatMoney(pendentes) + '</div><div class="stat-change">8 QR ativos</div></div>';
+  h += '<div class="stat-card" style="background:linear-gradient(135deg,rgba(5,150,105,0.08),rgba(16,185,129,0.04));border:2px solid var(--green)"><div class="stat-label" style="color:var(--green)">💰 Economia Gateway</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(economiaGateway) + '</div><div class="stat-change">Vs taxa 0,99% MP</div></div>';
+  h += '</div>';
+
+  // FLUXO PIX → NF-e
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">';
+  h += '<div>';
+  h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:14px">Fluxo Automatizado: Pix → NF-e</h3>';
+  h += '<div class="pix-flow">';
+  h += '<div class="pix-step done"><div class="step-icon">📱</div><div class="step-title">QR Gerado</div><div class="step-time">~50ms</div></div>';
+  h += '<div class="pix-step done"><div class="step-icon">💸</div><div class="step-title">Pago via Pix</div><div class="step-time">Cliente</div></div>';
+  h += '<div class="pix-step done"><div class="step-icon">🔔</div><div class="step-title">Webhook</div><div class="step-time">~200ms</div></div>';
+  h += '<div class="pix-step done"><div class="step-icon">📄</div><div class="step-title">NF-e Emitida</div><div class="step-time">~3s</div></div>';
+  h += '</div>';
+  h += '<div style="background:var(--green-light);border-radius:var(--radius-sm);padding:14px 18px;font-size:13px;color:var(--green);font-weight:600;line-height:1.5">';
+  h += '✓ <strong>Tudo automático.</strong> Cliente paga, sistema confirma em &lt;500ms, NF-e emitida em até 3s, XML enviado pro email do cliente.';
+  h += '</div></div>';
+
+  // PROVEDOR NF-e
+  h += '<div>';
+  h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:14px">Emissor de NF-e</h3>';
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px">';
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+  h += '<div><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:700">Provedor</div>';
+  h += '<div style="font-size:18px;font-weight:800;margin-top:2px">Focus NFe</div></div>';
+  h += '<span class="badge-status active" style="font-size:11px">Operando</span></div>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">';
+  h += '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:700">NF-e Emitidas (mês)</div><div style="font-size:20px;font-weight:900;margin-top:2px">187</div></div>';
+  h += '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:700">Taxa de sucesso</div><div style="font-size:20px;font-weight:900;color:var(--green);margin-top:2px">99.5%</div></div>';
+  h += '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:700">Tempo médio</div><div style="font-size:20px;font-weight:900;margin-top:2px">2.8s</div></div>';
+  h += '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:700">Custo/mês</div><div style="font-size:20px;font-weight:900;margin-top:2px">R$ 187</div></div>';
+  h += '</div>';
+  h += '<div style="font-size:12px;color:var(--gray-500);background:var(--gray-50);padding:10px 14px;border-radius:var(--radius-xs)">📨 XML + DANFE enviados automaticamente pra <strong>email do cliente + WhatsApp</strong></div>';
+  h += '</div></div></div>';
+
+  // TRANSAÇÕES PIX RECENTES
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px">';
+  h += '<div style="padding:18px 22px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
+  h += '<h3 style="font-size:15px;font-weight:800">Transações Pix em Tempo Real</h3>';
+  h += '<button class="btn btn-outline btn-sm" onclick="alert(\'Atualizando feed Pix...\\n\\nÚltima transação: R$ 247,90 há 2min\')">🔄 Atualizar</button>';
+  h += '</div>';
+  var txs = [
+    {id:'E125265200707000000003892',valor:1247.50,status:'pago',meta:'Construtora ABC · #1052',tempo:'há 2 min'},
+    {id:'E125265200707000000003891',valor:347.80,status:'pago',meta:'João Silva · #1051',tempo:'há 8 min'},
+    {id:'E125265200707000000003890',valor:892.00,status:'pago',meta:'Reformas RJ · #1050',tempo:'há 14 min'},
+    {id:'E125265200707000000003889',valor:458.90,status:'aguardando',meta:'Maria Souza · #1049',tempo:'expira em 12 min'},
+    {id:'E125265200707000000003888',valor:2147.30,status:'pago',meta:'Edifício Nova Era · #1048',tempo:'há 32 min'},
+    {id:'E125265200707000000003887',valor:189.50,status:'expirado',meta:'Pedro Henrique · #1047',tempo:'há 1h'},
+    {id:'E125265200707000000003886',valor:567.40,status:'pago',meta:'Carlos Mendes · #1046',tempo:'há 1h 18min'}
+  ];
+  txs.forEach(function(tx) {
+    h += '<div class="pix-tx-row">';
+    h += '<div class="pix-status-dot ' + tx.status + '"></div>';
+    h += '<div class="pix-tx-info"><div class="tx-meta">' + tx.meta + '</div><div class="tx-id">' + tx.id + '</div></div>';
+    h += '<div class="pix-tx-valor">R$ ' + formatMoney(tx.valor) + '</div>';
+    h += '<div class="pix-tx-tempo">' + tx.tempo + '</div>';
+    h += '<div class="pix-tx-acao tx-acao-' + tx.status + '">' + (tx.status==='pago'?'✓ NF-e #'+(1100+Math.floor(Math.random()*99)):tx.status==='aguardando'?'⏳ Aguardando':'✗ Expirado') + '</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // CONFIGURAÇÃO TÉCNICA
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px">';
+  h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:18px">Configuração Técnica</h3>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+  h += '<div class="form-group"><label class="form-label">Endpoint API ' + PIX_CONFIG.banco + '</label><input class="form-input" value="https://api.sicoob.com.br/pix/api/v2" style="font-family:monospace;font-size:12px"></div>';
+  h += '<div class="form-group"><label class="form-label">Webhook URL</label><input class="form-input" value="https://zmatacadista.com.br/api/pix/webhook" style="font-family:monospace;font-size:12px"></div>';
+  h += '<div class="form-group"><label class="form-label">Client ID</label><input class="form-input" type="password" value="••••••••••••••••" style="font-family:monospace"></div>';
+  h += '<div class="form-group"><label class="form-label">Certificado A1 (.pfx)</label><input class="form-input" value="cert_zm_2026.pfx (vence 15/03/2027)"></div>';
+  h += '<div class="form-group"><label class="form-label">Tempo de expiração do QR (min)</label><input class="form-input" value="30" type="number"></div>';
+  h += '<div class="form-group"><label class="form-label">Provedor NF-e</label><select class="form-input"><option selected>Focus NFe</option><option>NFE.io</option><option>Tecnospeed NF-e</option></select></div>';
+  h += '</div>';
+  h += '<button class="btn btn-primary" style="margin-top:8px">Salvar e Testar Conexão</button></div>';
+  return h;
+}
+
+function renderAdminTributacao() {
+  var totalProdutos = ALL_PRODUCTS.length;
+  var produtosST = ALL_PRODUCTS.filter(function(p){return p.icmsST;}).length;
+  var pctST = Math.round(produtosST/totalProdutos*100);
+  var ncmsUnicos = {};
+  ALL_PRODUCTS.forEach(function(p){ ncmsUnicos[p.ncm] = true; });
+  var totalNcms = Object.keys(ncmsUnicos).length;
+
+  var h = '<div class="admin-header"><h2>📊 Tributação por Produto</h2><span style="font-size:13px;color:var(--gray-400)">Tabela atualizada diária via API · Versão ' + TRIBUTACAO_API.versaoTabela + '</span></div>';
+
+  // CARD DA API
+  h += '<div class="api-status-card">';
+  h += '<div class="api-info">';
+  h += '<div class="label">API Tributária Conectada</div>';
+  h += '<div class="name">' + TRIBUTACAO_API.provedor + '</div>';
+  h += '<div class="meta">' + TRIBUTACAO_API.ncmsAtualizados.toLocaleString('pt-BR') + ' NCMs sincronizados · ' + TRIBUTACAO_API.alteracoes24h + ' alterações nas últimas 24h · próxima sync ' + TRIBUTACAO_API.proximaAtualizacao + '</div>';
+  h += '</div>';
+  h += '<button class="api-sync-btn" onclick="simularSyncAPI(this)">🔄 Sincronizar Agora</button>';
+  h += '</div>';
+
+  // STATS
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Produtos Cadastrados</div><div class="stat-value">' + totalProdutos.toLocaleString('pt-BR') + '</div><div class="stat-change up">100% com NCM</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">NCMs únicos</div><div class="stat-value">' + totalNcms + '</div><div class="stat-change">Mapeados na base</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Com ICMS-ST</div><div class="stat-value" style="color:var(--orange)">' + produtosST + '</div><div class="stat-change">' + pctST + '% do catálogo</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">ICMS Médio</div><div class="stat-value">17.4%</div><div class="stat-change">Pondera por venda</div></div>';
+  h += '</div>';
+
+  // ALERTAS
+  h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:12px">🔔 Alertas Recentes</h3>';
+  h += '<div style="margin-bottom:24px">';
+  h += '<div class="alert-card critical"><div class="alert-icon">⚠️</div><div class="alert-content"><div class="alert-title">ICMS-ST de tubos PVC alterou — NCM 39172300</div><div class="alert-meta">06/05/2026 · MVA-ST passou de 41% para 43% em SP. 47 produtos afetados.</div></div><button class="btn btn-outline btn-sm">Aplicar</button></div>';
+  h += '<div class="alert-card"><div class="alert-icon">📋</div><div class="alert-content"><div class="alert-title">Convênio ICMS 142/2025 publicado</div><div class="alert-meta">05/05/2026 · Mudança em alíquotas de cimento (NCM 25232900) válida em 15 dias.</div></div><button class="btn btn-outline btn-sm">Ver detalhes</button></div>';
+  h += '<div class="alert-card"><div class="alert-icon">✓</div><div class="alert-content"><div class="alert-title">' + TRIBUTACAO_API.alteracoes24h + ' alterações sincronizadas automaticamente</div><div class="alert-meta">07/05/2026 · 03:42 · Tabela tributária atualizada sem ação necessária.</div></div></div>';
+  h += '</div>';
+
+  // TABELA DE NCMs MAIS USADOS
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px">';
+  h += '<div style="padding:18px 22px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
+  h += '<h3 style="font-size:15px;font-weight:800">Tabela Tributária — NCMs Cadastrados</h3>';
+  h += '<div style="display:flex;gap:8px"><input class="form-input" style="max-width:240px" placeholder="Buscar por NCM ou descrição"><button class="btn btn-outline btn-sm">Exportar CSV</button></div>';
+  h += '</div>';
+  h += '<table class="data-table"><thead><tr><th>NCM</th><th>Descrição</th><th>CST</th><th>ICMS</th><th>IPI</th><th>PIS</th><th>COFINS</th><th>ST</th><th>Produtos</th></tr></thead><tbody>';
+  var ncmsExibir = NCM_DATABASE.construcao.concat(NCM_DATABASE.eletronicos.slice(0,2)).concat(NCM_DATABASE.higiene.slice(0,2));
+  ncmsExibir.forEach(function(n){
+    var qtd = ALL_PRODUCTS.filter(function(p){return p.ncm===n.ncm;}).length;
+    h += '<tr>';
+    h += '<td><span class="fiscal-pill ncm">' + n.ncm + '</span></td>';
+    h += '<td style="font-weight:600">' + n.desc + '</td>';
+    h += '<td><span class="fiscal-pill cst">' + n.cst + '</span></td>';
+    h += '<td style="font-weight:700">' + n.icms + '%</td>';
+    h += '<td>' + n.ipi + '%</td>';
+    h += '<td>' + n.pis + '%</td>';
+    h += '<td>' + n.cofins + '%</td>';
+    h += '<td>' + (n.st ? '<span class="fiscal-pill st">SIM</span>' : '<span style="color:var(--gray-300);font-size:11px">—</span>') + '</td>';
+    h += '<td style="font-weight:700">' + qtd + '</td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+
+  // EXEMPLO DE CÁLCULO
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px">';
+  h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:14px">Exemplo de Cálculo — Cimento Portland CP-II 50kg</h3>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">';
+  h += '<div>';
+  h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">';
+  h += '<span class="fiscal-pill ncm">NCM 25232900</span>';
+  h += '<span class="fiscal-pill cst">CST 00</span>';
+  h += '<span style="font-size:11px;font-weight:700;background:#F0FDF4;color:#166534;padding:3px 10px;border-radius:99px">CFOP 5102</span>';
+  h += '</div>';
+  h += '<div style="font-size:13px;color:var(--gray-500);line-height:1.6">';
+  h += 'Valor produto: <strong>R$ 100,00</strong><br>';
+  h += 'Origem: Nacional · Operação: Venda dentro do estado<br>';
+  h += 'Destino: GO → MG · Atualizado: 07/05/2026 03:42';
+  h += '</div></div>';
+  h += '<div class="tax-breakdown">';
+  h += '<h4>📋 Decomposição de Impostos</h4>';
+  h += '<div class="tax-line"><span>ICMS (18%)</span><span>R$ 18,00</span></div>';
+  h += '<div class="tax-line"><span>IPI (0%)</span><span>R$ 0,00</span></div>';
+  h += '<div class="tax-line"><span>PIS (1,65%)</span><span>R$ 1,65</span></div>';
+  h += '<div class="tax-line"><span>COFINS (7,6%)</span><span>R$ 7,60</span></div>';
+  h += '<div class="tax-total"><span>Total tributado</span><span>R$ 27,25</span></div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-top:10px;padding-top:10px;border-top:1px dashed var(--gray-300)">Valor líquido p/ empresa: <strong style="color:var(--green)">R$ 72,75</strong></div>';
+  h += '</div></div></div>';
+  return h;
+}
+
+function simularSyncAPI(btn) {
+  btn.classList.add('loading');
+  btn.innerHTML = 'Sincronizando...';
+  setTimeout(function() {
+    btn.classList.remove('loading');
+    btn.innerHTML = '🔄 Sincronizar Agora';
+    TRIBUTACAO_API.alteracoes24h = TRIBUTACAO_API.alteracoes24h + Math.floor(Math.random()*5);
+    TRIBUTACAO_API.ultimaAtualizacao = new Date().toISOString();
+    alert('✓ Sincronização concluída.\n\n• ' + TRIBUTACAO_API.ncmsAtualizados.toLocaleString('pt-BR') + ' NCMs verificados\n• ' + Math.floor(Math.random()*5+2) + ' alíquotas atualizadas\n• Próxima sync automática: ' + TRIBUTACAO_API.proximaAtualizacao + '\n\nTabela versão: ' + TRIBUTACAO_API.versaoTabela);
+    render();
+  }, 1800);
+}
+
+function gerarCodigoIndicacao(nome) {
+  var primeiro = (nome || 'CLIENTE').split(' ')[0].toUpperCase().replace(/[^A-Z]/g,'');
+  var hash = 0;
+  for (var i = 0; i < (nome || '').length; i++) hash = ((hash << 5) - hash) + nome.charCodeAt(i);
+  var num = Math.abs(hash) % 900 + 100;
+  return primeiro + '-' + num;
+}
+
+function copiarTexto(txt) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function(){ alert('Copiado: ' + txt); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    alert('Copiado: ' + txt);
+  }
+}
+
+function aplicarCupom() {
+  var input = document.getElementById('cupom-input');
+  if (!input) return;
+  var codigo = input.value.toUpperCase().trim();
+  state.cupomErro = '';
+  if (!codigo) { state.cupomErro = 'Digite um código de cupom'; render(); return; }
+
+  var cupom = CUPONS.find(function(c){return c.codigo === codigo;});
+  if (!cupom) { state.cupomErro = 'Cupom inválido ou expirado'; render(); return; }
+  if (!cupom.ativo) { state.cupomErro = 'Este cupom não está ativo'; render(); return; }
+
+  var subtotal = state.cart.reduce(function(s,i){var p=ALL_PRODUCTS.find(function(x){return x.id===i.pid;});return s+(p?p.price*i.qty:0);},0);
+  if (subtotal < cupom.minimo) { state.cupomErro = 'Valor mínimo de R$ ' + formatMoney(cupom.minimo) + ' não atingido'; render(); return; }
+
+  state.cupomAplicado = cupom;
+  state.cupomErro = '';
+  render();
+}
+
+function removerCupom() { state.cupomAplicado = null; state.cupomErro = ''; render(); }
+
+function toggleCupom(idx) { CUPONS[idx].ativo = !CUPONS[idx].ativo; render(); }
+function excluirCupom(idx) { if (confirm('Excluir cupom ' + CUPONS[idx].codigo + '?')) { CUPONS.splice(idx,1); render(); } }
+function abrirCupomNovo() {
+  var cod = prompt('Código do cupom (ex: PROMO20):'); if (!cod) return;
+  var tipo = prompt('Tipo: digite "percent" (% off) ou "fixed" (R$ off):', 'percent'); if (!tipo) return;
+  var valor = parseFloat(prompt(tipo==='percent'?'% de desconto:':'R$ de desconto:'));
+  var minimo = parseFloat(prompt('Valor mínimo de compra (R$):', '50') || '50');
+  var validade = prompt('Validade (DD/MM/AAAA):', '31/12/2026');
+  var desc = prompt('Descrição curta:', 'Cupom promocional');
+  CUPONS.unshift({ codigo: cod.toUpperCase(), tipo: tipo, valor: valor, validade: validade, minimo: minimo, usos: 0, ativo: true, desc: desc });
+  render();
 }
 
 // =============================================
@@ -1173,7 +2238,8 @@ function doLogin(tipo) {
       nome: document.getElementById('login-nome').value || 'João da Silva',
       doc: document.getElementById('login-cpf').value || '123.456.789-00',
       email: document.getElementById('login-email').value || 'joao@email.com',
-      tipo: 'pf'
+      tipo: 'pf',
+      cashback: 127.40
     };
   } else {
     state.user = {
@@ -1182,9 +2248,15 @@ function doLogin(tipo) {
       doc: document.getElementById('login-cnpj').value || '12.345.678/0001-90',
       ie: document.getElementById('login-ie').value || '702.123.456',
       email: document.getElementById('login-email-pj').value || 'contato@abc.com',
-      tipo: 'pj'
+      tipo: 'pj',
+      cashback: 846.20
     };
   }
+  state.cashbackHistory = [
+    {data:'04/05/2026', tipo:'in', desc:'Crédito do pedido #1043', valor: state.user.cashback * 0.4},
+    {data:'28/04/2026', tipo:'in', desc:'Crédito do pedido #1031', valor: state.user.cashback * 0.35},
+    {data:'15/04/2026', tipo:'in', desc:'Crédito do pedido #1018', valor: state.user.cashback * 0.25}
+  ];
   state.logged = true;
   closeModal();
   render();
@@ -1194,15 +2266,39 @@ function finalizarPedido() {
   if (!state.frete.calculado || !state.frete.opcao) { alert('Por favor, calcule o frete antes de finalizar o pedido.'); return; }
   var subtotal = state.cart.reduce(function(s,i){var p=ALL_PRODUCTS.find(function(x){return x.id===i.pid;});return s+(p?p.price*i.qty:0);},0);
   var frete = state.frete.valor;
-  var total = subtotal + frete;
-  if (state.checkoutPay === 'pix') total *= 0.95;
+  var descontoCupom = 0;
+  if (state.cupomAplicado) {
+    var cup = state.cupomAplicado;
+    if (cup.tipo === 'percent') descontoCupom = subtotal * (cup.valor/100);
+    else if (cup.tipo === 'fixed') descontoCupom = cup.valor;
+    else if (cup.tipo === 'frete') frete = 0;
+    cup.usos = (cup.usos || 0) + 1;
+  }
+  var saldoCb = state.user.cashback || 0;
+  var cashbackUso = state.useCashback ? Math.min(saldoCb, subtotal - descontoCupom) : 0;
+  var totalSemCb = subtotal + frete - descontoCupom - cashbackUso;
+  var total = state.checkoutPay === 'pix' ? totalSemCb * 0.95 : totalSemCb;
+  var cashbackGanho = subtotal * CASHBACK_PCT;
   var opNome = {sedex:'SEDEX',pac:'PAC',expresso:'SEDEX 10'};
+
+  // Atribui vendedor (rotativo, exclui Diego — Júnior só atende presencial nessa demo)
+  var vendedoresAtivos = VENDEDORES.slice(0, 6);
+  var vendedor = vendedoresAtivos[state.orders.length % vendedoresAtivos.length];
+  vendedor.vendas += total;
+  vendedor.pedidos += 1;
+
+  var orderId = 1048 + state.orders.length;
   var order = {
-    id: 1048 + state.orders.length,
+    id: orderId,
     date: new Date().toLocaleDateString('pt-BR'),
     items: state.cart.map(function(i){var p=ALL_PRODUCTS.find(function(x){return x.id===i.pid;});return{name:p?p.name:'',qty:i.qty,price:p?p.price:0};}),
     total: total,
+    subtotal: subtotal,
     frete: frete,
+    cashbackUsado: cashbackUso,
+    cashbackGanho: cashbackGanho,
+    vendedor: vendedor.nome,
+    vendedorId: vendedor.id,
     freteModalidade: opNome[state.frete.opcao] || state.frete.opcao,
     fretePrazo: state.frete.prazo,
     pay: state.checkoutPay === 'pix' ? 'Pix' : state.checkoutPay === 'cartao' ? 'Cartão' : 'Boleto',
@@ -1210,13 +2306,33 @@ function finalizarPedido() {
     statusClass: 'status-blue',
     cliente: state.user.nome
   };
+
+  // Atualiza saldo de cashback do user
+  state.user.cashback = saldoCb - cashbackUso + cashbackGanho;
+  if (cashbackUso > 0) {
+    state.cashbackHistory.unshift({data:order.date, tipo:'out', desc:'Resgate no pedido #' + orderId, valor: cashbackUso});
+  }
+  state.cashbackHistory.unshift({data:order.date, tipo:'in', desc:'Crédito do pedido #' + orderId, valor: cashbackGanho});
+
+  order.cupomCodigo = state.cupomAplicado ? state.cupomAplicado.codigo : null;
+  order.descontoCupom = descontoCupom;
   state.orders.push(order);
   state.cart = [];
   state.frete = { cep: '', opcao: '', valor: 0, prazo: '', calculado: false };
+  state.useCashback = false;
+  state.cupomAplicado = null;
+  state.cupomErro = '';
   state.view = 'client';
   state.clientView = 'pedidos';
   render();
-  alert('✅ Pedido #' + order.id + ' realizado com sucesso!\n\nTotal: R$ ' + formatMoney(order.total) + '\nPagamento: ' + order.pay + '\nEntrega: ' + order.freteModalidade + ' — ' + order.fretePrazo);
+  var msg = '✅ Pedido #' + order.id + ' realizado com sucesso!\n\n';
+  msg += 'Total: R$ ' + formatMoney(order.total) + '\n';
+  msg += 'Pagamento: ' + order.pay + '\n';
+  msg += 'Vendedor responsável: ' + vendedor.nome + '\n';
+  msg += 'Entrega: ' + order.freteModalidade + ' — ' + order.fretePrazo + '\n';
+  if (cashbackUso > 0) msg += '\n💰 Cashback usado: R$ ' + formatMoney(cashbackUso);
+  msg += '\n💰 Cashback ganho: R$ ' + formatMoney(cashbackGanho) + '\n💰 Saldo atual: R$ ' + formatMoney(state.user.cashback);
+  alert(msg);
 }
 
 // =============================================
