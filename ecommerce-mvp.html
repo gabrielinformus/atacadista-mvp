@@ -532,6 +532,89 @@ img{max-width:100%;display:block;}
 .alert-card .alert-title{font-size:13px;font-weight:800;margin-bottom:2px;}
 .alert-card .alert-meta{font-size:11px;color:var(--gray-500);}
 
+/* BREADCRUMB */
+.breadcrumb{padding:14px 0 0;font-size:12px;color:var(--gray-500);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.breadcrumb a{color:var(--blue);cursor:pointer;font-weight:600;text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+.breadcrumb span{color:var(--gray-300);}
+.breadcrumb .current{color:var(--gray-700);font-weight:700;}
+
+/* RATING FILTER */
+.rating-filter{display:flex;flex-direction:column;gap:4px;}
+.rating-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-xs);cursor:pointer;font-size:12px;color:var(--gray-700);border:1px solid transparent;}
+.rating-opt:hover{background:var(--gray-50);}
+.rating-opt.active{background:var(--blue-50);color:var(--blue);font-weight:700;border-color:var(--blue);}
+.rating-opt input{margin:0;accent-color:var(--blue);}
+
+/* BACK TO TOP */
+.back-to-top{position:fixed;bottom:24px;right:24px;width:46px;height:46px;border-radius:50%;background:var(--gray-900);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.3);opacity:0;pointer-events:none;transform:translateY(20px);transition:all 0.3s;z-index:400;}
+.back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
+.back-to-top:hover{background:var(--blue);transform:translateY(-3px) scale(1.05);}
+
+/* WHATSAPP FLUTUANTE (canto inferior direito) */
+.wpp-float{position:fixed;bottom:24px;right:90px;display:flex;align-items:center;gap:10px;z-index:350;text-decoration:none;}
+.wpp-float .wpp-balao{background:#fff;color:var(--gray-900);font-size:13px;font-weight:700;padding:10px 16px;border-radius:24px;box-shadow:0 6px 16px rgba(0,0,0,0.18);position:relative;animation:wppPulseBalao 2.4s ease-in-out infinite;letter-spacing:-0.01em;}
+.wpp-float .wpp-balao::after{content:'';position:absolute;right:-7px;top:50%;transform:translateY(-50%);border-left:8px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;}
+.wpp-float .wpp-icon{width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(37,211,102,0.5);transition:all 0.25s;animation:wppPulseRing 2.4s ease-in-out infinite;}
+.wpp-float:hover .wpp-icon{transform:scale(1.08);background:#128C7E;}
+.wpp-float:hover .wpp-balao{transform:translateX(-4px);}
+@keyframes wppPulseBalao{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes wppPulseRing{0%{box-shadow:0 8px 22px rgba(37,211,102,0.5),0 0 0 0 rgba(37,211,102,0.5)}50%{box-shadow:0 8px 22px rgba(37,211,102,0.5),0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 8px 22px rgba(37,211,102,0.5),0 0 0 0 rgba(37,211,102,0)}}
+@media(max-width:768px){.wpp-float .wpp-balao{display:none;}.wpp-float{right:24px;bottom:90px;}}
+
+/* CADASTRO MODAL com prova social lateral */
+.modal-cadastro{max-width:980px;}
+.modal-cadastro-grid{display:grid;grid-template-columns:320px 1fr;min-height:560px;}
+.cadastro-prova{background:linear-gradient(160deg,#1a0005 0%,#3D0019 50%,#5A0028 100%);color:#fff;padding:32px 28px;display:flex;flex-direction:column;gap:18px;border-radius:var(--radius) 0 0 var(--radius);position:relative;overflow:hidden;}
+.cadastro-prova::before{content:'';position:absolute;top:-30%;right:-20%;width:280px;height:280px;background:radial-gradient(circle,rgba(226,0,49,0.25) 0%,transparent 70%);}
+.cadastro-prova .cp-logo{width:54px;height:54px;border-radius:14px;background:#E20031;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;letter-spacing:-1px;position:relative;}
+.cadastro-prova .cp-title{font-size:20px;font-weight:800;line-height:1.2;letter-spacing:-0.02em;position:relative;}
+.cp-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;}
+.cp-stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;}
+.cp-stat .cp-num{font-size:20px;font-weight:900;color:#FFD60A;letter-spacing:-0.02em;}
+.cp-stat .cp-lab{font-size:10px;color:#C4C4CF;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-top:2px;}
+.cp-trust{display:flex;flex-direction:column;gap:8px;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;position:relative;}
+.cp-trust-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#E5E5EA;}
+.cp-trust-item span{font-weight:500;}
+.cp-recente{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);position:relative;}
+.cp-recente-title{font-size:11px;font-weight:700;color:#FFD60A;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.cp-recente-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;font-size:11px;color:#C4C4CF;}
+.cp-rec-dot{width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0;margin-top:5px;box-shadow:0 0 0 3px rgba(34,197,94,0.2);animation:pulseGreen 2s infinite;}
+@keyframes pulseGreen{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.2)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0.05)}}
+.cp-rec-name{font-size:12px;color:#fff;line-height:1.3;}
+.cp-rec-meta{font-size:10px;color:#8A8A99;margin-top:2px;}
+
+.cadastro-form{padding:28px 32px;overflow-y:auto;max-height:90vh;}
+
+/* AUTH TABS (login vs cadastro) */
+.auth-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--gray-100);padding:5px;border-radius:var(--radius);margin-bottom:18px;}
+.auth-mode-btn{padding:11px 16px;border:0;background:transparent;font-size:13px;font-weight:700;color:var(--gray-500);border-radius:var(--radius-xs);cursor:pointer;font-family:inherit;transition:all 0.2s;letter-spacing:-0.01em;}
+.auth-mode-btn:hover{color:var(--gray-800);}
+.auth-mode-btn.active{background:#fff;color:var(--blue);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+
+/* CARDS DE SELEÇÃO PF/PJ */
+.tipo-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.tipo-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius);cursor:pointer;transition:all 0.2s;position:relative;}
+.tipo-card:hover{border-color:var(--blue);background:var(--blue-50);transform:translateY(-2px);}
+.tipo-card.active{border-color:var(--blue);background:linear-gradient(135deg,var(--blue-50),#fff);box-shadow:0 4px 14px rgba(7,42,216,0.12);}
+.tipo-card .tc-icon{width:42px;height:42px;border-radius:10px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:all 0.2s;}
+.tipo-card.active .tc-icon{background:var(--blue);}
+.tipo-card .tc-info{flex:1;min-width:0;}
+.tipo-card .tc-title{font-size:14px;font-weight:800;color:var(--gray-900);letter-spacing:-0.01em;}
+.tipo-card .tc-sub{font-size:11px;color:var(--gray-500);margin-top:2px;font-weight:500;}
+.tipo-card .tc-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;transition:all 0.2s;position:relative;}
+.tipo-card.active .tc-radio{border-color:var(--blue);background:var(--blue);}
+.tipo-card.active .tc-radio::after{content:'';position:absolute;inset:4px;background:#fff;border-radius:50%;}
+.form-section-title{font-size:11px;font-weight:800;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.08em;margin:18px 0 10px;padding-top:14px;border-top:1px dashed var(--gray-200);}
+.form-section-title:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+
+@media(max-width:768px){
+  .modal-cadastro-grid{grid-template-columns:1fr;}
+  .cadastro-prova{border-radius:var(--radius) var(--radius) 0 0;padding:20px;}
+  .cp-stats{grid-template-columns:repeat(4,1fr);}
+  .cp-recente{display:none;}
+}
+
 /* VIEWS */
 .view{display:none;}
 .view.active{display:block;}
@@ -563,6 +646,15 @@ img{max-width:100%;display:block;}
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal-content"></div></div>
 <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
 <div class="cart-drawer" id="cart-drawer"></div>
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<a class="wpp-float" href="https://wa.me/5534984282779?text=Olá!%20Vim%20pelo%20site%20da%20ZM%20Atacadista%20e%20gostaria%20de%20mais%20informações." target="_blank" rel="noopener">
+  <span class="wpp-balao">Fale conosco</span>
+  <span class="wpp-icon">
+    <svg viewBox="0 0 32 32" width="30" height="30" fill="#fff"><path d="M16 .396C7.164.396.001 7.559.001 16.396c0 2.823.736 5.583 2.139 8.001L.105 31.605l7.398-1.948A15.92 15.92 0 0016 32.396c8.836 0 15.999-7.163 15.999-16S24.836.396 16 .396zm0 29.293c-2.514 0-4.99-.686-7.156-1.984l-.513-.305-5.331 1.404 1.428-5.198-.334-.532A13.218 13.218 0 012.71 16.396C2.71 9.073 8.677 3.106 16 3.106s13.29 5.967 13.29 13.29-5.967 13.293-13.29 13.293zm7.281-9.92c-.397-.199-2.353-1.16-2.717-1.293-.364-.133-.629-.199-.894.199-.265.397-1.027 1.293-1.259 1.557-.232.265-.464.298-.861.099-.397-.199-1.679-.619-3.198-1.974-1.182-1.054-1.98-2.355-2.213-2.752-.232-.397-.025-.611.174-.81.179-.178.397-.464.595-.696.199-.232.265-.397.397-.662.133-.265.066-.497-.033-.696-.099-.199-.894-2.156-1.225-2.951-.323-.775-.65-.67-.894-.682l-.762-.014c-.265 0-.696.099-1.061.497-.364.397-1.392 1.36-1.392 3.317 0 1.957 1.425 3.846 1.624 4.111.199.265 2.806 4.282 6.797 6.005.95.41 1.692.654 2.27.838.954.303 1.821.26 2.508.158.765-.114 2.353-.962 2.685-1.891.331-.929.331-1.726.232-1.891-.099-.166-.364-.265-.762-.464z"/></svg>
+  </span>
+</a>
 
 <script>
 // =============================================
@@ -589,7 +681,32 @@ var VENDEDORES = [
   {id:7,nome:'Diego Martins',inicial:'DM',cor:'#475569',meta:20000,vendas:11500,pedidos:24,role:'Júnior'}
 ];
 var COMISSAO_PCT = 0.02;
-var CASHBACK_PCT = 0.03;
+var CASHBACK_CONFIG = {
+  pct: 0.03,                    // 3% padrão
+  limiteMensalCpf: 100,         // R$ 100/mês por CPF
+  limiteAcumuladoCpf: 500,      // R$ 500 acumulado por CPF (anti-fraude)
+  valorMinimoCompra: 50,        // só ganha cashback se compra ≥ R$ 50
+  validadeDias: 90              // expira em 90 dias
+};
+var CASHBACK_PCT = CASHBACK_CONFIG.pct; // alias retro-compat
+
+// PROVA SOCIAL — clientes recentes que compraram (rotativo)
+var PROVA_SOCIAL = [
+  {nome:'Carlos M.',cidade:'Goiânia/GO',tempo:'há 2 min',valor:1247.50,produtos:'4 produtos'},
+  {nome:'Ana B.',cidade:'Brasília/DF',tempo:'há 8 min',valor:347.80,produtos:'2 produtos'},
+  {nome:'Reformas RJ Ltda',cidade:'Rio de Janeiro/RJ',tempo:'há 14 min',valor:892.00,produtos:'7 produtos'},
+  {nome:'Maria S.',cidade:'Uberlândia/MG',tempo:'há 22 min',valor:458.90,produtos:'3 produtos'},
+  {nome:'Construtora ABC',cidade:'São Paulo/SP',tempo:'há 31 min',valor:2147.30,produtos:'12 produtos'},
+  {nome:'Pedro H.',cidade:'Anápolis/GO',tempo:'há 45 min',valor:189.50,produtos:'1 produto'},
+  {nome:'Edifício Nova Era',cidade:'Águas Lindas/GO',tempo:'há 1h',valor:3458.90,produtos:'18 produtos'}
+];
+var STATS_LOJA = {
+  clientesAtivos: 12847,
+  pedidosMes: 1842,
+  avaliacaoMedia: 4.8,
+  totalAvaliacoes: 3421,
+  anosOperacao: 8
+};
 
 var CUPONS = [
   { codigo:'PRIMEIRA10', tipo:'percent', valor:10, validade:'31/12/2026', minimo:50, usos:47, ativo:true, desc:'Primeira compra' },
@@ -647,7 +764,18 @@ var TRIBUTACAO_API = {
   proximaAtualizacao: 'amanhã às 03:00',
   ncmsAtualizados: 12847,
   alteracoes24h: 23,
-  versaoTabela: '2026.05.07-001'
+  versaoTabela: '2026.05.07-001',
+  // Sede do contribuinte ZM Atacadista
+  municipioSede: {
+    nome: 'Águas Lindas de Goiás',
+    uf: 'GO',
+    ibge: '5200258',
+    cnaes: ['4744-0/01','4744-0/02','4744-0/05','4744-0/99','4742-3/00','4741-5/00'],
+    aliquotaIssMedia: 5.0,
+    regimeIcms: 'Simples Nacional + ST',
+    convenioIcmsAtual: 'Convênio ICMS 142/2018 (atualizado pelo 184/2024)',
+    sefazSync: true
+  }
 };
 
 var PIX_CONFIG = {
@@ -760,7 +888,9 @@ var state = {
   logoSrc: 'logo-zm.png',
   logoZoom: 1,
   logoEditorOpen: false,
-  filters: { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false },
+  filters: { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false, ratingMin:0, freteGratis:false, novidade:false },
+  adminProdFilter: { search:'', cat:'' },
+  reposicoes: [],
   useCashback: false,
   cashbackHistory: [],
   cupomAplicado: null,
@@ -828,7 +958,7 @@ function renderHeader() {
     '<button onclick="doSearch(document.getElementById(\'search-input\').value)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>' +
     '</div>' +
     '<div class="header-actions">' +
-    '<button class="h-btn" onclick="navigate(state.logged?\'client\':void openModal(\'login\'))">' +
+    '<button class="h-btn" onclick="if(state.logged){navigate(\'client\')}else{openModal(\'login\')}">' +
     '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
     (state.logged ? '<span style="max-width:80px;overflow:hidden;text-overflow:ellipsis">' + state.user.nome.split(' ')[0] + '</span>' : 'Entrar') + '</button>' +
     '<button class="h-btn" onclick="toggleCart()">' +
@@ -904,6 +1034,9 @@ function applyFilters(arr) {
     if (f.soDesconto && !p.discount) return false;
     if (f.soAtacado && !p.atacado) return false;
     if (f.soEstoque && p.stock <= 0) return false;
+    if (f.ratingMin > 0 && parseFloat(p.rating) < f.ratingMin) return false;
+    if (f.freteGratis && p.price < 299) return false;
+    if (f.novidade && p.id % 7 !== 0) return false; // mock: a cada 7 produtos um é "novidade"
     return true;
   });
   if (f.sort === 'priceAsc') out.sort(function(a,b){return a.price - b.price;});
@@ -923,7 +1056,13 @@ function renderCatalog() {
   var catName = state.catFilter ? CATEGORIES.find(function(c){return c.id===state.catFilter;}).label : 'Todos os Produtos';
   var f = state.filters;
 
-  var h = '<div class="section"><div class="section-header"><h2>' + catName + (state.search ? ' — "' + escHtml(state.search) + '"' : '') + '</h2>';
+  // BREADCRUMB
+  var bc = '<nav class="breadcrumb"><a onclick="navigate(\'home\')">🏠 Início</a> <span>›</span> <a onclick="filterCat(\'\')">Catálogo</a>';
+  if (state.catFilter) bc += ' <span>›</span> <span class="current">' + catName + '</span>';
+  if (state.search) bc += ' <span>›</span> <span class="current">Busca: "' + escHtml(state.search) + '"</span>';
+  bc += '</nav>';
+
+  var h = bc + '<div class="section"><div class="section-header"><h2>' + catName + (state.search ? ' — "' + escHtml(state.search) + '"' : '') + '</h2>';
   h += '<span style="font-size:13px;color:var(--gray-400)">' + filtered.length + ' produtos encontrados</span></div>';
   h += '<div class="catalog-layout">';
 
@@ -950,10 +1089,20 @@ function renderCatalog() {
   CATEGORIES.forEach(function(c){h += '<option value="' + c.id + '"' + (state.catFilter===c.id?' selected':'') + '>' + c.label + '</option>';});
   h += '</select></div>';
 
+  h += '<div class="filter-group"><h4>Avaliação mínima</h4>';
+  h += '<div class="rating-filter">';
+  [0,3,4,4.5].forEach(function(r){
+    var lab = r===0?'Todas':r+'★ ou mais';
+    h += '<label class="rating-opt' + (f.ratingMin===r?' active':'') + '"><input type="radio" name="rmin" ' + (f.ratingMin===r?'checked ':'') + 'onchange="state.filters.ratingMin=' + r + ';state.page=1;render()"><span>' + lab + '</span></label>';
+  });
+  h += '</div></div>';
+
   h += '<div class="filter-group"><h4>Filtros rápidos</h4>';
-  h += '<label class="filter-check"><input type="checkbox"' + (f.soDesconto?' checked':'') + ' onchange="state.filters.soDesconto=this.checked;state.page=1;render()"> Só com desconto</label>';
-  h += '<label class="filter-check"><input type="checkbox"' + (f.soAtacado?' checked':'') + ' onchange="state.filters.soAtacado=this.checked;state.page=1;render()"> Só preço atacado</label>';
-  h += '<label class="filter-check"><input type="checkbox"' + (f.soEstoque?' checked':'') + ' onchange="state.filters.soEstoque=this.checked;state.page=1;render()"> Em estoque</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.soDesconto?' checked':'') + ' onchange="state.filters.soDesconto=this.checked;state.page=1;render()"> 🏷️ Só com desconto</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.soAtacado?' checked':'') + ' onchange="state.filters.soAtacado=this.checked;state.page=1;render()"> 📦 Só preço atacado</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.soEstoque?' checked':'') + ' onchange="state.filters.soEstoque=this.checked;state.page=1;render()"> ✓ Em estoque</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.freteGratis?' checked':'') + ' onchange="state.filters.freteGratis=this.checked;state.page=1;render()"> 🚚 Frete grátis (R$ 299+)</label>';
+  h += '<label class="filter-check"><input type="checkbox"' + (f.novidade?' checked':'') + ' onchange="state.filters.novidade=this.checked;state.page=1;render()"> ✨ Novidades</label>';
   h += '</div>';
 
   h += '<button class="filter-clear" onclick="clearFilters()">Limpar todos os filtros</button>';
@@ -982,7 +1131,7 @@ function renderCatalog() {
 }
 
 function clearFilters() {
-  state.filters = { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false };
+  state.filters = { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false, ratingMin:0, freteGratis:false, novidade:false };
   state.search = '';
   state.catFilter = '';
   state.page = 1;
@@ -1493,24 +1642,50 @@ function renderAdminDash() {
 }
 
 function renderAdminProdutos() {
-  var h = '<div class="admin-header"><h2>Produtos</h2><button class="btn btn-primary btn-sm" onclick="alert(\'Cadastrar produto — em desenvolvimento\')">+ Novo Produto</button></div>';
-  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<div style="padding:16px;border-bottom:1px solid var(--gray-200);display:flex;gap:12px">';
-  h += '<input class="form-input" style="max-width:300px" placeholder="Buscar produto...">';
-  h += '<select class="form-input" style="max-width:200px"><option>Todas Categorias</option>';
-  CATEGORIES.forEach(function(c){h+='<option>'+c.label+'</option>';});
-  h += '</select></div>';
-  h += '<table class="data-table"><thead><tr><th></th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Vendidos</th></tr></thead><tbody>';
-  ALL_PRODUCTS.slice(0,30).forEach(function(p){
-    h += '<tr><td style="font-size:24px;text-align:center">' + p.emoji + '</td>';
-    h += '<td><strong>' + escHtml(p.name) + '</strong></td>';
-    h += '<td style="font-size:12px">' + escHtml(p.catLabel) + '</td>';
-    h += '<td style="font-weight:700">R$ ' + formatMoney(p.price) + '</td>';
-    h += '<td><span class="' + (p.stock<15?'stock-low':'stock-ok') + '">' + p.stock + '</span></td>';
-    h += '<td>' + p.sold + '</td></tr>';
+  var f = state.adminProdFilter;
+  var filtered = ALL_PRODUCTS.filter(function(p) {
+    if (f.cat && p.cat !== f.cat) return false;
+    if (f.search) {
+      var s = f.search.toLowerCase();
+      if (p.name.toLowerCase().indexOf(s) < 0 && p.catLabel.toLowerCase().indexOf(s) < 0 && p.sub.toLowerCase().indexOf(s) < 0 && (p.ncm||'').indexOf(s) < 0) return false;
+    }
+    return true;
   });
-  h += '</tbody></table></div>';
+
+  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:16px;border-bottom:1px solid var(--gray-200);display:flex;gap:12px;align-items:center">';
+  h += '<input class="form-input" style="max-width:340px" placeholder="🔍 Buscar por nome, categoria ou NCM..." value="' + escHtml(f.search) + '" oninput="state.adminProdFilter.search=this.value;render();document.querySelector(\'.admin-content input.form-input[placeholder^=\\\'🔍\\\']\').focus()">';
+  h += '<select class="form-input" style="max-width:220px" onchange="state.adminProdFilter.cat=this.value;render()">';
+  h += '<option value=""' + (!f.cat?' selected':'') + '>Todas Categorias</option>';
+  CATEGORIES.forEach(function(c){h+='<option value="'+c.id+'"'+(f.cat===c.id?' selected':'')+'>'+c.label+'</option>';});
+  h += '</select>';
+  if (f.search || f.cat) h += '<button class="btn btn-outline btn-sm" onclick="state.adminProdFilter={search:\'\',cat:\'\'};render()">✕ Limpar</button>';
+  h += '</div>';
+
+  if (filtered.length === 0) {
+    h += '<div style="padding:60px 20px;text-align:center;color:var(--gray-400)"><div style="font-size:48px;margin-bottom:12px">🔍</div><h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Nenhum produto encontrado</h3><p style="font-size:13px">Tente outra busca ou categoria</p></div>';
+  } else {
+    h += '<table class="data-table"><thead><tr><th></th><th>Produto</th><th>Categoria</th><th>NCM</th><th>Preço</th><th>Estoque</th><th>Vendidos</th><th>Ações</th></tr></thead><tbody>';
+    filtered.slice(0,50).forEach(function(p){
+      h += '<tr><td style="font-size:24px;text-align:center">' + p.emoji + '</td>';
+      h += '<td><strong>' + escHtml(p.name) + '</strong><div style="font-size:11px;color:var(--gray-400)">' + escHtml(p.sub) + '</div></td>';
+      h += '<td style="font-size:12px">' + escHtml(p.catLabel) + '</td>';
+      h += '<td style="font-size:11px;font-family:monospace;color:var(--gray-500)">' + (p.ncm||'—') + '</td>';
+      h += '<td style="font-weight:700">R$ ' + formatMoney(p.price) + '</td>';
+      h += '<td><span class="' + (p.stock<15?'stock-low':'stock-ok') + '">' + p.stock + '</span></td>';
+      h += '<td>' + p.sold + '</td>';
+      h += '<td><button class="btn btn-outline btn-sm" onclick="abrirReposicao(' + p.id + ')">📦 Repor</button></td></tr>';
+    });
+    h += '</tbody></table>';
+    if (filtered.length > 50) h += '<div style="padding:12px;text-align:center;font-size:12px;color:var(--gray-500);background:var(--gray-50)">Mostrando 50 de ' + filtered.length + ' resultados — refine a busca pra ver mais</div>';
+  }
+  h += '</div>';
   return h;
+}
+
+function abrirCadastroProduto() {
+  alert('+ Novo produto\n\nForm completo com:\n• Nome, categoria, sub-categoria\n• Preço, estoque inicial\n• NCM, CST, CFOP, alíquotas\n• Foto/emoji, descrição\n• Atacado (sim/não), desconto\n\n[ tela em desenvolvimento ]');
 }
 
 function renderAdminPedidos() {
@@ -1554,7 +1729,7 @@ function renderAdminEstoque() {
     h += '<td style="font-size:12px">' + escHtml(p.catLabel) + '</td>';
     h += '<td><span class="stock-low">' + p.stock + ' un</span></td>';
     h += '<td>' + p.sold + '</td>';
-    h += '<td><button class="btn btn-outline btn-sm" onclick="alert(\'Repor estoque — ' + escHtml(p.name) + '\')">Repor</button></td></tr>';
+    h += '<td><button class="btn btn-primary btn-sm" onclick="abrirReposicao(' + p.id + ')">📦 Repor</button></td></tr>';
   });
   h += '</tbody></table></div>';
   return h;
@@ -1671,7 +1846,7 @@ function renderAdminCashback() {
   var saldoAtivo = totalDistribuido - totalResgatado;
   var clientesAtivos = 287;
 
-  var h = '<div class="admin-header"><h2>💰 Programa de Cashback</h2><span style="font-size:13px;color:var(--gray-400)">' + (CASHBACK_PCT*100) + '% de retorno em cada compra</span></div>';
+  var h = '<div class="admin-header"><h2>💰 Programa de Cashback</h2><span style="font-size:13px;color:var(--gray-400)">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '% de retorno · limite R$ ' + CASHBACK_CONFIG.limiteMensalCpf + '/mês por CPF</span></div>';
   h += '<div class="stat-grid">';
   h += '<div class="stat-card"><div class="stat-label">Distribuído (Mês)</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(totalDistribuido) + '</div><div class="stat-change up">↑ 22% vs mês passado</div></div>';
   h += '<div class="stat-card"><div class="stat-label">Resgatado</div><div class="stat-value">R$ ' + formatMoney(totalResgatado) + '</div><div class="stat-change">' + Math.round(totalResgatado/totalDistribuido*100) + '% do total</div></div>';
@@ -1680,11 +1855,22 @@ function renderAdminCashback() {
   h += '</div>';
 
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">';
-  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Configuração</h3>';
-  h += '<div class="form-group"><label class="form-label">% de cashback por compra</label><div style="display:flex;gap:8px"><input class="form-input" value="' + (CASHBACK_PCT*100) + '" style="max-width:80px"><span style="padding:10px;color:var(--gray-500)">%</span></div></div>';
-  h += '<div class="form-group"><label class="form-label">Validade do saldo</label><select class="form-input"><option>30 dias</option><option selected>90 dias</option><option>180 dias</option><option>1 ano</option><option>Sem validade</option></select></div>';
-  h += '<div class="form-group"><label class="form-label">Valor mínimo de compra</label><input class="form-input" value="50,00"></div>';
-  h += '<button class="btn btn-primary btn-sm">Salvar Configurações</button></div>';
+  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">⚙️ Configuração de Cashback</h3>';
+  h += '<div class="form-group"><label class="form-label">% de cashback por compra</label>';
+  h += '<div style="display:flex;align-items:center;gap:12px"><input type="range" min="0" max="10" step="0.5" value="' + (CASHBACK_CONFIG.pct*100) + '" oninput="CASHBACK_CONFIG.pct=parseFloat(this.value)/100;CASHBACK_PCT=CASHBACK_CONFIG.pct;document.getElementById(\'cb-pct-display\').textContent=this.value+\'%\';" style="flex:1;accent-color:var(--green)">';
+  h += '<span id="cb-pct-display" style="min-width:60px;font-weight:800;color:var(--green);font-size:16px;text-align:center;background:var(--green-light);padding:6px 10px;border-radius:6px">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '%</span>';
+  h += '</div>';
+  h += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray-400);margin-top:4px;font-weight:600"><span>0% (desativado)</span><span>5%</span><span>10% (máximo)</span></div></div>';
+  h += '<div class="form-group"><label class="form-label">🛡️ Limite mensal por CPF/CNPJ <span style="color:var(--gray-400);font-weight:500">(anti-fraude)</span></label>';
+  h += '<div style="display:flex;gap:8px"><span style="padding:10px;color:var(--gray-500);font-weight:600">R$</span><input class="form-input" type="number" value="' + CASHBACK_CONFIG.limiteMensalCpf + '" onchange="CASHBACK_CONFIG.limiteMensalCpf=parseFloat(this.value)||0" style="max-width:120px"><span style="padding:10px;color:var(--gray-400);font-size:12px">/ mês</span></div></div>';
+  h += '<div class="form-group"><label class="form-label">🔒 Limite acumulado por CPF/CNPJ</label>';
+  h += '<div style="display:flex;gap:8px"><span style="padding:10px;color:var(--gray-500);font-weight:600">R$</span><input class="form-input" type="number" value="' + CASHBACK_CONFIG.limiteAcumuladoCpf + '" onchange="CASHBACK_CONFIG.limiteAcumuladoCpf=parseFloat(this.value)||0" style="max-width:120px"><span style="padding:10px;color:var(--gray-400);font-size:12px">vitalício</span></div></div>';
+  h += '<div class="form-group"><label class="form-label">Valor mínimo de compra (pra ganhar cashback)</label>';
+  h += '<div style="display:flex;gap:8px"><span style="padding:10px;color:var(--gray-500);font-weight:600">R$</span><input class="form-input" type="number" value="' + CASHBACK_CONFIG.valorMinimoCompra + '" onchange="CASHBACK_CONFIG.valorMinimoCompra=parseFloat(this.value)||0" style="max-width:120px"></div></div>';
+  h += '<div class="form-group"><label class="form-label">Validade do saldo</label><select class="form-input" onchange="CASHBACK_CONFIG.validadeDias=parseInt(this.value)">';
+  [['30','30 dias'],['60','60 dias'],['90','90 dias'],['180','180 dias'],['365','1 ano'],['9999','Sem validade']].forEach(function(o){h+='<option value="'+o[0]+'"'+(parseInt(o[0])===CASHBACK_CONFIG.validadeDias?' selected':'')+'>'+o[1]+'</option>';});
+  h += '</select></div>';
+  h += '<button class="btn btn-primary btn-sm" onclick="alert(\'✓ Configurações salvas!\\n\\n• % cashback: \'+(CASHBACK_CONFIG.pct*100).toFixed(1)+\'%\\n• Limite mês/CPF: R$ \'+CASHBACK_CONFIG.limiteMensalCpf+\'\\n• Limite acumulado: R$ \'+CASHBACK_CONFIG.limiteAcumuladoCpf+\'\\n• Mínimo compra: R$ \'+CASHBACK_CONFIG.valorMinimoCompra+\'\\n• Validade: \'+CASHBACK_CONFIG.validadeDias+\' dias\');render()">Salvar Configurações</button></div>';
 
   h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Top Clientes (Saldo)</h3>';
   var topCli = [
@@ -1937,16 +2123,25 @@ function renderAdminTributacao() {
   ALL_PRODUCTS.forEach(function(p){ ncmsUnicos[p.ncm] = true; });
   var totalNcms = Object.keys(ncmsUnicos).length;
 
-  var h = '<div class="admin-header"><h2>📊 Tributação por Produto</h2><span style="font-size:13px;color:var(--gray-400)">Tabela atualizada diária via API · Versão ' + TRIBUTACAO_API.versaoTabela + '</span></div>';
+  var mun = TRIBUTACAO_API.municipioSede;
+  var h = '<div class="admin-header"><h2>📊 Tributação por Produto</h2><span style="font-size:13px;color:var(--gray-400)">Sede fiscal: <strong>' + mun.nome + '/' + mun.uf + '</strong> · IBGE ' + mun.ibge + ' · Versão ' + TRIBUTACAO_API.versaoTabela + '</span></div>';
 
-  // CARD DA API
+  // CARD DA API + município
   h += '<div class="api-status-card">';
   h += '<div class="api-info">';
-  h += '<div class="label">API Tributária Conectada</div>';
-  h += '<div class="name">' + TRIBUTACAO_API.provedor + '</div>';
-  h += '<div class="meta">' + TRIBUTACAO_API.ncmsAtualizados.toLocaleString('pt-BR') + ' NCMs sincronizados · ' + TRIBUTACAO_API.alteracoes24h + ' alterações nas últimas 24h · próxima sync ' + TRIBUTACAO_API.proximaAtualizacao + '</div>';
+  h += '<div class="label">📍 ' + mun.nome + '/' + mun.uf + ' · API Tributária</div>';
+  h += '<div class="name">' + TRIBUTACAO_API.provedor + ' + SEFAZ-' + mun.uf + '</div>';
+  h += '<div class="meta">' + TRIBUTACAO_API.ncmsAtualizados.toLocaleString('pt-BR') + ' NCMs · ' + TRIBUTACAO_API.alteracoes24h + ' alterações 24h · ' + mun.convenioIcmsAtual + '</div>';
   h += '</div>';
   h += '<button class="api-sync-btn" onclick="simularSyncAPI(this)">🔄 Sincronizar Agora</button>';
+  h += '</div>';
+
+  // INFO DA SEDE (Águas Lindas)
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;margin-bottom:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:center">';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Município (sede)</div><div style="font-size:14px;font-weight:800;margin-top:3px">' + mun.nome + '/' + mun.uf + '</div></div>';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Cód. IBGE</div><div style="font-size:14px;font-weight:800;font-family:monospace;margin-top:3px">' + mun.ibge + '</div></div>';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Regime ICMS</div><div style="font-size:13px;font-weight:700;margin-top:3px">' + mun.regimeIcms + '</div></div>';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">ISS médio</div><div style="font-size:14px;font-weight:800;margin-top:3px">' + mun.aliquotaIssMedia + '%</div></div>';
   h += '</div>';
 
   // STATS
@@ -2018,15 +2213,27 @@ function renderAdminTributacao() {
 
 function simularSyncAPI(btn) {
   btn.classList.add('loading');
-  btn.innerHTML = 'Sincronizando...';
+  btn.innerHTML = 'Sincronizando SEFAZ-GO...';
   setTimeout(function() {
     btn.classList.remove('loading');
     btn.innerHTML = '🔄 Sincronizar Agora';
-    TRIBUTACAO_API.alteracoes24h = TRIBUTACAO_API.alteracoes24h + Math.floor(Math.random()*5);
+    var novas = Math.floor(Math.random()*8+3);
+    TRIBUTACAO_API.alteracoes24h += novas;
     TRIBUTACAO_API.ultimaAtualizacao = new Date().toISOString();
-    alert('✓ Sincronização concluída.\n\n• ' + TRIBUTACAO_API.ncmsAtualizados.toLocaleString('pt-BR') + ' NCMs verificados\n• ' + Math.floor(Math.random()*5+2) + ' alíquotas atualizadas\n• Próxima sync automática: ' + TRIBUTACAO_API.proximaAtualizacao + '\n\nTabela versão: ' + TRIBUTACAO_API.versaoTabela);
+    var mun = TRIBUTACAO_API.municipioSede;
+    var msg = '✓ Sincronização SEFAZ-' + mun.uf + ' concluída\n\n';
+    msg += '📍 Sede: ' + mun.nome + '/' + mun.uf + ' (IBGE ' + mun.ibge + ')\n';
+    msg += '📋 ' + mun.convenioIcmsAtual + '\n\n';
+    msg += '• ' + TRIBUTACAO_API.ncmsAtualizados.toLocaleString('pt-BR') + ' NCMs verificados\n';
+    msg += '• ' + novas + ' alíquotas atualizadas\n';
+    msg += '• ICMS-ST de material de construção: 41% MVA-ST\n';
+    msg += '• Pauta fiscal cimento/areia: atualizada\n';
+    msg += '• Convênios ICMS aplicáveis: 142/2018, 184/2024\n\n';
+    msg += '🕐 Próxima sync: ' + TRIBUTACAO_API.proximaAtualizacao + '\n';
+    msg += '📦 Tabela: ' + TRIBUTACAO_API.versaoTabela;
+    alert(msg);
     render();
-  }, 1800);
+  }, 2200);
 }
 
 function gerarCodigoIndicacao(nome) {
@@ -2133,25 +2340,105 @@ function openModal(type) {
   var content = document.getElementById('modal-content');
   var h = '';
   if (type === 'login') {
-    content.className = 'modal modal-sm';
-    h += '<div class="modal-header"><h3>Entrar ou Cadastrar</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
-    h += '<div class="modal-body">';
-    h += '<div class="form-tabs"><div class="form-tab active" id="tab-pf" onclick="switchTab(\'pf\')">Pessoa Física</div><div class="form-tab" id="tab-pj" onclick="switchTab(\'pj\')">Pessoa Jurídica</div></div>';
-    h += '<div id="form-pf">';
-    h += '<div class="form-group"><label class="form-label">Nome Completo</label><input class="form-input" id="login-nome" placeholder="Seu nome"></div>';
-    h += '<div class="form-group"><label class="form-label">CPF</label><input class="form-input" id="login-cpf" placeholder="000.000.000-00"></div>';
-    h += '<div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" placeholder="email@exemplo.com"></div>';
-    h += '<div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="login-senha" placeholder="Sua senha"></div>';
-    h += '<button class="btn btn-primary btn-block btn-lg" onclick="doLogin(\'pf\')">Entrar como Pessoa Física</button>';
+    content.className = 'modal modal-lg modal-cadastro';
+    h += '<div class="modal-cadastro-grid">';
+
+    // LATERAL DE PROVA SOCIAL
+    h += '<aside class="cadastro-prova">';
+    h += '<div class="cp-logo">ZM</div>';
+    h += '<h3 class="cp-title">Junte-se a quem já confia na ZM</h3>';
+    h += '<div class="cp-stats">';
+    h += '<div class="cp-stat"><div class="cp-num">' + STATS_LOJA.clientesAtivos.toLocaleString('pt-BR') + '+</div><div class="cp-lab">clientes ativos</div></div>';
+    h += '<div class="cp-stat"><div class="cp-num">' + STATS_LOJA.pedidosMes.toLocaleString('pt-BR') + '</div><div class="cp-lab">pedidos só este mês</div></div>';
+    h += '<div class="cp-stat"><div class="cp-num">' + STATS_LOJA.avaliacaoMedia + '★</div><div class="cp-lab">' + STATS_LOJA.totalAvaliacoes.toLocaleString('pt-BR') + ' avaliações</div></div>';
+    h += '<div class="cp-stat"><div class="cp-num">' + STATS_LOJA.anosOperacao + ' anos</div><div class="cp-lab">de mercado</div></div>';
     h += '</div>';
+    h += '<div class="cp-trust">';
+    h += '<div class="cp-trust-item">✓ <span>Pix direto · sem taxa de gateway</span></div>';
+    h += '<div class="cp-trust-item">✓ <span>NF-e emitida em segundos</span></div>';
+    h += '<div class="cp-trust-item">✓ <span>Cashback de até ' + Math.round(CASHBACK_CONFIG.pct*100) + '% por compra</span></div>';
+    h += '<div class="cp-trust-item">✓ <span>Site seguro · SSL + LGPD</span></div>';
+    h += '</div>';
+    h += '<div class="cp-recente">';
+    h += '<div class="cp-recente-title">📦 Compras agora há pouco</div>';
+    PROVA_SOCIAL.slice(0,3).forEach(function(p){
+      h += '<div class="cp-recente-item"><div class="cp-rec-dot"></div><div><div class="cp-rec-name"><strong>' + p.nome + '</strong> · ' + p.cidade + '</div><div class="cp-rec-meta">' + p.produtos + ' · R$ ' + formatMoney(p.valor) + ' · ' + p.tempo + '</div></div></div>';
+    });
+    h += '</div>';
+    h += '</aside>';
+
+    // FORMULÁRIO
+    h += '<div class="cadastro-form">';
+    h += '<div class="modal-header" style="border:none;padding:0 0 8px"><h3>Bem-vindo à ZM</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+
+    // ETAPA 1: ENTRAR ou CRIAR
+    h += '<div class="auth-mode-tabs">';
+    h += '<button class="auth-mode-btn active" id="auth-tab-login" onclick="switchAuthMode(\'login\')">🔑 Já tenho conta · Entrar</button>';
+    h += '<button class="auth-mode-btn" id="auth-tab-novo" onclick="switchAuthMode(\'novo\')">✨ Sou novo · Cadastrar</button>';
+    h += '</div>';
+
+    // FORM LOGIN RÁPIDO
+    h += '<div id="auth-login">';
+    h += '<p style="font-size:13px;color:var(--gray-500);margin-bottom:14px">Acesse com seu email e senha cadastrados:</p>';
+    h += '<div class="form-group"><label class="form-label">Email *</label><input class="form-input" id="quick-email" placeholder="seu@email.com" type="email"></div>';
+    h += '<div class="form-group"><label class="form-label">Senha *</label><input class="form-input" id="quick-senha" type="password" placeholder="Sua senha"></div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><label class="filter-check" style="margin:0"><input type="checkbox" checked> Manter conectado</label><a style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer">Esqueci a senha</a></div>';
+    h += '<button class="btn btn-primary btn-block btn-lg" onclick="doQuickLogin()">Entrar</button>';
+    h += '<div style="text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-100);font-size:13px;color:var(--gray-500)">Ainda não tem conta? <a onclick="switchAuthMode(\'novo\')" style="color:var(--blue);font-weight:700;cursor:pointer">Cadastre-se grátis →</a></div>';
+    h += '</div>';
+
+    // FORM NOVO CADASTRO (escondido por padrão)
+    h += '<div id="auth-novo" style="display:none">';
+    h += '<p style="font-size:13px;color:var(--gray-500);margin-bottom:18px">Selecione abaixo se você é <strong style="color:var(--gray-800)">Pessoa Física</strong> ou <strong style="color:var(--gray-800)">Pessoa Jurídica</strong>:</p>';
+    h += '<div class="tipo-cards"><div class="tipo-card active" id="tab-pf" onclick="switchTab(\'pf\')"><div class="tc-icon">👤</div><div class="tc-info"><div class="tc-title">Pessoa Física</div><div class="tc-sub">Cadastro com CPF</div></div><div class="tc-radio"></div></div><div class="tipo-card" id="tab-pj" onclick="switchTab(\'pj\')"><div class="tc-icon">🏢</div><div class="tc-info"><div class="tc-title">Pessoa Jurídica</div><div class="tc-sub">Empresa com CNPJ · preço atacado</div></div><div class="tc-radio"></div></div></div>';
+
+    // PF
+    h += '<div id="form-pf">';
+    h += '<div class="form-section-title">Seus dados</div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Nome Completo *</label><input class="form-input" id="login-nome" placeholder="Seu nome"></div>';
+    h += '<div class="form-group"><label class="form-label">CPF *</label><input class="form-input" id="login-cpf" placeholder="000.000.000-00"></div></div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Email *</label><input class="form-input" id="login-email" placeholder="email@exemplo.com"></div>';
+    h += '<div class="form-group"><label class="form-label">Telefone *</label><input class="form-input" id="login-tel" placeholder="(11) 99999-0000"></div></div>';
+    h += '<div class="form-group"><label class="form-label">Senha *</label><input class="form-input" type="password" id="login-senha" placeholder="Mínimo 6 caracteres"></div>';
+
+    h += '<div class="form-section-title">📍 Endereço de entrega</div>';
+    h += '<div class="form-row" style="grid-template-columns:140px 1fr"><div class="form-group"><label class="form-label">CEP *</label><input class="form-input" id="end-cep" placeholder="00000-000" maxlength="9" onkeyup="this.value=this.value.replace(/\\D/g,\'\').replace(/(\\d{5})(\\d)/,\'$1-$2\');if(this.value.length===9)buscarCepCadastro(this.value,\'pf\')"></div>';
+    h += '<div class="form-group"><label class="form-label">Rua / Logradouro *</label><input class="form-input" id="end-rua" placeholder="Rua/Av..."></div></div>';
+    h += '<div class="form-row" style="grid-template-columns:120px 1fr 120px"><div class="form-group"><label class="form-label">Número *</label><input class="form-input" id="end-num" placeholder="123"></div>';
+    h += '<div class="form-group"><label class="form-label">Bairro</label><input class="form-input" id="end-bairro" placeholder="Bairro"></div>';
+    h += '<div class="form-group"><label class="form-label">UF</label><input class="form-input" id="end-uf" placeholder="UF" maxlength="2"></div></div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Cidade</label><input class="form-input" id="end-cidade" placeholder="Cidade"></div>';
+    h += '<div class="form-group"><label class="form-label">Complemento</label><input class="form-input" id="end-comp" placeholder="Apto, sala (opcional)"></div></div>';
+
+    h += '<label class="filter-check" style="margin:8px 0 14px"><input type="checkbox" checked> Quero receber ofertas e cashback no email</label>';
+    h += '<button class="btn btn-primary btn-block btn-lg" onclick="doLogin(\'pf\')">✓ Criar conta · começar a comprar</button>';
+    h += '<p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:10px">Ao criar conta você concorda com nossos <a style="color:var(--blue);cursor:pointer">Termos</a> e <a style="color:var(--blue);cursor:pointer">Política de Privacidade</a>. Site seguro 🔒</p>';
+    h += '</div>';
+
+    // PJ
     h += '<div id="form-pj" style="display:none">';
-    h += '<div class="form-group"><label class="form-label">Razão Social</label><input class="form-input" id="login-razao" placeholder="Nome da empresa"></div>';
-    h += '<div class="form-group"><label class="form-label">CNPJ</label><input class="form-input" id="login-cnpj" placeholder="00.000.000/0000-00"></div>';
-    h += '<div class="form-group"><label class="form-label">Inscrição Estadual</label><input class="form-input" id="login-ie" placeholder="Opcional"></div>';
-    h += '<div class="form-group"><label class="form-label">Nome do Responsável</label><input class="form-input" id="login-resp" placeholder="Seu nome"></div>';
-    h += '<div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email-pj" placeholder="email@empresa.com"></div>';
-    h += '<div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="login-senha-pj" placeholder="Sua senha"></div>';
-    h += '<button class="btn btn-primary btn-block btn-lg" onclick="doLogin(\'pj\')">Entrar como Pessoa Jurídica</button>';
+    h += '<div class="form-section-title">Dados da empresa</div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Razão Social *</label><input class="form-input" id="login-razao" placeholder="Nome da empresa"></div>';
+    h += '<div class="form-group"><label class="form-label">CNPJ *</label><input class="form-input" id="login-cnpj" placeholder="00.000.000/0000-00"></div></div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Inscrição Estadual</label><input class="form-input" id="login-ie" placeholder="Opcional"></div>';
+    h += '<div class="form-group"><label class="form-label">Telefone *</label><input class="form-input" id="login-tel-pj" placeholder="(11) 99999-0000"></div></div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Nome do Responsável *</label><input class="form-input" id="login-resp" placeholder="Seu nome"></div>';
+    h += '<div class="form-group"><label class="form-label">Email *</label><input class="form-input" id="login-email-pj" placeholder="email@empresa.com"></div></div>';
+    h += '<div class="form-group"><label class="form-label">Senha *</label><input class="form-input" type="password" id="login-senha-pj" placeholder="Mínimo 6 caracteres"></div>';
+
+    h += '<div class="form-section-title">📍 Endereço de entrega</div>';
+    h += '<div class="form-row" style="grid-template-columns:140px 1fr"><div class="form-group"><label class="form-label">CEP *</label><input class="form-input" id="end-cep-pj" placeholder="00000-000" maxlength="9" onkeyup="this.value=this.value.replace(/\\D/g,\'\').replace(/(\\d{5})(\\d)/,\'$1-$2\');if(this.value.length===9)buscarCepCadastro(this.value,\'pj\')"></div>';
+    h += '<div class="form-group"><label class="form-label">Rua / Logradouro *</label><input class="form-input" id="end-rua-pj" placeholder="Rua/Av..."></div></div>';
+    h += '<div class="form-row" style="grid-template-columns:120px 1fr 120px"><div class="form-group"><label class="form-label">Número *</label><input class="form-input" id="end-num-pj" placeholder="123"></div>';
+    h += '<div class="form-group"><label class="form-label">Bairro</label><input class="form-input" id="end-bairro-pj" placeholder="Bairro"></div>';
+    h += '<div class="form-group"><label class="form-label">UF</label><input class="form-input" id="end-uf-pj" placeholder="UF" maxlength="2"></div></div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Cidade</label><input class="form-input" id="end-cidade-pj" placeholder="Cidade"></div>';
+    h += '<div class="form-group"><label class="form-label">Complemento</label><input class="form-input" id="end-comp-pj" placeholder="Sala, andar (opcional)"></div></div>';
+
+    h += '<button class="btn btn-primary btn-block btn-lg" onclick="doLogin(\'pj\')">✓ Cadastrar empresa · acessar atacado</button>';
+    h += '</div>';
+
+    h += '</div>'; // /auth-novo
     h += '</div></div>';
   }
   content.innerHTML = h;
@@ -2160,6 +2447,86 @@ function openModal(type) {
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function abrirReposicao(pid) {
+  var p = ALL_PRODUCTS.find(function(x){return x.id===pid;});
+  if (!p) return;
+  var hoje = new Date();
+  var hojeStr = hoje.toISOString().slice(0,10);
+  var d180 = new Date(hoje); d180.setDate(d180.getDate()+180);
+  var d180Str = d180.toISOString().slice(0,10);
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-md';
+  var h = '<div class="modal-header"><h3>📦 Repor Estoque</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+  // Card produto
+  h += '<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--gray-50);border-radius:var(--radius-sm);margin-bottom:18px;border:1px solid var(--gray-200)">';
+  h += '<div style="font-size:36px">' + p.emoji + '</div>';
+  h += '<div style="flex:1"><div style="font-size:14px;font-weight:800">' + escHtml(p.name) + '</div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-top:2px">' + escHtml(p.catLabel) + ' / ' + escHtml(p.sub) + ' · NCM ' + (p.ncm||'—') + '</div></div>';
+  h += '<div style="text-align:right"><div style="font-size:10px;text-transform:uppercase;color:var(--gray-400);font-weight:700">Estoque atual</div>';
+  h += '<div style="font-size:22px;font-weight:900;color:' + (p.stock<15?'var(--red)':'var(--green)') + '">' + p.stock + '</div></div>';
+  h += '</div>';
+
+  h += '<div class="form-section-title" style="margin-top:0">Dados da entrada</div>';
+  h += '<div class="form-row" style="grid-template-columns:1fr 120px"><div class="form-group"><label class="form-label">Quantidade recebida *</label>';
+  h += '<input class="form-input" type="number" id="rep-qtd" placeholder="Ex: 100" min="1" autofocus></div>';
+  h += '<div class="form-group"><label class="form-label">Unidade</label><select class="form-input" id="rep-un"><option>UN</option><option>CX</option><option>KG</option><option>L</option><option>M</option><option>SC</option></select></div></div>';
+
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">📅 Data de recebimento *</label><input class="form-input" type="date" id="rep-data-rec" value="' + hojeStr + '"></div>';
+  h += '<div class="form-group"><label class="form-label">⏳ Data de validade <span style="color:var(--gray-400);font-weight:500">(se aplicável)</span></label><input class="form-input" type="date" id="rep-data-val" value="' + d180Str + '"></div></div>';
+
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Lote / Nº NF entrada</label><input class="form-input" id="rep-lote" placeholder="Ex: NF-12345 / Lote 2026-A"></div>';
+  h += '<div class="form-group"><label class="form-label">Custo unitário (R$)</label><input class="form-input" type="number" step="0.01" id="rep-custo" placeholder="0,00"></div></div>';
+
+  h += '<div class="form-group"><label class="form-label">Fornecedor</label><input class="form-input" id="rep-forn" placeholder="Nome do fornecedor (opcional)"></div>';
+
+  h += '<div class="form-group"><label class="form-label">Observação</label><textarea class="form-input" id="rep-obs" rows="2" placeholder="Notas sobre a entrada (opcional)"></textarea></div>';
+
+  h += '<div style="background:var(--blue-50);border:1px solid rgba(7,42,216,0.15);border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:var(--gray-700);margin-top:8px"><strong>💡 Atenção:</strong> A entrada será registrada no histórico, somada ao estoque atual e gerará movimentação na contabilidade. Se houver data de validade, alertas automáticos serão criados a 30/15/7 dias do vencimento.</div>';
+
+  h += '</div>';
+  h += '<div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';
+  h += '<button class="btn btn-primary" onclick="confirmarReposicao(' + pid + ')">✓ Confirmar entrada</button></div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+
+function confirmarReposicao(pid) {
+  var p = ALL_PRODUCTS.find(function(x){return x.id===pid;});
+  if (!p) return;
+  var qtd = parseInt(document.getElementById('rep-qtd').value);
+  if (!qtd || qtd <= 0) { alert('Informe a quantidade.'); return; }
+  var dataRec = document.getElementById('rep-data-rec').value;
+  if (!dataRec) { alert('Informe a data de recebimento.'); return; }
+  var rep = {
+    pid: pid,
+    produto: p.name,
+    qtd: qtd,
+    un: document.getElementById('rep-un').value,
+    dataRec: dataRec,
+    dataVal: document.getElementById('rep-data-val').value || null,
+    lote: document.getElementById('rep-lote').value || '',
+    custo: parseFloat(document.getElementById('rep-custo').value) || 0,
+    fornecedor: document.getElementById('rep-forn').value || '',
+    obs: document.getElementById('rep-obs').value || '',
+    estoqueAntes: p.stock,
+    estoqueDepois: p.stock + qtd
+  };
+  state.reposicoes.unshift(rep);
+  p.stock += qtd;
+  closeModal();
+  var msg = '✅ Entrada registrada!\n\n';
+  msg += '📦 ' + p.name + '\n';
+  msg += '➕ ' + qtd + ' ' + rep.un + ' (' + rep.estoqueAntes + ' → ' + rep.estoqueDepois + ')\n';
+  msg += '📅 Recebido em ' + new Date(dataRec).toLocaleDateString('pt-BR') + '\n';
+  if (rep.dataVal) msg += '⏳ Vence em ' + new Date(rep.dataVal).toLocaleDateString('pt-BR') + '\n';
+  if (rep.lote) msg += '🏷️ Lote: ' + rep.lote + '\n';
+  if (rep.fornecedor) msg += '🏢 Fornecedor: ' + rep.fornecedor;
+  alert(msg);
+  render();
 }
 
 function openNF(orderIdx) {
@@ -2197,11 +2564,11 @@ function openNF(orderIdx) {
 // ACTIONS
 // =============================================
 
-function navigate(view) { state.view = view; state.page = 1; window.scrollTo(0,0); render(); }
-function filterCat(catId) { state.catFilter = catId; state.page = 1; state.search = ''; if (state.view==='home') state.view='catalog'; render(); }
-function doSearch(val) { state.search = val; state.catFilter = ''; state.page = 1; state.view = 'catalog'; render(); }
+function navigate(view) { closeModal(); state.view = view; state.page = 1; window.scrollTo(0,0); render(); }
+function filterCat(catId) { closeModal(); state.catFilter = catId; state.page = 1; state.search = ''; if (state.view==='home'||state.view==='product') state.view='catalog'; render(); }
+function doSearch(val) { closeModal(); state.search = val; state.catFilter = ''; state.page = 1; state.view = 'catalog'; render(); }
 function goPage(p) { state.page = p; window.scrollTo(0,0); render(); }
-function openProduct(id) { state.productDetail = id; state.view = 'product'; window.scrollTo(0,0); render(); }
+function openProduct(id) { closeModal(); state.productDetail = id; state.view = 'product'; window.scrollTo(0,0); render(); }
 function toggleCart() { state.cartOpen = !state.cartOpen; renderCartDrawer(); updateCartOverlay(); }
 function addToCart(pid) {
   var existing = state.cart.find(function(i){return i.pid===pid;});
@@ -2227,31 +2594,91 @@ function removeFromCart(idx) {
   render();
 }
 function switchTab(tab) {
-  document.getElementById('tab-pf').className = 'form-tab' + (tab==='pf'?' active':'');
-  document.getElementById('tab-pj').className = 'form-tab' + (tab==='pj'?' active':'');
+  document.getElementById('tab-pf').className = 'tipo-card' + (tab==='pf'?' active':'');
+  document.getElementById('tab-pj').className = 'tipo-card' + (tab==='pj'?' active':'');
   document.getElementById('form-pf').style.display = tab==='pf' ? 'block' : 'none';
   document.getElementById('form-pj').style.display = tab==='pj' ? 'block' : 'none';
 }
+
+function switchAuthMode(mode) {
+  document.getElementById('auth-tab-login').className = 'auth-mode-btn' + (mode==='login'?' active':'');
+  document.getElementById('auth-tab-novo').className = 'auth-mode-btn' + (mode==='novo'?' active':'');
+  document.getElementById('auth-login').style.display = mode==='login' ? 'block' : 'none';
+  document.getElementById('auth-novo').style.display = mode==='novo' ? 'block' : 'none';
+}
+
+function doQuickLogin() {
+  var email = document.getElementById('quick-email').value || 'cliente@zm.com';
+  // Simulação: cliente já cadastrado entra direto
+  state.user = {
+    nome: 'Cliente ZM',
+    doc: '123.456.789-00',
+    email: email,
+    telefone: '(34) 98428-2779',
+    endereco: { cep:'72915-000', rua:'Av. JK', numero:'500', bairro:'Centro', cidade:'Águas Lindas de Goiás', uf:'GO', complemento:'' },
+    tipo: 'pf',
+    cashback: 127.40,
+    cashbackMesAtual: 35.20,
+    cashbackTotalAcumulado: 287.50
+  };
+  state.cashbackHistory = [
+    {data:'04/05/2026', tipo:'in', desc:'Crédito do pedido #1043', valor: 50.96},
+    {data:'28/04/2026', tipo:'in', desc:'Crédito do pedido #1031', valor: 44.59},
+    {data:'15/04/2026', tipo:'in', desc:'Crédito do pedido #1018', valor: 31.85}
+  ];
+  state.frete.cep = '72915000';
+  state.logged = true;
+  closeModal();
+  render();
+}
+function buscarCepCadastro(cep, tipo) {
+  var cepNum = (cep||'').replace(/\D/g,'');
+  if (cepNum.length !== 8) return;
+  var sufix = tipo === 'pj' ? '-pj' : '';
+  fetch('https://viacep.com.br/ws/' + cepNum + '/json/').then(function(r){return r.json();}).then(function(d){
+    if (d.erro) return;
+    var rua = document.getElementById('end-rua' + sufix); if (rua && d.logradouro) rua.value = d.logradouro;
+    var bairro = document.getElementById('end-bairro' + sufix); if (bairro && d.bairro) bairro.value = d.bairro;
+    var cidade = document.getElementById('end-cidade' + sufix); if (cidade && d.localidade) cidade.value = d.localidade;
+    var uf = document.getElementById('end-uf' + sufix); if (uf && d.uf) uf.value = d.uf;
+    var num = document.getElementById('end-num' + sufix); if (num) num.focus();
+  }).catch(function(){});
+}
+
 function doLogin(tipo) {
+  function val(id){var el=document.getElementById(id);return el?el.value:'';}
+  var endereco;
   if (tipo === 'pf') {
+    endereco = { cep: val('end-cep'), rua: val('end-rua'), numero: val('end-num'), complemento: val('end-comp'), bairro: val('end-bairro'), cidade: val('end-cidade'), uf: val('end-uf') };
     state.user = {
-      nome: document.getElementById('login-nome').value || 'João da Silva',
-      doc: document.getElementById('login-cpf').value || '123.456.789-00',
-      email: document.getElementById('login-email').value || 'joao@email.com',
+      nome: val('login-nome') || 'João da Silva',
+      doc: val('login-cpf') || '123.456.789-00',
+      email: val('login-email') || 'joao@email.com',
+      telefone: val('login-tel') || '(11) 99999-0000',
+      endereco: endereco,
       tipo: 'pf',
-      cashback: 127.40
+      cashback: 127.40,
+      cashbackMesAtual: 35.20,
+      cashbackTotalAcumulado: 287.50
     };
   } else {
+    endereco = { cep: val('end-cep-pj'), rua: val('end-rua-pj'), numero: val('end-num-pj'), complemento: val('end-comp-pj'), bairro: val('end-bairro-pj'), cidade: val('end-cidade-pj'), uf: val('end-uf-pj') };
     state.user = {
-      nome: document.getElementById('login-resp').value || 'Construtora ABC',
-      razao: document.getElementById('login-razao').value || 'Construtora ABC LTDA',
-      doc: document.getElementById('login-cnpj').value || '12.345.678/0001-90',
-      ie: document.getElementById('login-ie').value || '702.123.456',
-      email: document.getElementById('login-email-pj').value || 'contato@abc.com',
+      nome: val('login-resp') || 'Construtora ABC',
+      razao: val('login-razao') || 'Construtora ABC LTDA',
+      doc: val('login-cnpj') || '12.345.678/0001-90',
+      ie: val('login-ie') || '702.123.456',
+      email: val('login-email-pj') || 'contato@abc.com',
+      telefone: val('login-tel-pj') || '(11) 99999-0000',
+      endereco: endereco,
       tipo: 'pj',
-      cashback: 846.20
+      cashback: 846.20,
+      cashbackMesAtual: 92.40,
+      cashbackTotalAcumulado: 1247.80
     };
   }
+  // Pré-preenche o CEP do checkout com o cadastrado
+  if (endereco.cep) state.frete.cep = endereco.cep.replace(/\D/g,'');
   state.cashbackHistory = [
     {data:'04/05/2026', tipo:'in', desc:'Crédito do pedido #1043', valor: state.user.cashback * 0.4},
     {data:'28/04/2026', tipo:'in', desc:'Crédito do pedido #1031', valor: state.user.cashback * 0.35},
@@ -2278,7 +2705,17 @@ function finalizarPedido() {
   var cashbackUso = state.useCashback ? Math.min(saldoCb, subtotal - descontoCupom) : 0;
   var totalSemCb = subtotal + frete - descontoCupom - cashbackUso;
   var total = state.checkoutPay === 'pix' ? totalSemCb * 0.95 : totalSemCb;
-  var cashbackGanho = subtotal * CASHBACK_PCT;
+
+  // CASHBACK COM LIMITE POR CPF
+  var cashbackGanho = 0;
+  if (subtotal >= CASHBACK_CONFIG.valorMinimoCompra) {
+    var ganhoBruto = subtotal * CASHBACK_CONFIG.pct;
+    var disponivelMes = Math.max(0, CASHBACK_CONFIG.limiteMensalCpf - (state.user.cashbackMesAtual || 0));
+    var disponivelAcum = Math.max(0, CASHBACK_CONFIG.limiteAcumuladoCpf - (state.user.cashbackTotalAcumulado || 0));
+    cashbackGanho = Math.min(ganhoBruto, disponivelMes, disponivelAcum);
+    state.user.cashbackMesAtual = (state.user.cashbackMesAtual || 0) + cashbackGanho;
+    state.user.cashbackTotalAcumulado = (state.user.cashbackTotalAcumulado || 0) + cashbackGanho;
+  }
   var opNome = {sedex:'SEDEX',pac:'PAC',expresso:'SEDEX 10'};
 
   // Atribui vendedor (rotativo, exclui Diego — Júnior só atende presencial nessa demo)
@@ -2501,9 +2938,26 @@ function renderFreteCalc(contexto) {
 function renderFooter() {
   return '<footer class="footer"><div class="container">' +
     '<div class="footer-grid">' +
-    '<div><img src="logo-zm.png" alt="ZM Atacadista" style="height:50px;margin-bottom:12px;filter:brightness(0) invert(1)"><p>Referência em atacado e material de construção. Mais de 2.000 produtos para PF e PJ com entrega para todo Brasil.</p></div>' +
-    '<div><h3>Institucional</h3><a href="#">Sobre Nós</a><br><a href="#">Trabalhe Conosco</a><br><a href="#">Política de Privacidade</a><br><a href="#">Termos de Uso</a></div>' +
-    '<div><h3>Atendimento</h3><a href="#">Central de Ajuda</a><br><a href="#">WhatsApp: (34) 98428-2779</a><br><a href="#">SAC: 0800 727 0909</a><br><a href="#">Trocas e Devoluções</a></div>' +
+    '<div>' +
+      '<img src="logo-zm.png" alt="ZM Atacadista" style="height:50px;margin-bottom:12px;filter:brightness(0) invert(1)">' +
+      '<p style="margin-bottom:14px">Referência em atacado e material de construção. Mais de 2.000 produtos para PF e PJ com entrega para todo Brasil.</p>' +
+      '<a href="https://zmfinanceira.com.br" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,rgba(255,214,10,0.15),rgba(255,214,10,0.05));border:1px solid rgba(255,214,10,0.3);border-radius:10px;text-decoration:none;color:#FFD60A;font-size:12px;font-weight:700;transition:all 0.2s">' +
+        '<span style="font-size:20px">💳</span>' +
+        '<span><span style="display:block;font-size:10px;color:#a8a8b3;text-transform:uppercase;letter-spacing:0.08em;font-weight:600">Conheça também</span><span>ZM Financeira →</span></span>' +
+      '</a>' +
+    '</div>' +
+    '<div><h3>Institucional</h3><a href="#">Sobre Nós</a><br><a href="#">Trabalhe Conosco</a><br><a href="#">Política de Privacidade</a><br><a href="#">Termos de Uso</a><br><a href="https://zmfinanceira.com.br" target="_blank" rel="noopener" style="color:#FFD60A">💳 ZM Financeira</a></div>' +
+    '<div>' +
+      '<h3>Atendimento</h3>' +
+      '<div style="margin-bottom:10px"><strong style="color:#fff;display:block;font-size:12px;margin-bottom:2px">📍 Loja Física</strong>' +
+      '<span style="font-size:12px;line-height:1.6">Av. JK, 500 — Centro<br>Águas Lindas de Goiás/GO<br>CEP 72915-000</span></div>' +
+      '<div style="margin-bottom:8px"><strong style="color:#fff;display:block;font-size:12px;margin-bottom:2px">🕐 Horário</strong>' +
+      '<span style="font-size:12px">Seg a Sáb · 08h às 18h</span></div>' +
+      '<a href="https://wa.me/5534984282779" target="_blank">📱 WhatsApp: (34) 98428-2779</a><br>' +
+      '<a href="#">☎️ SAC: 0800 727 0909</a><br>' +
+      '<a href="#">Central de Ajuda</a><br>' +
+      '<a href="#">Trocas e Devoluções</a>' +
+    '</div>' +
     '<div><h3>Formas de Pagamento</h3><div class="footer-payments"><span>PIX</span><span>VISA</span><span>MASTER</span><span>ELO</span><span>BOLETO</span></div><br><h3 style="margin-top:12px">Segurança</h3><p>🔒 Site 100% seguro<br>Certificado SSL</p></div>' +
     '</div>' +
     '<div class="footer-bottom"><span>© 2026 ZM Atacadista e Material de Construção. Todos os direitos reservados. CNPJ: 25.456.789/0001-90</span><span>Desenvolvido por Informus</span></div>' +
@@ -2516,6 +2970,12 @@ document.addEventListener('click', function(e) {
     state.logoEditorOpen = false;
     render();
   }
+});
+
+// Voltar ao topo: aparece quando rolar
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('backToTop');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 400);
 });
 
 // INIT
