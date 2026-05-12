@@ -1387,7 +1387,17 @@ function renderCatalog() {
   // GRID
   h += '<div>';
   if (pageItems.length === 0) {
-    h += '<div class="no-results"><div class="icon">🔍</div><h3 style="font-size:16px;font-weight:700;margin-bottom:6px">Nenhum produto encontrado</h3><p style="font-size:13px;color:var(--gray-400)">Tente ajustar os filtros ou limpar a busca</p><button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="clearFilters()">Limpar filtros</button></div>';
+    // REGISTRAR BUSCA PERDIDA (só se tem termo de busca, não só filtro)
+    if (state.search && state.search.trim().length >= 2) {
+      registrarBuscaPerdida(state.search);
+    }
+    var waMsgFalha = encodeURIComponent('Olá! Procurei "' + (state.search||'') + '" no site da ZM mas não encontrei. Tem como me ajudar?');
+    h += '<div class="no-results"><div class="icon">🔍</div><h3 style="font-size:18px;font-weight:700;margin-bottom:6px">Não encontramos "' + escHtml(state.search||'') + '"</h3>' +
+         '<p style="font-size:13px;color:var(--gray-400);margin-bottom:14px">Mas anotamos sua busca pra trazer pra você. Quer falar com a gente no WhatsApp?</p>' +
+         '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">' +
+         '<a href="https://wa.me/5534984282779?text=' + waMsgFalha + '" target="_blank" style="background:#25D366;color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">💬 Falar no WhatsApp</a>' +
+         '<button class="btn btn-outline btn-sm" onclick="clearFilters()">Limpar filtros</button>' +
+         '</div></div>';
   } else {
     h += '<div class="product-grid">';
     pageItems.forEach(function(p) { h += productCard(p); });
@@ -1807,7 +1817,8 @@ function renderAdmin() {
     ]},
     { label: 'Catálogo', items: [
       {id:'produtos',icon:'<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',label:'Produtos'},
-      {id:'estoque',icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',label:'Estoque'}
+      {id:'estoque',icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',label:'Estoque'},
+      {id:'buscasperdidas',icon:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',label:'Buscas Perdidas'}
     ]},
     { label: 'Marketing', items: [
       {id:'vendedores',icon:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',label:'Vendedores'},
@@ -1843,6 +1854,7 @@ function renderAdmin() {
   else if (state.adminView === 'indicacoes') h += renderAdminIndicacoes();
   else if (state.adminView === 'pix') h += renderAdminPix();
   else if (state.adminView === 'tributacao') h += renderAdminTributacao();
+  else if (state.adminView === 'buscasperdidas') h += renderAdminBuscasPerdidas();
   h += '</div></div>';
   return h;
 }
@@ -2424,6 +2436,101 @@ function renderAdminPix() {
   return h;
 }
 
+function renderAdminBuscasPerdidas() {
+  var todas = loadBuscasPerdidas();
+  var pendentes = todas.filter(function(b){ return !b.atendido && !b.ignorado; });
+  var atendidas = todas.filter(function(b){ return b.atendido; });
+  var ignoradas = todas.filter(function(b){ return b.ignorado; });
+  var totalBuscas = todas.reduce(function(s,b){ return s+b.count; }, 0);
+
+  // Ranking ordenado por demanda (count desc)
+  pendentes.sort(function(a,b){ return b.count - a.count; });
+
+  // Top 7 dias
+  var seteDias = Date.now() - 7*24*60*60*1000;
+  var ultimaSemana = pendentes.filter(function(b){ return new Date(b.lastAt).getTime() >= seteDias; });
+
+  var h = '<div class="admin-header"><h2>🔍 Buscas Perdidas</h2><span style="font-size:13px;color:var(--gray-400)">O que o cliente procurou e não encontrou — sua próxima compra de fornecedor</span></div>';
+
+  // KPIs
+  h += '<div class="stat-grid">';
+  h += '<div class="stat-card"><div class="stat-label">Termos Únicos</div><div class="stat-value">' + pendentes.length + '</div><div class="stat-change">aguardando atendimento</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Total de Buscas</div><div class="stat-value">' + totalBuscas + '</div><div class="stat-change up">demanda acumulada</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Últimos 7 dias</div><div class="stat-value" style="color:var(--orange)">' + ultimaSemana.length + '</div><div class="stat-change">termos quentes</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Já Atendidos</div><div class="stat-value" style="color:var(--green)">' + atendidas.length + '</div><div class="stat-change">produtos cadastrados</div></div>';
+  h += '</div>';
+
+  // Alerta comercial
+  if (pendentes.length > 0) {
+    var top = pendentes[0];
+    h += '<div style="background:linear-gradient(135deg,#fff7ed,#fed7aa);border:1px solid #fdba74;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px">';
+    h += '<div style="font-size:32px">💡</div>';
+    h += '<div style="flex:1"><div style="font-size:13px;font-weight:800;color:#9a3412">Oportunidade comercial detectada</div>';
+    h += '<div style="font-size:12px;color:#7c2d12;margin-top:2px">O termo mais buscado é <strong>"' + escHtml(top.qOriginal) + '"</strong> com <strong>' + top.count + '</strong> busca(s). Considere comprar do fornecedor.</div></div>';
+    h += '<button class="btn btn-orange btn-sm" onclick="exportarBuscasCsv()">📊 Exportar CSV</button>';
+    h += '</div>';
+  }
+
+  // Toolbar
+  h += '<div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">';
+  h += '<div style="font-size:13px;font-weight:700;color:var(--gray-700)">Ranking por demanda</div>';
+  h += '<div style="margin-left:auto;display:flex;gap:8px">';
+  if (pendentes.length > 0) h += '<button class="btn btn-outline btn-sm" onclick="exportarBuscasCsv()">📊 Exportar CSV</button>';
+  if (todas.length > 0) h += '<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="limparBuscasPerdidas()">🗑 Limpar tudo</button>';
+  h += '</div></div>';
+
+  // Tabela
+  if (pendentes.length === 0) {
+    h += '<div style="padding:60px 20px;text-align:center;color:var(--gray-400);background:#fff;border-radius:12px;border:1px solid var(--gray-100)">';
+    h += '<div style="font-size:48px;margin-bottom:12px">✨</div>';
+    h += '<h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Sem buscas perdidas</h3>';
+    h += '<p style="font-size:13px">Quando algum cliente buscar algo que não tem no catálogo, aparece aqui automaticamente.</p>';
+    h += '</div>';
+  } else {
+    h += '<table class="data-table"><thead><tr>';
+    h += '<th style="width:50px">#</th><th>Termo Buscado</th><th>Vezes</th><th>Primeira</th><th>Última</th><th>Interessados</th><th style="text-align:right">Ações</th>';
+    h += '</tr></thead><tbody>';
+    pendentes.forEach(function(b, i){
+      var diasDesde = Math.floor((Date.now() - new Date(b.lastAt).getTime()) / (1000*60*60*24));
+      var ranking = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1);
+      var calor = b.count >= 5 ? '🔥' : b.count >= 3 ? '⚡' : '';
+      h += '<tr>';
+      h += '<td style="font-size:16px;font-weight:700;text-align:center">' + ranking + '</td>';
+      h += '<td><strong style="font-size:14px">' + escHtml(b.qOriginal) + '</strong> ' + calor + '</td>';
+      h += '<td><span style="display:inline-block;min-width:32px;padding:3px 8px;background:' + (b.count>=5?'var(--red)':b.count>=3?'var(--orange)':'var(--blue)') + ';color:#fff;border-radius:20px;font-size:12px;font-weight:800;text-align:center">' + b.count + '</span></td>';
+      h += '<td style="font-size:11px;color:var(--gray-500)">' + new Date(b.firstAt).toLocaleDateString('pt-BR') + '</td>';
+      h += '<td style="font-size:11px;color:var(--gray-500)">' + (diasDesde === 0 ? 'hoje' : diasDesde === 1 ? 'ontem' : 'há ' + diasDesde + ' dias') + '</td>';
+      h += '<td style="font-size:11px;color:var(--gray-500)">' + (b.contatos && b.contatos.length ? b.contatos.length + ' cliente(s)' : '—') + '</td>';
+      h += '<td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">';
+      h += '<button class="btn btn-outline btn-sm" style="color:var(--green);border-color:var(--green)" onclick="marcarBuscaAtendida(\'' + b.q.replace(/'/g,"\\'") + '\')" title="Já cadastrei esse produto">✓ Atendido</button>';
+      h += '<button class="btn btn-outline btn-sm" onclick="ignorarBusca(\'' + b.q.replace(/'/g,"\\'") + '\')" title="Não vou cadastrar">✕ Ignorar</button>';
+      h += '</div></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+  }
+
+  // Histórico (atendidos + ignorados)
+  if (atendidas.length > 0 || ignoradas.length > 0) {
+    h += '<div style="margin-top:30px"><h3 style="font-size:14px;font-weight:700;color:var(--gray-700);margin-bottom:12px">Histórico</h3>';
+    h += '<table class="data-table"><thead><tr><th>Termo</th><th>Vezes</th><th>Status</th><th style="text-align:right">Ação</th></tr></thead><tbody>';
+    atendidas.concat(ignoradas).forEach(function(b){
+      var statusPill = b.atendido
+        ? '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">✓ Atendido</span>'
+        : '<span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">Ignorado</span>';
+      h += '<tr>';
+      h += '<td>' + escHtml(b.qOriginal) + '</td>';
+      h += '<td>' + b.count + '</td>';
+      h += '<td>' + statusPill + '</td>';
+      h += '<td style="text-align:right"><button class="btn btn-outline btn-sm" onclick="reativarBusca(\'' + b.q.replace(/'/g,"\\'") + '\')">↩ Reativar</button> <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="excluirBusca(\'' + b.q.replace(/'/g,"\\'") + '\')">🗑</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+  }
+
+  return h;
+}
+
 function renderAdminTributacao() {
   var totalProdutos = ALL_PRODUCTS.length;
   var produtosST = ALL_PRODUCTS.filter(function(p){return p.icmsST;}).length;
@@ -2883,6 +2990,96 @@ function openNF(orderIdx) {
 function navigate(view) { closeModal(); state.view = view; state.page = 1; window.scrollTo(0,0); render(); }
 function filterCat(catId) { closeModal(); state.catFilter = catId; state.page = 1; state.search = ''; if (state.view==='home'||state.view==='product') state.view='catalog'; render(); }
 function doSearch(val) { closeModal(); state.search = val; state.catFilter = ''; state.page = 1; state.view = 'catalog'; render(); }
+
+// =============================================
+// RANKING DE BUSCAS PERDIDAS (sem resultado)
+// =============================================
+function loadBuscasPerdidas() {
+  try { return JSON.parse(localStorage.getItem('zm_buscas_perdidas') || '[]'); }
+  catch(e) { return []; }
+}
+function saveBuscasPerdidas(list) {
+  try { localStorage.setItem('zm_buscas_perdidas', JSON.stringify(list)); }
+  catch(e) {}
+}
+function registrarBuscaPerdida(query) {
+  if (!query || query.trim().length < 2) return;
+  // Normaliza pra agrupar variações: lowercase + remove acento + trim
+  var norm = query.trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/\s+/g,' ');
+  var list = loadBuscasPerdidas();
+  var existing = list.find(function(b){ return b.q === norm; });
+  if (existing) {
+    existing.count++;
+    existing.lastAt = new Date().toISOString();
+    if (state.user && state.user.telefone) {
+      existing.contatos = existing.contatos || [];
+      if (existing.contatos.indexOf(state.user.telefone) === -1 && existing.contatos.length < 10) {
+        existing.contatos.push(state.user.telefone);
+      }
+    }
+  } else {
+    list.push({
+      q: norm,
+      qOriginal: query.trim(),
+      count: 1,
+      firstAt: new Date().toISOString(),
+      lastAt: new Date().toISOString(),
+      atendido: false,
+      ignorado: false,
+      contatos: state.user && state.user.telefone ? [state.user.telefone] : []
+    });
+  }
+  saveBuscasPerdidas(list);
+}
+function marcarBuscaAtendida(q) {
+  var list = loadBuscasPerdidas();
+  var b = list.find(function(x){ return x.q === q; });
+  if (b) { b.atendido = true; b.atendidoEm = new Date().toISOString(); saveBuscasPerdidas(list); render(); toast('Marcada como atendida — o cliente verá o produto na próxima busca', 'success'); }
+}
+function ignorarBusca(q) {
+  var list = loadBuscasPerdidas();
+  var b = list.find(function(x){ return x.q === q; });
+  if (b) { b.ignorado = true; saveBuscasPerdidas(list); render(); }
+}
+function reativarBusca(q) {
+  var list = loadBuscasPerdidas();
+  var b = list.find(function(x){ return x.q === q; });
+  if (b) { b.ignorado = false; b.atendido = false; saveBuscasPerdidas(list); render(); }
+}
+function excluirBusca(q) {
+  if (!confirm('Remover essa busca do ranking? Não dá pra desfazer.')) return;
+  var list = loadBuscasPerdidas().filter(function(x){ return x.q !== q; });
+  saveBuscasPerdidas(list);
+  render();
+}
+function limparBuscasPerdidas() {
+  if (!confirm('Apagar TODO o histórico de buscas perdidas? Não dá pra desfazer.')) return;
+  saveBuscasPerdidas([]);
+  render();
+  toast('Histórico limpo', 'success');
+}
+function exportarBuscasCsv() {
+  var list = loadBuscasPerdidas().filter(function(b){ return !b.ignorado; });
+  list.sort(function(a,b){ return b.count - a.count; });
+  var csv = 'Termo Buscado,Vezes,Primeira Busca,Última Busca,Status,Contatos Interessados\n';
+  list.forEach(function(b){
+    var status = b.atendido ? 'Atendido' : 'Pendente';
+    var contatos = (b.contatos || []).join('; ');
+    csv += '"' + b.qOriginal.replace(/"/g,'""') + '",' + b.count + ',' +
+      new Date(b.firstAt).toLocaleDateString('pt-BR') + ',' +
+      new Date(b.lastAt).toLocaleDateString('pt-BR') + ',' +
+      status + ',"' + contatos + '"\n';
+  });
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'zm_buscas_perdidas_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV exportado — abra no Excel', 'success');
+}
 function goPage(p) { state.page = p; window.scrollTo(0,0); render(); }
 function openProduct(id) { closeModal(); state.productDetail = id; state.view = 'product'; window.scrollTo(0,0); render(); }
 function toggleCart() { state.cartOpen = !state.cartOpen; renderCartDrawer(); updateCartOverlay(); }
