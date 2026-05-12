@@ -638,6 +638,100 @@ img{max-width:100%;display:block;}
   .seller-card{grid-template-columns:auto 1fr;gap:10px;}
   .seller-bar,.seller-vendas{grid-column:1/-1;}
 }
+
+/* ═══════════════════════════════════════════════════════════
+   UX LEIGO — Ondas 1, 2 e 3
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Banner de Frete Sticky ─── */
+.frete-banner-sticky{position:sticky;top:0;z-index:90;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.frete-banner-sticky .fbs-ico{font-size:18px}
+.frete-banner-sticky strong{font-weight:800}
+
+/* ─── Stars de Avaliação no Card ─── */
+.card-stars{display:flex;align-items:center;gap:4px;margin:6px 0 4px;font-size:11px;color:var(--gray-500)}
+.card-stars .star-row{color:#fbbf24;letter-spacing:1px;font-size:13px}
+.card-stars .star-count{color:var(--gray-400)}
+
+/* ─── Botão Comprar Agora no Card ─── */
+.product-actions{display:flex;flex-direction:column;gap:6px}
+.btn-comprar-agora{background:#f97316;color:#fff;border:none;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;width:100%}
+.btn-comprar-agora:hover{background:#ea580c;transform:translateY(-1px)}
+
+/* ─── Bottom Navigation Mobile ─── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-200);box-shadow:0 -4px 20px rgba(0,0,0,0.08);z-index:100;padding:8px 0 max(8px,env(safe-area-inset-bottom));justify-content:space-around}
+.bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;color:var(--gray-500);text-decoration:none;font-size:10px;font-weight:600;cursor:pointer;transition:color .15s;position:relative;background:none;border:none}
+.bottom-nav-item svg{width:22px;height:22px;stroke-width:2}
+.bottom-nav-item.active{color:var(--blue)}
+.bottom-nav-item.active svg{stroke:var(--blue)}
+.bottom-nav-item .bn-badge{position:absolute;top:2px;right:18px;background:var(--red,#ef4444);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+@media(max-width:768px){
+  .bottom-nav{display:flex}
+  body{padding-bottom:70px}
+  .header-actions{display:none}
+}
+
+/* ─── Toast amigável ─── */
+.toast-wrap{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+@media(min-width:769px){.toast-wrap{bottom:30px}}
+.toast{background:#0f172a;color:#fff;padding:14px 22px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 10px 40px rgba(0,0,0,0.25);pointer-events:auto;animation:toastIn .25s ease;max-width:90vw;text-align:center;display:flex;align-items:center;gap:10px;border-left:4px solid var(--blue)}
+.toast.success{border-left-color:#10b981}
+.toast.warn{border-left-color:#f59e0b}
+.toast.error{border-left-color:#ef4444}
+.toast .toast-ico{font-size:18px}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,30px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* ─── Tour guiado ─── */
+.tour-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.75);z-index:9000;display:none;align-items:center;justify-content:center;padding:20px}
+.tour-overlay.open{display:flex}
+.tour-card{background:#fff;border-radius:18px;padding:32px 28px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;animation:tourIn .3s ease}
+@keyframes tourIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.tour-ico{font-size:64px;margin-bottom:16px}
+.tour-title{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:10px;letter-spacing:-0.02em}
+.tour-text{font-size:15px;color:#475569;line-height:1.5;margin-bottom:24px}
+.tour-progress{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
+.tour-dot{width:8px;height:8px;border-radius:50%;background:#e2e8f0;transition:all .2s}
+.tour-dot.active{background:var(--blue);width:24px;border-radius:4px}
+.tour-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tour-btn{padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.tour-btn-skip{background:transparent;color:#94a3b8}
+.tour-btn-skip:hover{color:#475569}
+.tour-btn-next{background:var(--blue);color:#fff;min-width:120px}
+.tour-btn-next:hover{background:var(--blue-dark)}
+
+/* ─── Modo Simples Toggle ─── */
+.simple-toggle{position:fixed;top:80px;right:20px;z-index:80;background:#fff;border:1px solid var(--gray-200);border-radius:30px;padding:6px 14px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--gray-700);cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.08);transition:all .15s}
+.simple-toggle:hover{border-color:var(--blue);color:var(--blue)}
+.simple-toggle.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.simple-toggle .st-sw{width:32px;height:18px;background:#e2e8f0;border-radius:9px;position:relative;transition:all .2s}
+.simple-toggle .st-sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:all .2s;box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+.simple-toggle.on .st-sw{background:rgba(255,255,255,0.3)}
+.simple-toggle.on .st-sw::after{left:16px}
+@media(max-width:768px){.simple-toggle{top:auto;bottom:85px;right:14px;padding:5px 10px;font-size:11px}}
+body.modo-simples .top-bar{display:none}
+body.modo-simples .nav-bar{display:none}
+
+/* ─── Help popup contextual ─── */
+.help-pop{position:fixed;bottom:90px;right:20px;z-index:80;background:#fff;border-radius:14px;padding:16px 20px;box-shadow:0 12px 32px rgba(0,0,0,0.15);max-width:280px;display:none;animation:helpIn .3s ease;border:1px solid var(--gray-100)}
+.help-pop.open{display:block}
+.help-pop-close{position:absolute;top:8px;right:10px;color:var(--gray-400);background:none;border:none;font-size:18px;cursor:pointer;line-height:1}
+.help-pop h4{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:6px}
+.help-pop p{font-size:12px;color:var(--gray-500);line-height:1.4;margin-bottom:12px}
+.help-pop .help-pop-btn{display:block;background:#25D366;color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none}
+@keyframes helpIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:769px){.help-pop{bottom:30px;right:30px}}
+
+/* ─── Pix Recomendado ─── */
+.pay-method-card{position:relative;border:2px solid var(--gray-200);border-radius:12px;padding:14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.pay-method-card:hover{border-color:var(--blue-light)}
+.pay-method-card.selected{border-color:var(--blue);background:#eff6ff}
+.pay-method-card .pmc-ico{font-size:28px;width:42px;text-align:center}
+.pay-method-card .pmc-body{flex:1}
+.pay-method-card .pmc-title{font-size:14px;font-weight:700;color:#0f172a}
+.pay-method-card .pmc-sub{font-size:11px;color:var(--gray-500);margin-top:2px}
+.pay-method-card.recommended{border-color:#10b981;background:#ecfdf5;position:relative}
+.pay-method-card.recommended::after{content:'⚡ MAIS RÁPIDO';position:absolute;top:-8px;right:12px;background:#10b981;color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:0.5px}
+.pay-method-card.recommended.selected{background:#d1fae5;border-color:#059669}
 </style>
 </head>
 <body>
@@ -894,8 +988,166 @@ var state = {
   useCashback: false,
   cashbackHistory: [],
   cupomAplicado: null,
-  cupomErro: ''
+  cupomErro: '',
+  // UX Leigo
+  modoSimples: localStorage.getItem('zm_modo_simples') === '1',
+  tourSeen: localStorage.getItem('zm_tour_seen') === '1',
+  tourStep: 0,
+  helpShown: false,
+  helpDismissed: false
 };
+
+// =============================================
+// UX HELPERS — Toast, Tour, Modo Simples
+// =============================================
+
+function toast(msg, tipo) {
+  tipo = tipo || 'info';
+  var icones = { info: 'ℹ️', success: '✅', warn: '⚠️', error: '❌' };
+  var wrap = document.getElementById('toast-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'toast-wrap';
+    wrap.className = 'toast-wrap';
+    document.body.appendChild(wrap);
+  }
+  var t = document.createElement('div');
+  t.className = 'toast ' + tipo;
+  t.innerHTML = '<span class="toast-ico">' + icones[tipo] + '</span><span>' + msg + '</span>';
+  wrap.appendChild(t);
+  setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(20px)'; t.style.transition = 'all .3s'; }, 2800);
+  setTimeout(function(){ if (t.parentNode) t.parentNode.removeChild(t); }, 3200);
+}
+
+var TOUR_STEPS = [
+  { ico: '👋', titulo: 'Bem-vindo à ZM!', texto: 'Aqui você encontra material de construção, ferramentas e mais — com preço de atacado mesmo comprando 1 unidade. Te mostro o caminho em 3 passos.' },
+  { ico: '🔍', titulo: 'Como encontrar produtos', texto: 'Use a busca no topo ou clique nas categorias (Cimento, Areia, Telha…). Não achou? Tem botão de WhatsApp em todo lugar — é só pedir.' },
+  { ico: '🛒', titulo: 'Como comprar', texto: 'Clique em "Comprar Agora" (laranja) pra ir direto pro pagamento, ou "+ Adicionar" pra juntar vários itens no carrinho. Pague com Pix em segundos.' },
+  { ico: '✅', titulo: 'Pronto!', texto: 'Qualquer dúvida, o botão verde do WhatsApp fica sempre visível no canto. Boas compras!' }
+];
+
+function startTour() {
+  state.tourStep = 0;
+  renderTour();
+}
+function nextTour() {
+  state.tourStep++;
+  if (state.tourStep >= TOUR_STEPS.length) { endTour(); return; }
+  renderTour();
+}
+function skipTour() { endTour(); }
+function endTour() {
+  localStorage.setItem('zm_tour_seen', '1');
+  state.tourSeen = true;
+  var ov = document.getElementById('tour-overlay');
+  if (ov) ov.classList.remove('open');
+}
+function renderTour() {
+  var ov = document.getElementById('tour-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'tour-overlay';
+    ov.className = 'tour-overlay';
+    document.body.appendChild(ov);
+  }
+  var s = TOUR_STEPS[state.tourStep];
+  var isLast = state.tourStep === TOUR_STEPS.length - 1;
+  var dots = TOUR_STEPS.map(function(_, i){
+    return '<div class="tour-dot' + (i === state.tourStep ? ' active' : '') + '"></div>';
+  }).join('');
+  ov.innerHTML = '<div class="tour-card">' +
+    '<div class="tour-ico">' + s.ico + '</div>' +
+    '<h2 class="tour-title">' + s.titulo + '</h2>' +
+    '<p class="tour-text">' + s.texto + '</p>' +
+    '<div class="tour-progress">' + dots + '</div>' +
+    '<div class="tour-actions">' +
+    (isLast ? '' : '<button class="tour-btn tour-btn-skip" onclick="skipTour()">Pular</button>') +
+    '<button class="tour-btn tour-btn-next" onclick="nextTour()">' + (isLast ? 'Começar a comprar' : 'Próximo →') + '</button>' +
+    '</div></div>';
+  ov.classList.add('open');
+}
+
+function toggleModoSimples() {
+  state.modoSimples = !state.modoSimples;
+  localStorage.setItem('zm_modo_simples', state.modoSimples ? '1' : '0');
+  document.body.classList.toggle('modo-simples', state.modoSimples);
+  toast(state.modoSimples ? 'Modo simples ativado — só o essencial' : 'Modo completo ativado', 'success');
+  render();
+}
+
+function showHelpPop() {
+  if (state.helpDismissed) return;
+  var pop = document.getElementById('help-pop');
+  if (!pop) {
+    pop = document.createElement('div');
+    pop.id = 'help-pop';
+    pop.className = 'help-pop';
+    pop.innerHTML = '<button class="help-pop-close" onclick="dismissHelpPop()">×</button>' +
+      '<h4>👋 Precisa de ajuda?</h4>' +
+      '<p>Está com dúvida em algum produto ou precisa de algo específico? Fala com a gente no WhatsApp — respondemos rapidinho.</p>' +
+      '<a class="help-pop-btn" href="https://wa.me/5534984282779?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20no%20site." target="_blank">💬 Chamar no WhatsApp</a>';
+    document.body.appendChild(pop);
+  }
+  pop.classList.add('open');
+}
+function dismissHelpPop() {
+  state.helpDismissed = true;
+  var pop = document.getElementById('help-pop');
+  if (pop) pop.classList.remove('open');
+}
+
+function setupHelpTimer() {
+  if (state._helpTimer) return;
+  state._helpTimer = setTimeout(function(){
+    if (!state.helpDismissed && state.view !== 'checkout' && state.view !== 'admin') showHelpPop();
+  }, 45000);
+}
+
+function comprarAgora(pid) {
+  // 1 toque: adiciona ao carrinho e vai direto pro checkout
+  var existing = state.cart.find(function(i){return i.pid===pid;});
+  if (existing) existing.qty++;
+  else state.cart.push({pid:pid, qty:1});
+  var p = ALL_PRODUCTS.find(function(x){return x.id===pid;});
+  if (p && p.stock > 0) p.stock--;
+  state.view = 'checkout';
+  state.cartOpen = false;
+  window.scrollTo(0,0);
+  render();
+}
+
+function renderBottomNav() {
+  var cartCount = state.cart.reduce(function(s,i){return s+i.qty;},0);
+  var v = state.view;
+  return '<nav class="bottom-nav" id="bottom-nav">' +
+    '<button class="bottom-nav-item' + (v==='home'?' active':'') + '" onclick="navigate(\'home\')">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' +
+      '<span>Início</span></button>' +
+    '<button class="bottom-nav-item' + (v==='catalog'?' active':'') + '" onclick="navigate(\'catalog\')">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
+      '<span>Buscar</span></button>' +
+    '<button class="bottom-nav-item' + (state.cartOpen?' active':'') + '" onclick="toggleCart()">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
+      (cartCount>0 ? '<span class="bn-badge">' + cartCount + '</span>' : '') +
+      '<span>Carrinho</span></button>' +
+    '<button class="bottom-nav-item' + (v==='client'?' active':'') + '" onclick="if(state.logged){navigate(\'client\')}else{openModal(\'login\')}">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+      '<span>Conta</span></button>' +
+    '</nav>';
+}
+
+function renderFreteBannerSticky() {
+  return '<div class="frete-banner-sticky">' +
+    '<span class="fbs-ico">🚚</span>' +
+    '<span>Frete <strong>GRÁTIS</strong> em compras acima de <strong>R$ 299</strong> · Atendemos todo o Brasil</span>' +
+    '</div>';
+}
+
+function renderModoSimplesToggle() {
+  return '<button class="simple-toggle' + (state.modoSimples?' on':'') + '" onclick="toggleModoSimples()" title="Esconde menus avançados">' +
+    '<span>Modo Simples</span><span class="st-sw"></span></button>';
+}
+
 
 // =============================================
 // RENDER ENGINE
@@ -904,10 +1156,12 @@ var state = {
 function render() {
   var app = document.getElementById('app');
   if (state.view === 'admin') { app.innerHTML = renderAdmin(); return; }
+  document.body.classList.toggle('modo-simples', state.modoSimples);
   var h = '';
-  h += renderTopBar();
+  h += renderFreteBannerSticky();
+  if (!state.modoSimples) h += renderTopBar();
   h += renderHeader();
-  if (state.view !== 'checkout') h += renderNav();
+  if (state.view !== 'checkout' && !state.modoSimples) h += renderNav();
   h += '<main class="container">';
   if (state.view === 'home') h += renderHome();
   else if (state.view === 'catalog') h += renderCatalog();
@@ -916,9 +1170,17 @@ function render() {
   else if (state.view === 'product') h += renderProductDetail();
   h += '</main>';
   h += renderFooter();
+  h += renderBottomNav();
+  h += renderModoSimplesToggle();
   app.innerHTML = h;
   renderCartDrawer();
   updateCartOverlay();
+  setupHelpTimer();
+  // Tour 1ª visita: dispara após render inicial
+  if (!state.tourSeen && !state._tourQueued) {
+    state._tourQueued = true;
+    setTimeout(startTour, 800);
+  }
 }
 
 function renderTopBar() {
@@ -1146,12 +1408,22 @@ function productCard(p) {
   h += '</div><div class="product-body">';
   h += '<div class="product-cat">' + escHtml(p.sub) + '</div>';
   h += '<div class="product-name">' + escHtml(p.name) + '</div>';
+  // Estrelas + prova social
+  var rating = p.rating || 4.5;
+  var fullStars = Math.floor(rating);
+  var stars = '★★★★★'.slice(0, fullStars) + '☆☆☆☆☆'.slice(0, 5-fullStars);
+  h += '<div class="card-stars"><span class="star-row">' + stars + '</span><span class="star-count">' + rating.toFixed(1) + ' · ' + (p.sold||0) + ' vendidos</span></div>';
   if (p.oldPrice) h += '<div class="product-price-old">R$ ' + formatMoney(p.oldPrice) + '</div>';
   h += '<div class="product-price">R$ ' + formatMoney(p.price) + '</div>';
   if (p.installment) h += '<div class="product-installment">até 12x de R$ ' + formatMoney(p.installment) + '</div>';
   h += '<div class="product-actions">';
-  h += '<button class="btn-cart" onclick="event.stopPropagation();addToCart(' + p.id + ')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Comprar</button>';
-  h += '<button class="btn-fav" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
+  // Comprar Agora — destaque laranja, 1 clique direto ao checkout
+  h += '<button class="btn-comprar-agora" onclick="event.stopPropagation();comprarAgora(' + p.id + ')">⚡ Comprar Agora</button>';
+  // Adicionar ao carrinho — secundário
+  h += '<div style="display:flex;gap:6px">';
+  h += '<button class="btn-cart" style="flex:1" onclick="event.stopPropagation();addToCart(' + p.id + ');toast(\'Adicionado ao carrinho!\',\'success\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> + Adicionar</button>';
+  h += '<button class="btn-fav" onclick="event.stopPropagation();toast(\'Favorito salvo (em breve)\',\'info\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
+  h += '</div>';
   h += '</div></div></div>';
   return h;
 }
@@ -1252,12 +1524,21 @@ function renderCheckout() {
   }
   h += '</div>';
 
-  // Pagamento
-  h += '<div class="checkout-section"><h3><span class="step">3</span> Forma de Pagamento</h3>';
-  h += '<div class="pay-method">';
-  h += '<div class="pay-method-card ' + (state.checkoutPay==='pix'?'selected':'') + '" onclick="state.checkoutPay=\'pix\';render()"><div class="pay-icon">📱</div><div class="pay-label">Pix</div></div>';
-  h += '<div class="pay-method-card ' + (state.checkoutPay==='cartao'?'selected':'') + '" onclick="state.checkoutPay=\'cartao\';render()"><div class="pay-icon">💳</div><div class="pay-label">Cartão de Crédito</div></div>';
-  h += '<div class="pay-method-card ' + (state.checkoutPay==='boleto'?'selected':'') + '" onclick="state.checkoutPay=\'boleto\';render()"><div class="pay-icon">📄</div><div class="pay-label">Boleto Bancário</div></div>';
+  // Pagamento — Pix em destaque como recomendado
+  h += '<div class="checkout-section"><h3><span class="step">3</span> Como você quer pagar?</h3>';
+  h += '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">';
+  h += '<div class="pay-method-card recommended ' + (state.checkoutPay==='pix'?'selected':'') + '" onclick="state.checkoutPay=\'pix\';render()">' +
+    '<div class="pmc-ico">📱</div>' +
+    '<div class="pmc-body"><div class="pmc-title">Pix</div><div class="pmc-sub">Aprovado na hora · Sem taxas · Mais usado</div></div>' +
+    '</div>';
+  h += '<div class="pay-method-card ' + (state.checkoutPay==='cartao'?'selected':'') + '" onclick="state.checkoutPay=\'cartao\';render()">' +
+    '<div class="pmc-ico">💳</div>' +
+    '<div class="pmc-body"><div class="pmc-title">Cartão de Crédito</div><div class="pmc-sub">Em até 12x sem juros</div></div>' +
+    '</div>';
+  h += '<div class="pay-method-card ' + (state.checkoutPay==='boleto'?'selected':'') + '" onclick="state.checkoutPay=\'boleto\';render()">' +
+    '<div class="pmc-ico">📄</div>' +
+    '<div class="pmc-body"><div class="pmc-title">Boleto Bancário</div><div class="pmc-sub">Compensação em até 2 dias úteis</div></div>' +
+    '</div>';
   h += '</div>';
 
   if (state.checkoutPay === 'pix') {
@@ -2498,9 +2779,9 @@ function confirmarReposicao(pid) {
   var p = ALL_PRODUCTS.find(function(x){return x.id===pid;});
   if (!p) return;
   var qtd = parseInt(document.getElementById('rep-qtd').value);
-  if (!qtd || qtd <= 0) { alert('Informe a quantidade.'); return; }
+  if (!qtd || qtd <= 0) { toast('Faltou informar a quantidade.', 'warn'); return; }
   var dataRec = document.getElementById('rep-data-rec').value;
-  if (!dataRec) { alert('Informe a data de recebimento.'); return; }
+  if (!dataRec) { toast('Faltou informar a data de recebimento.', 'warn'); return; }
   var rep = {
     pid: pid,
     produto: p.name,
@@ -2690,7 +2971,7 @@ function doLogin(tipo) {
 }
 function finalizarPedido() {
   if (!state.logged) { openModal('login'); return; }
-  if (!state.frete.calculado || !state.frete.opcao) { alert('Por favor, calcule o frete antes de finalizar o pedido.'); return; }
+  if (!state.frete.calculado || !state.frete.opcao) { toast('Calcule o frete antes de finalizar o pedido — é só preencher o CEP.', 'warn'); return; }
   var subtotal = state.cart.reduce(function(s,i){var p=ALL_PRODUCTS.find(function(x){return x.id===i.pid;});return s+(p?p.price*i.qty:0);},0);
   var frete = state.frete.valor;
   var descontoCupom = 0;
@@ -2762,14 +3043,28 @@ function finalizarPedido() {
   state.view = 'client';
   state.clientView = 'pedidos';
   render();
-  var msg = '✅ Pedido #' + order.id + ' realizado com sucesso!\n\n';
-  msg += 'Total: R$ ' + formatMoney(order.total) + '\n';
-  msg += 'Pagamento: ' + order.pay + '\n';
-  msg += 'Vendedor responsável: ' + vendedor.nome + '\n';
-  msg += 'Entrega: ' + order.freteModalidade + ' — ' + order.fretePrazo + '\n';
-  if (cashbackUso > 0) msg += '\n💰 Cashback usado: R$ ' + formatMoney(cashbackUso);
-  msg += '\n💰 Cashback ganho: R$ ' + formatMoney(cashbackGanho) + '\n💰 Saldo atual: R$ ' + formatMoney(state.user.cashback);
-  alert(msg);
+  // Modal de confirmação amigável com link de acompanhamento por WhatsApp
+  var waMsg = encodeURIComponent('Olá! Acabei de fazer o pedido #' + order.id + ' na ZM Atacadista. Gostaria de acompanhar o andamento.');
+  var waLink = 'https://wa.me/5534984282779?text=' + waMsg;
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML =
+    '<div style="background:#fff;border-radius:18px;padding:32px 28px;max-width:440px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)">' +
+      '<div style="font-size:64px;margin-bottom:12px">✅</div>' +
+      '<h2 style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:6px">Pedido confirmado!</h2>' +
+      '<p style="font-size:14px;color:#64748b;margin-bottom:18px">Pedido #<strong>' + order.id + '</strong></p>' +
+      '<div style="background:#f8fafc;border-radius:12px;padding:14px;text-align:left;font-size:13px;color:#334155;margin-bottom:20px;line-height:1.7">' +
+        '<div>💰 <strong>Total:</strong> R$ ' + formatMoney(order.total) + '</div>' +
+        '<div>💳 <strong>Pagamento:</strong> ' + order.pay + '</div>' +
+        '<div>🚚 <strong>Entrega:</strong> ' + order.freteModalidade + ' — ' + order.fretePrazo + '</div>' +
+        '<div>👤 <strong>Atendido por:</strong> ' + vendedor.nome + '</div>' +
+        (cashbackGanho > 0 ? '<div style="color:#10b981;margin-top:6px">🎁 <strong>+R$ ' + formatMoney(cashbackGanho) + '</strong> de cashback ganho</div>' : '') +
+      '</div>' +
+      '<a href="' + waLink + '" target="_blank" style="display:block;background:#25D366;color:#fff;padding:14px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;margin-bottom:10px">💬 Acompanhar pelo WhatsApp</a>' +
+      '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:transparent;color:#64748b;font-size:13px;border:none;cursor:pointer;padding:8px">Fechar</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+  modal.onclick = function(e){ if(e.target === modal) modal.remove(); };
 }
 
 // =============================================
@@ -2811,7 +3106,7 @@ var FRETE_CACHE = {};
 
 function calcularFrete(cepInput, callback) {
   var cep = (cepInput || '').replace(/\D/g, '');
-  if (cep.length !== 8) { alert('CEP inválido. Digite 8 dígitos.'); return; }
+  if (cep.length !== 8) { toast('CEP inválido. Digite os 8 números (sem traço).', 'warn'); return; }
 
   if (FRETE_CACHE[cep]) { callback(FRETE_CACHE[cep]); return; }
 
@@ -2821,7 +3116,7 @@ function calcularFrete(cepInput, callback) {
   fetch('https://viacep.com.br/ws/' + cep + '/json/')
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.erro) { alert('CEP não encontrado. Verifique e tente novamente.'); resetFreteBtn(); return; }
+      if (data.erro) { toast('CEP não encontrado. Confira os números e tente de novo.', 'error'); resetFreteBtn(); return; }
 
       var subtotal = state.cart.reduce(function(s,i){var p=ALL_PRODUCTS.find(function(x){return x.id===i.pid;});return s+(p?p.price*i.qty:0);},0);
       var totalItens = state.cart.reduce(function(s,i){return s+i.qty;},0);
