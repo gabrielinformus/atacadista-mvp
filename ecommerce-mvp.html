@@ -2049,6 +2049,9 @@ function renderAdmin() {
       {id:'cupons',icon:'<svg viewBox="0 0 24 24"><path d="M21 5H3a2 2 0 0 0-2 2v3a3 3 0 1 1 0 6v3a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-3a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2z"/><line x1="13" y1="5" x2="13" y2="19"/></svg>',label:'Cupons'},
       {id:'indicacoes',icon:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',label:'Indicações'}
     ]},
+    { label: 'CRM', items: [
+      {id:'fornecedores',icon:'<svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/><path d="M21 8V3h-5"/><circle cx="12" cy="12" r="3"/></svg>',label:'Fornecedores'}
+    ]},
     { label: 'Fiscal', items: [
       {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'},
       {id:'pix',icon:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>',label:'Pix & NF-e'},
@@ -2078,6 +2081,7 @@ function renderAdmin() {
   else if (state.adminView === 'pix') h += renderAdminPix();
   else if (state.adminView === 'tributacao') h += renderAdminTributacao();
   else if (state.adminView === 'buscasperdidas') h += renderAdminBuscasPerdidas();
+  else if (state.adminView === 'fornecedores') h += renderAdminFornecedores();
   h += '</div></div>';
   return h;
 }
@@ -3651,6 +3655,261 @@ function openNF(orderIdx) {
 function navigate(view) { closeModal(); state.view = view; state.page = 1; window.scrollTo(0,0); render(); }
 function filterCat(catId) { closeModal(); state.catFilter = catId; state.page = 1; state.search = ''; if (state.view==='home'||state.view==='product') state.view='catalog'; render(); }
 function doSearch(val) { closeModal(); state.search = val; state.catFilter = ''; state.page = 1; state.view = 'catalog'; render(); }
+
+// =============================================
+// CRM — FORNECEDORES
+// =============================================
+function loadFornecedores() {
+  try { return JSON.parse(localStorage.getItem('zm_fornecedores') || '[]'); }
+  catch(e) { return []; }
+}
+function saveFornecedores(list) {
+  try { localStorage.setItem('zm_fornecedores', JSON.stringify(list)); }
+  catch(e) {}
+}
+function _fornStatusCor(s) {
+  return s==='ativo' ? {bg:'#d1fae5',fg:'#065f46'}
+       : s==='avaliacao' ? {bg:'#fef3c7',fg:'#92400e'}
+       : s==='bloqueado' ? {bg:'#fee2e2',fg:'#991b1b'}
+       : {bg:'var(--gray-200)',fg:'var(--gray-700)'};
+}
+function _fornStatusLabel(s){
+  return {ativo:'Ativo',inativo:'Inativo',avaliacao:'Em avaliação',bloqueado:'Bloqueado'}[s]||s;
+}
+
+function renderAdminFornecedores() {
+  var lista = loadFornecedores();
+  var filtro = state.fornFilter || (state.fornFilter = {search:'',status:'',cat:''});
+  var filtrada = lista.filter(function(f){
+    if (filtro.search) {
+      var s = filtro.search.toLowerCase();
+      if ((f.razao||'').toLowerCase().indexOf(s)<0 && (f.fantasia||'').toLowerCase().indexOf(s)<0 && (f.cnpj||'').indexOf(s)<0 && (f.contatoNome||'').toLowerCase().indexOf(s)<0) return false;
+    }
+    if (filtro.status && f.status !== filtro.status) return false;
+    if (filtro.cat && f.categoria !== filtro.cat) return false;
+    return true;
+  });
+
+  var totalAtivos = lista.filter(function(f){return f.status==='ativo';}).length;
+  var totalCompras = lista.reduce(function(s,f){return s + (f.totalComprado||0);},0);
+  var categorias = {};
+  lista.forEach(function(f){ if (f.categoria) categorias[f.categoria] = true; });
+  var qtdCategorias = Object.keys(categorias).length;
+
+  var h = '<div class="admin-header"><h2>Fornecedores</h2><button class="btn btn-primary btn-sm" onclick="abrirFornecedor()">+ Novo fornecedor</button></div>';
+
+  // KPIs
+  h += '<div class="stat-grid" style="margin-bottom:18px">';
+  h += '<div class="stat-card"><div class="stat-label">Cadastrados</div><div class="stat-value">' + lista.length + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-value">' + totalAtivos + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Total comprado</div><div class="stat-value">R$ ' + formatMoney(totalCompras) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Categorias</div><div class="stat-value">' + qtdCategorias + '</div></div>';
+  h += '</div>';
+
+  // Toolbar de filtros
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);display:flex;gap:10px;align-items:center;flex-wrap:wrap">';
+  h += '<input class="form-input" style="flex:1;min-width:200px;max-width:340px" placeholder="🔍 Buscar razão social, CNPJ ou contato..." value="' + escHtml(filtro.search) + '" oninput="state.fornFilter.search=this.value;render();document.querySelector(\'.admin-content input[placeholder^=\\\'🔍 Buscar razao\\\']\')&&document.querySelector(\'.admin-content input[placeholder^=\\\'🔍 Buscar razao\\\']\').focus()">';
+  h += '<select class="form-input" style="max-width:170px" onchange="state.fornFilter.status=this.value;render()">';
+  h += '<option value="">Todos os status</option>';
+  ['ativo','avaliacao','inativo','bloqueado'].forEach(function(s){
+    h += '<option value="'+s+'"'+(filtro.status===s?' selected':'')+'>'+_fornStatusLabel(s)+'</option>';
+  });
+  h += '</select>';
+  h += '<select class="form-input" style="max-width:200px" onchange="state.fornFilter.cat=this.value;render()">';
+  h += '<option value="">Todas as categorias</option>';
+  CATEGORIES.forEach(function(c){
+    h += '<option value="'+c.id+'"'+(filtro.cat===c.id?' selected':'')+'>'+c.label+'</option>';
+  });
+  h += '</select>';
+  if (filtro.search || filtro.status || filtro.cat) h += '<button class="btn btn-outline btn-sm" onclick="state.fornFilter={search:\'\',status:\'\',cat:\'\'};render()">✕ Limpar</button>';
+  h += '</div>';
+
+  // Tabela
+  if (filtrada.length === 0) {
+    h += '<div style="padding:60px 20px;text-align:center;color:var(--gray-400)">';
+    h += '<div style="font-size:42px;margin-bottom:10px">🏢</div>';
+    if (lista.length === 0) {
+      h += '<h3 style="font-size:15px;color:var(--gray-700);margin-bottom:6px">Sem fornecedores cadastrados</h3>';
+      h += '<p style="font-size:13px;margin-bottom:16px">Comece cadastrando seu primeiro fornecedor — mantenha o histórico de contatos, prazos e compras num só lugar.</p>';
+      h += '<button class="btn btn-primary btn-sm" onclick="abrirFornecedor()">+ Cadastrar primeiro fornecedor</button>';
+    } else {
+      h += '<h3 style="font-size:15px;color:var(--gray-700);margin-bottom:6px">Nenhum resultado pra esse filtro</h3>';
+      h += '<p style="font-size:13px">Tenta limpar os filtros ou busca outro termo.</p>';
+    }
+    h += '</div>';
+  } else {
+    h += '<table class="data-table"><thead><tr>';
+    h += '<th>Razão Social</th><th>CNPJ</th><th>Contato</th><th>Categoria</th><th>Status</th><th>Último contato</th><th>Total comprado</th><th style="text-align:right">Ações</th>';
+    h += '</tr></thead><tbody>';
+    filtrada.forEach(function(f){
+      var s = _fornStatusCor(f.status);
+      var diasUlt = f.ultContato ? Math.floor((Date.now() - new Date(f.ultContato).getTime())/(1000*60*60*24)) : null;
+      var ultTxt = diasUlt == null ? '—' : (diasUlt === 0 ? 'hoje' : (diasUlt === 1 ? 'ontem' : 'há '+diasUlt+' dias'));
+      var catLabel = (CATEGORIES.find(function(c){return c.id===f.categoria;})||{}).label || (f.categoria||'—');
+      h += '<tr>';
+      h += '<td><strong>' + escHtml(f.razao||'—') + '</strong>' + (f.fantasia ? '<div style="font-size:11px;color:var(--gray-400)">' + escHtml(f.fantasia) + '</div>' : '') + '</td>';
+      h += '<td style="font-family:monospace;font-size:11px;color:var(--gray-600)">' + escHtml(f.cnpj||'—') + '</td>';
+      h += '<td><div style="font-size:12px;font-weight:600">' + escHtml(f.contatoNome||'—') + '</div>';
+      h += '<div style="font-size:10px;color:var(--gray-500)">' + escHtml(f.telefone||'') + '</div></td>';
+      h += '<td style="font-size:12px">' + escHtml(catLabel) + '</td>';
+      h += '<td><span style="display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;background:' + s.bg + ';color:' + s.fg + '">' + _fornStatusLabel(f.status||'ativo') + '</span></td>';
+      h += '<td style="font-size:12px;color:var(--gray-500)">' + ultTxt + '</td>';
+      h += '<td style="font-weight:700">R$ ' + formatMoney(f.totalComprado||0) + '</td>';
+      h += '<td style="text-align:right;white-space:nowrap">';
+      if (f.telefone) h += '<a class="btn btn-sm" style="background:#25D366;color:#fff;border:0;text-decoration:none;padding:6px 8px" href="' + _whatsappLink(f.telefone, f.razao||'fornecedor') + '" target="_blank" rel="noopener" title="WhatsApp">💬</a> ';
+      h += '<button class="btn btn-outline btn-sm" onclick="abrirFornecedor(\'' + f.id + '\')" title="Editar">✏️</button>';
+      h += '</td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    h += '<div style="padding:10px 18px;font-size:11px;color:var(--gray-400)">Mostrando ' + filtrada.length + ' de ' + lista.length + ' fornecedores</div>';
+  }
+  h += '</div>';
+
+  return h;
+}
+
+function abrirFornecedor(id) {
+  var lista = loadFornecedores();
+  var f = id ? lista.find(function(x){return x.id===id;}) : null;
+  var editing = !!f;
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-lg';
+
+  var h = '<div class="modal-header"><h3>' + (editing?'✏️ Editar Fornecedor':'➕ Novo Fornecedor') + '</h3>';
+  h += '<button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+
+  // Identificação
+  h += '<div class="form-section-title" style="margin-top:0">Identificação</div>';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Razão Social *</label>';
+  h += '<input class="form-input" id="fn-razao" value="' + escHtml(f?f.razao:'') + '" placeholder="Empresa LTDA"></div>';
+  h += '<div class="form-group"><label class="form-label">Nome Fantasia</label>';
+  h += '<input class="form-input" id="fn-fantasia" value="' + escHtml(f?f.fantasia:'') + '" placeholder="Nome comercial"></div></div>';
+
+  h += '<div class="form-row" style="grid-template-columns:1fr 1fr 1fr"><div class="form-group"><label class="form-label">CNPJ *</label>';
+  h += '<input class="form-input" id="fn-cnpj" value="' + escHtml(f?f.cnpj:'') + '" placeholder="00.000.000/0000-00"></div>';
+  h += '<div class="form-group"><label class="form-label">Inscrição Estadual</label>';
+  h += '<input class="form-input" id="fn-ie" value="' + escHtml(f?f.ie:'') + '" placeholder="000.000.000.000"></div>';
+  h += '<div class="form-group"><label class="form-label">Status</label>';
+  h += '<select class="form-input" id="fn-status">';
+  ['ativo','avaliacao','inativo','bloqueado'].forEach(function(s){
+    h += '<option value="'+s+'"'+(f&&f.status===s?' selected':(s==='ativo'&&!f?' selected':''))+'>'+_fornStatusLabel(s)+'</option>';
+  });
+  h += '</select></div></div>';
+
+  // Contato
+  h += '<div class="form-section-title">Contato</div>';
+  h += '<div class="form-row" style="grid-template-columns:1fr 1fr"><div class="form-group"><label class="form-label">Nome do contato</label>';
+  h += '<input class="form-input" id="fn-contato" value="' + escHtml(f?f.contatoNome:'') + '" placeholder="Quem atende"></div>';
+  h += '<div class="form-group"><label class="form-label">Cargo</label>';
+  h += '<input class="form-input" id="fn-cargo" value="' + escHtml(f?f.contatoCargo:'') + '" placeholder="Comercial / Vendas / Diretor..."></div></div>';
+
+  h += '<div class="form-row" style="grid-template-columns:1fr 1fr 1fr"><div class="form-group"><label class="form-label">Telefone / WhatsApp</label>';
+  h += '<input class="form-input" id="fn-tel" value="' + escHtml(f?f.telefone:'') + '" placeholder="(00) 00000-0000"></div>';
+  h += '<div class="form-group"><label class="form-label">E-mail</label>';
+  h += '<input class="form-input" id="fn-email" value="' + escHtml(f?f.email:'') + '" placeholder="contato@empresa.com"></div>';
+  h += '<div class="form-group"><label class="form-label">Site</label>';
+  h += '<input class="form-input" id="fn-site" value="' + escHtml(f?f.site:'') + '" placeholder="empresa.com.br"></div></div>';
+
+  // Endereço
+  h += '<div class="form-section-title">Endereço</div>';
+  h += '<div class="form-row" style="grid-template-columns:120px 1fr 100px"><div class="form-group"><label class="form-label">CEP</label>';
+  h += '<input class="form-input" id="fn-cep" value="' + escHtml(f?f.cep:'') + '" placeholder="00000-000"></div>';
+  h += '<div class="form-group"><label class="form-label">Endereço (rua, nº, bairro)</label>';
+  h += '<input class="form-input" id="fn-endereco" value="' + escHtml(f?f.endereco:'') + '" placeholder="Av. Brasil, 1000, Centro"></div>';
+  h += '<div class="form-group"><label class="form-label">UF</label>';
+  h += '<input class="form-input" id="fn-uf" value="' + escHtml(f?f.uf:'') + '" placeholder="GO"></div></div>';
+  h += '<div class="form-group"><label class="form-label">Cidade</label>';
+  h += '<input class="form-input" id="fn-cidade" value="' + escHtml(f?f.cidade:'') + '" placeholder="Goiânia"></div>';
+
+  // Comercial
+  h += '<div class="form-section-title">Dados comerciais</div>';
+  h += '<div class="form-row" style="grid-template-columns:1fr 1fr 1fr"><div class="form-group"><label class="form-label">Categoria fornecida</label>';
+  h += '<select class="form-input" id="fn-cat"><option value="">— escolher —</option>';
+  CATEGORIES.forEach(function(c){
+    h += '<option value="'+c.id+'"'+(f&&f.categoria===c.id?' selected':'')+'>'+c.label+'</option>';
+  });
+  h += '</select></div>';
+  h += '<div class="form-group"><label class="form-label">Prazo padrão (dias)</label>';
+  h += '<input class="form-input" type="number" id="fn-prazo" value="' + (f?f.prazo||30:30) + '"></div>';
+  h += '<div class="form-group"><label class="form-label">Avaliação (1-5)</label>';
+  h += '<select class="form-input" id="fn-rating">';
+  for (var r=1;r<=5;r++) h += '<option value="'+r+'"'+(f&&f.rating===r?' selected':(r===4&&!f?' selected':''))+'>'+'★'.repeat(r)+'☆'.repeat(5-r)+'</option>';
+  h += '</select></div></div>';
+
+  h += '<div class="form-row" style="grid-template-columns:1fr 1fr"><div class="form-group"><label class="form-label">Total já comprado (R$)</label>';
+  h += '<input class="form-input" type="number" step="0.01" id="fn-total" value="' + (f?f.totalComprado||0:0) + '"></div>';
+  h += '<div class="form-group"><label class="form-label">Último contato</label>';
+  h += '<input class="form-input" type="date" id="fn-ultc" value="' + (f&&f.ultContato?f.ultContato.slice(0,10):new Date().toISOString().slice(0,10)) + '"></div></div>';
+
+  // Notas
+  h += '<div class="form-section-title">Observações / histórico</div>';
+  h += '<div class="form-group"><label class="form-label">Notas internas</label>';
+  h += '<textarea class="form-input" id="fn-notas" rows="3" placeholder="Condições especiais, problemas conhecidos, oportunidades...">' + escHtml(f?f.notas:'') + '</textarea></div>';
+
+  h += '</div>'; // modal-body
+
+  h += '<div class="modal-footer">';
+  if (editing) h += '<button class="btn btn-outline" style="margin-right:auto;color:var(--red);border-color:var(--red)" onclick="excluirFornecedor(\'' + f.id + '\')">🗑 Excluir</button>';
+  h += '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';
+  if (editing && f.telefone) h += '<a class="btn" style="background:#25D366;color:#fff;border:0;text-decoration:none" href="' + _whatsappLink(f.telefone, f.razao||'fornecedor') + '" target="_blank" rel="noopener">💬 WhatsApp</a>';
+  h += '<button class="btn btn-primary" onclick="salvarFornecedor(' + (editing?'\''+f.id+'\'':'null') + ')">' + (editing?'💾 Salvar':'➕ Cadastrar') + '</button>';
+  h += '</div>';
+
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+
+function salvarFornecedor(id) {
+  var razao = document.getElementById('fn-razao').value.trim();
+  var cnpj = document.getElementById('fn-cnpj').value.trim();
+  if (!razao) { toast('Razão social é obrigatória.','warn'); return; }
+  if (!cnpj) { toast('CNPJ é obrigatório.','warn'); return; }
+  var lista = loadFornecedores();
+  var existing = id ? lista.find(function(x){return x.id===id;}) : null;
+  var f = existing || {id: 'forn_' + Date.now(), criadoEm: new Date().toISOString()};
+  f.razao = razao;
+  f.fantasia = document.getElementById('fn-fantasia').value.trim();
+  f.cnpj = cnpj;
+  f.ie = document.getElementById('fn-ie').value.trim();
+  f.status = document.getElementById('fn-status').value;
+  f.contatoNome = document.getElementById('fn-contato').value.trim();
+  f.contatoCargo = document.getElementById('fn-cargo').value.trim();
+  f.telefone = document.getElementById('fn-tel').value.trim();
+  f.email = document.getElementById('fn-email').value.trim();
+  f.site = document.getElementById('fn-site').value.trim();
+  f.cep = document.getElementById('fn-cep').value.trim();
+  f.endereco = document.getElementById('fn-endereco').value.trim();
+  f.cidade = document.getElementById('fn-cidade').value.trim();
+  f.uf = document.getElementById('fn-uf').value.trim().toUpperCase();
+  f.categoria = document.getElementById('fn-cat').value;
+  f.prazo = parseInt(document.getElementById('fn-prazo').value,10) || 30;
+  f.rating = parseInt(document.getElementById('fn-rating').value,10) || 4;
+  f.totalComprado = parseFloat(document.getElementById('fn-total').value) || 0;
+  f.ultContato = document.getElementById('fn-ultc').value;
+  f.notas = document.getElementById('fn-notas').value.trim();
+  f.atualizadoEm = new Date().toISOString();
+  if (!existing) lista.unshift(f);
+  saveFornecedores(lista);
+  closeModal();
+  toast(existing?'✅ Fornecedor atualizado':'✅ Fornecedor cadastrado','success');
+  render();
+}
+
+function excluirFornecedor(id) {
+  var lista = loadFornecedores();
+  var f = lista.find(function(x){return x.id===id;});
+  if (!f) return;
+  if (!confirm('Excluir o fornecedor "'+f.razao+'"?\n\nEssa ação não pode ser desfeita.')) return;
+  lista = lista.filter(function(x){return x.id!==id;});
+  saveFornecedores(lista);
+  closeModal();
+  toast('🗑 Fornecedor excluído','success');
+  render();
+}
 
 // =============================================
 // RANKING DE BUSCAS PERDIDAS (sem resultado)
