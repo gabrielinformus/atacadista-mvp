@@ -2366,7 +2366,38 @@ function renderAdminEstoque() {
     h += '<td><button class="btn btn-primary btn-sm" onclick="abrirReposicao(' + p.id + ')">📦 Repor</button></td></tr>';
   });
   h += '</tbody></table></div>';
+
+  // Histórico de Entradas (reposições)
+  if (state.reposicoes && state.reposicoes.length) {
+    h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-top:18px">';
+    h += '<div style="padding:16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--gray-200)">📥 Histórico de Entradas (' + state.reposicoes.length + ')</div>';
+    h += '<table class="data-table"><thead><tr><th>Data</th><th>Produto</th><th>Qtd</th><th>Fornecedor</th><th>Lote/NF</th><th>Custo</th><th>NF Anexa</th></tr></thead><tbody>';
+    state.reposicoes.slice(0,30).forEach(function(r, idx){
+      h += '<tr><td style="font-size:12px">' + new Date(r.dataRec).toLocaleDateString('pt-BR') + '</td>';
+      h += '<td style="font-size:12px"><strong>' + escHtml(r.produto) + '</strong></td>';
+      h += '<td style="font-weight:700">+' + r.qtd + ' ' + r.un + '</td>';
+      h += '<td style="font-size:12px">' + escHtml(r.fornecedor||'—') + '</td>';
+      h += '<td style="font-size:11px;font-family:monospace">' + escHtml(r.lote||'—') + '</td>';
+      h += '<td style="font-size:12px">' + (r.custo?'R$ '+formatMoney(r.custo):'—') + '</td>';
+      if (r.nfData) {
+        h += '<td><button class="btn btn-outline btn-sm" onclick="verNfReposicao(' + idx + ')" title="' + escHtml(r.nfName) + '">📎 Ver</button></td>';
+      } else {
+        h += '<td style="font-size:11px;color:var(--gray-400)">sem anexo</td>';
+      }
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+  }
+
   return h;
+}
+
+function verNfReposicao(idx) {
+  var r = state.reposicoes[idx];
+  if (!r || !r.nfData) return;
+  var w = window.open();
+  if (!w) { toast('Bloqueio de pop-up. Libere pra visualizar.','warn'); return; }
+  w.document.write('<title>'+escHtml(r.nfName)+'</title><iframe src="'+r.nfData+'" style="border:0;width:100%;height:100vh"></iframe>');
 }
 
 function renderAdminPagamentos() {
@@ -3221,6 +3252,19 @@ function abrirReposicao(pid) {
 
   h += '<div class="form-group"><label class="form-label">Observação</label><textarea class="form-input" id="rep-obs" rows="2" placeholder="Notas sobre a entrada (opcional)"></textarea></div>';
 
+  // Anexar NF
+  h += '<div class="form-group"><label class="form-label">📎 Anexar Nota Fiscal (PDF ou imagem)</label>';
+  h += '<div style="border:2px dashed var(--gray-200);border-radius:var(--radius-sm);padding:14px;background:var(--gray-50);text-align:center" id="rep-nf-box">';
+  h += '<input type="file" id="rep-nf-file" accept="application/pdf,image/*" style="display:none" onchange="anexarNfReposicao(event)">';
+  h += '<input type="hidden" id="rep-nf-data">';
+  h += '<input type="hidden" id="rep-nf-name">';
+  h += '<input type="hidden" id="rep-nf-type">';
+  h += '<div id="rep-nf-empty"><div style="font-size:32px;margin-bottom:4px">📄</div><div style="font-size:12px;color:var(--gray-500);margin-bottom:8px">Anexe a NF de entrada do fornecedor</div>';
+  h += '<button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById(\'rep-nf-file\').click()">📎 Selecionar arquivo</button>';
+  h += '<div style="font-size:10px;color:var(--gray-400);margin-top:6px">PDF, JPG ou PNG · até 3MB</div></div>';
+  h += '<div id="rep-nf-preview" style="display:none"></div>';
+  h += '</div></div>';
+
   h += '<div style="background:var(--blue-50);border:1px solid rgba(7,42,216,0.15);border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:var(--gray-700);margin-top:8px"><strong>💡 Atenção:</strong> A entrada será registrada no histórico, somada ao estoque atual e gerará movimentação na contabilidade. Se houver data de validade, alertas automáticos serão criados a 30/15/7 dias do vencimento.</div>';
 
   h += '</div>';
@@ -3248,6 +3292,9 @@ function confirmarReposicao(pid) {
     custo: parseFloat(document.getElementById('rep-custo').value) || 0,
     fornecedor: document.getElementById('rep-forn').value || '',
     obs: document.getElementById('rep-obs').value || '',
+    nfData: document.getElementById('rep-nf-data').value || '',
+    nfName: document.getElementById('rep-nf-name').value || '',
+    nfType: document.getElementById('rep-nf-type').value || '',
     estoqueAntes: p.stock,
     estoqueDepois: p.stock + qtd
   };
@@ -3261,8 +3308,50 @@ function confirmarReposicao(pid) {
   if (rep.dataVal) msg += '⏳ Vence em ' + new Date(rep.dataVal).toLocaleDateString('pt-BR') + '\n';
   if (rep.lote) msg += '🏷️ Lote: ' + rep.lote + '\n';
   if (rep.fornecedor) msg += '🏢 Fornecedor: ' + rep.fornecedor;
+  if (rep.nfName) msg += '\n📎 NF anexada: ' + rep.nfName;
   alert(msg);
   render();
+}
+
+function anexarNfReposicao(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  if (file.size > 3*1024*1024) { toast('Arquivo muito grande (máx 3MB).','warn'); ev.target.value=''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    document.getElementById('rep-nf-data').value = dataUrl;
+    document.getElementById('rep-nf-name').value = file.name;
+    document.getElementById('rep-nf-type').value = file.type;
+    document.getElementById('rep-nf-empty').style.display = 'none';
+    var prev = document.getElementById('rep-nf-preview');
+    prev.style.display = 'block';
+    var icon = file.type === 'application/pdf' ? '📕' : '🖼️';
+    var sizeKb = (file.size/1024).toFixed(0);
+    prev.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#fff;border:1px solid var(--gray-200);border-radius:6px;text-align:left">'
+      + '<div style="font-size:28px">'+icon+'</div>'
+      + '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(file.name)+'</div>'
+      + '<div style="font-size:10px;color:var(--gray-500)">'+sizeKb+' KB · anexada</div></div>'
+      + '<button type="button" class="btn btn-outline btn-sm" onclick="visualizarNfAnexada()" title="Visualizar">👁</button>'
+      + '<button type="button" class="btn btn-outline btn-sm" onclick="removerNfAnexada()" title="Remover" style="color:var(--red);border-color:var(--red)">✕</button>'
+      + '</div>';
+  };
+  reader.readAsDataURL(file);
+}
+function removerNfAnexada() {
+  document.getElementById('rep-nf-data').value = '';
+  document.getElementById('rep-nf-name').value = '';
+  document.getElementById('rep-nf-type').value = '';
+  document.getElementById('rep-nf-file').value = '';
+  document.getElementById('rep-nf-empty').style.display = 'block';
+  document.getElementById('rep-nf-preview').style.display = 'none';
+}
+function visualizarNfAnexada() {
+  var url = document.getElementById('rep-nf-data').value;
+  if (!url) return;
+  var w = window.open();
+  if (!w) { toast('Bloqueio de pop-up. Libere pra visualizar.','warn'); return; }
+  w.document.write('<title>NF anexada</title><iframe src="'+url+'" style="border:0;width:100%;height:100vh"></iframe>');
 }
 
 function openNF(orderIdx) {
