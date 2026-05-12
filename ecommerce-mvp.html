@@ -1560,27 +1560,8 @@ function renderProductDetail() {
   h += '<div style="font-size:12px;color:var(--gray-500)">🛡️ Garantia do vendedor</div>';
   h += '<div style="font-size:12px;color:var(--gray-500)">💳 Pix, cartão e boleto</div>';
   h += '</div>';
-  // FISCAL DO PRODUTO (Simples Nacional - Lei 12.741)
-  if (p.ncm) {
-    // Carga tributária aproximada IBPT (já inclui DAS + ICMS-ST quando aplicável)
-    var cargaPct = p.cargaIbpt || 6.0;
-    var totalImposto = p.price * cargaPct / 100;
-    h += '<div class="tax-breakdown" style="margin-top:18px">';
-    h += '<h4>📋 Tributação deste produto</h4>';
-    h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
-    h += '<span class="fiscal-pill ncm">NCM ' + p.ncm + '</span>';
-    h += '<span class="fiscal-pill cst">CSOSN ' + (p.cst||'102') + '</span>';
-    if (p.icmsST) h += '<span class="fiscal-pill st">ICMS-ST</span>';
-    h += '<span class="fiscal-pill" style="background:#ECFDF5;color:#065F46">SIMPLES NACIONAL</span>';
-    h += '</div>';
-    h += '<div class="tax-line"><span>Carga tributária aproximada (IBPT)</span><span><strong>' + cargaPct.toFixed(1) + '%</strong></span></div>';
-    h += '<div class="tax-line"><span>↳ ICMS referência GO</span><span>' + p.icms + '%' + (p.icmsST?' (recolhido por ST)':'') + '</span></div>';
-    if (p.icmsST) h += '<div class="tax-line"><span>↳ Convênio ICMS</span><span>142/2018 (atualizado 184/2024)</span></div>';
-    h += '<div class="tax-line"><span>↳ DAS Simples Anexo I</span><span>~' + TRIBUTACAO_API.municipioSede.aliquotaDasEfetiva.toFixed(2) + '% sobre receita</span></div>';
-    h += '<div class="tax-total"><span>Tributos inclusos no preço</span><span>R$ ' + formatMoney(totalImposto) + '</span></div>';
-    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:8px">Lei da Transparência (12.741/2012). Fonte: ' + TRIBUTACAO_API.provedor + '. Empresa optante pelo Simples Nacional — tributos federais (PIS, COFINS, IRPJ, CSLL, CPP) e ICMS são recolhidos via DAS único.</div>';
-    h += '</div>';
-  }
+  // Tributação detalhada foi removida da página pública do produto.
+  // Lei 12.741/2012 é cumprida na nota fiscal/cupom no checkout, não no card de produto.
   h += renderFreteCalc('produto');
   h += '</div></div></div>';
   return h;
