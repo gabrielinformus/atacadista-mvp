@@ -2030,7 +2030,7 @@ function renderClientArea() {
 function renderAdmin() {
   var h = '<div class="admin-wrap">';
   h += '<div class="admin-sidebar">';
-  h += '<div class="admin-logo"><img src="logo-zm.png" alt="ZM" style="height:32px;filter:brightness(0) invert(1)"> <small>ADMIN</small></div>';
+  h += '<div class="admin-logo"><img src="logo-zm.png" alt="ZM" style="height:36px"> <small>ADMIN</small></div>';
   h += '<ul class="admin-nav">';
   var navGroups = [
     { label: 'Principal', items: [
@@ -2738,33 +2738,38 @@ function renderAdminCashback() {
   var saldoAtivo = totalDistribuido - totalResgatado;
   var clientesAtivos = 287;
 
-  var h = '<div class="admin-header"><h2>💰 Programa de Cashback</h2><span style="font-size:13px;color:var(--gray-400)">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '% de retorno · limite R$ ' + CASHBACK_CONFIG.limiteMensalCpf + '/mês por CPF</span></div>';
-  h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Distribuído (Mês)</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(totalDistribuido) + '</div><div class="stat-change up">↑ 22% vs mês passado</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Resgatado</div><div class="stat-value">R$ ' + formatMoney(totalResgatado) + '</div><div class="stat-change">' + Math.round(totalResgatado/totalDistribuido*100) + '% do total</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Saldo Ativo</div><div class="stat-value" style="color:var(--yellow)">R$ ' + formatMoney(saldoAtivo) + '</div><div class="stat-change">A vencer</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Clientes Ativos</div><div class="stat-value">' + clientesAtivos + '</div><div class="stat-change up">↑ 34 novos no mês</div></div>';
+  var h = '<div class="admin-header"><h2>Cashback</h2><span style="font-size:12px;color:var(--gray-400)">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '% de retorno · limite R$ ' + CASHBACK_CONFIG.limiteMensalCpf + '/mês</span></div>';
+
+  // KPIs neutros
+  h += '<div class="stat-grid" style="margin-bottom:18px">';
+  h += '<div class="stat-card"><div class="stat-label">Distribuído</div><div class="stat-value">R$ ' + formatMoney(totalDistribuido) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Resgatado</div><div class="stat-value">R$ ' + formatMoney(totalResgatado) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Saldo Ativo</div><div class="stat-value">R$ ' + formatMoney(saldoAtivo) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Clientes</div><div class="stat-value">' + clientesAtivos + '</div></div>';
   h += '</div>';
 
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">';
-  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">⚙️ Configuração de Cashback</h3>';
-  h += '<div class="form-group"><label class="form-label">% de cashback por compra</label>';
-  h += '<div style="display:flex;align-items:center;gap:12px"><input type="range" min="0" max="10" step="0.5" value="' + (CASHBACK_CONFIG.pct*100) + '" oninput="CASHBACK_CONFIG.pct=parseFloat(this.value)/100;CASHBACK_PCT=CASHBACK_CONFIG.pct;document.getElementById(\'cb-pct-display\').textContent=this.value+\'%\';" style="flex:1;accent-color:var(--green)">';
-  h += '<span id="cb-pct-display" style="min-width:60px;font-weight:800;color:var(--green);font-size:16px;text-align:center;background:var(--green-light);padding:6px 10px;border-radius:6px">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '%</span>';
-  h += '</div>';
-  h += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray-400);margin-top:4px;font-weight:600"><span>0% (desativado)</span><span>5%</span><span>10% (máximo)</span></div></div>';
-  h += '<div class="form-group"><label class="form-label">🛡️ Limite mensal por CPF/CNPJ <span style="color:var(--gray-400);font-weight:500">(anti-fraude)</span></label>';
-  h += '<div style="display:flex;gap:8px"><span style="padding:10px;color:var(--gray-500);font-weight:600">R$</span><input class="form-input" type="number" value="' + CASHBACK_CONFIG.limiteMensalCpf + '" onchange="CASHBACK_CONFIG.limiteMensalCpf=parseFloat(this.value)||0" style="max-width:120px"><span style="padding:10px;color:var(--gray-400);font-size:12px">/ mês</span></div></div>';
-  h += '<div class="form-group"><label class="form-label">🔒 Limite acumulado por CPF/CNPJ</label>';
-  h += '<div style="display:flex;gap:8px"><span style="padding:10px;color:var(--gray-500);font-weight:600">R$</span><input class="form-input" type="number" value="' + CASHBACK_CONFIG.limiteAcumuladoCpf + '" onchange="CASHBACK_CONFIG.limiteAcumuladoCpf=parseFloat(this.value)||0" style="max-width:120px"><span style="padding:10px;color:var(--gray-400);font-size:12px">vitalício</span></div></div>';
-  h += '<div class="form-group"><label class="form-label">Valor mínimo de compra (pra ganhar cashback)</label>';
-  h += '<div style="display:flex;gap:8px"><span style="padding:10px;color:var(--gray-500);font-weight:600">R$</span><input class="form-input" type="number" value="' + CASHBACK_CONFIG.valorMinimoCompra + '" onchange="CASHBACK_CONFIG.valorMinimoCompra=parseFloat(this.value)||0" style="max-width:120px"></div></div>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">';
+
+  // Configuração — mais limpa
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">';
+  h += '<div style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--gray-700)">Configuração</div>';
+  h += '<div class="form-group"><label class="form-label">% de cashback</label>';
+  h += '<div style="display:flex;align-items:center;gap:10px"><input type="range" min="0" max="10" step="0.5" value="' + (CASHBACK_CONFIG.pct*100) + '" oninput="CASHBACK_CONFIG.pct=parseFloat(this.value)/100;CASHBACK_PCT=CASHBACK_CONFIG.pct;document.getElementById(\'cb-pct-display\').textContent=this.value+\'%\';" style="flex:1">';
+  h += '<span id="cb-pct-display" style="min-width:56px;font-weight:800;font-size:14px;text-align:center;background:var(--gray-100);padding:5px 10px;border-radius:6px">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '%</span></div></div>';
+  h += '<div class="form-group"><label class="form-label">Limite mensal por CPF/CNPJ (R$)</label>';
+  h += '<input class="form-input" type="number" value="' + CASHBACK_CONFIG.limiteMensalCpf + '" onchange="CASHBACK_CONFIG.limiteMensalCpf=parseFloat(this.value)||0"></div>';
+  h += '<div class="form-group"><label class="form-label">Limite acumulado vitalício (R$)</label>';
+  h += '<input class="form-input" type="number" value="' + CASHBACK_CONFIG.limiteAcumuladoCpf + '" onchange="CASHBACK_CONFIG.limiteAcumuladoCpf=parseFloat(this.value)||0"></div>';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Mínimo de compra (R$)</label>';
+  h += '<input class="form-input" type="number" value="' + CASHBACK_CONFIG.valorMinimoCompra + '" onchange="CASHBACK_CONFIG.valorMinimoCompra=parseFloat(this.value)||0"></div>';
   h += '<div class="form-group"><label class="form-label">Validade do saldo</label><select class="form-input" onchange="CASHBACK_CONFIG.validadeDias=parseInt(this.value)">';
   [['30','30 dias'],['60','60 dias'],['90','90 dias'],['180','180 dias'],['365','1 ano'],['9999','Sem validade']].forEach(function(o){h+='<option value="'+o[0]+'"'+(parseInt(o[0])===CASHBACK_CONFIG.validadeDias?' selected':'')+'>'+o[1]+'</option>';});
-  h += '</select></div>';
-  h += '<button class="btn btn-primary btn-sm" onclick="alert(\'✓ Configurações salvas!\\n\\n• % cashback: \'+(CASHBACK_CONFIG.pct*100).toFixed(1)+\'%\\n• Limite mês/CPF: R$ \'+CASHBACK_CONFIG.limiteMensalCpf+\'\\n• Limite acumulado: R$ \'+CASHBACK_CONFIG.limiteAcumuladoCpf+\'\\n• Mínimo compra: R$ \'+CASHBACK_CONFIG.valorMinimoCompra+\'\\n• Validade: \'+CASHBACK_CONFIG.validadeDias+\' dias\');render()">Salvar Configurações</button></div>';
+  h += '</select></div></div>';
+  h += '<button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="toast(\'Configurações salvas\',\'success\');render()">Salvar</button></div>';
 
-  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Top Clientes (Saldo)</h3>';
+  // Top clientes — lista enxuta
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">';
+  h += '<div style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--gray-700)">Top clientes (saldo)</div>';
   var topCli = [
     {n:'Construtora ABC',d:'12.345.678/0001-90',s:846.20,inicial:'CA'},
     {n:'João da Silva',d:'123.456.789-00',s:534.80,inicial:'JS'},
@@ -2772,19 +2777,19 @@ function renderAdminCashback() {
     {n:'Reformas RJ ME',d:'45.678.901/0001-23',s:389.10,inicial:'RR'},
     {n:'Pedro Henrique',d:'456.789.012-34',s:287.90,inicial:'PH'}
   ];
-  topCli.forEach(function(c){
-    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)">';
-    h += '<div style="width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">' + c.inicial + '</div>';
-    h += '<div style="flex:1"><div style="font-size:12px;font-weight:700">' + c.n + '</div><div style="font-size:11px;color:var(--gray-400)">' + c.d + '</div></div>';
-    h += '<div style="font-size:14px;font-weight:800;color:var(--green)">R$ ' + formatMoney(c.s) + '</div>';
+  topCli.forEach(function(c, i){
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0' + (i<4?';border-bottom:1px solid var(--gray-100)':'') + '">';
+    h += '<div style="width:30px;height:30px;border-radius:50%;background:var(--gray-100);color:var(--gray-700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">' + c.inicial + '</div>';
+    h += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700">' + c.n + '</div><div style="font-size:10px;color:var(--gray-400);font-family:monospace">' + c.d + '</div></div>';
+    h += '<div style="font-size:13px;font-weight:800">R$ ' + formatMoney(c.s) + '</div>';
     h += '</div>';
   });
   h += '</div></div>';
 
-  // HISTÓRICO DE MOVIMENTAÇÃO
+  // HISTÓRICO DE MOVIMENTAÇÃO — minimalista
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
-  h += '<h3 style="font-size:15px;font-weight:700">Movimentações Recentes</h3>';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center">';
+  h += '<div style="font-size:13px;font-weight:700;color:var(--gray-700)">Movimentações recentes</div>';
   h += '<button class="btn btn-outline btn-sm">Exportar</button></div>';
   h += '<table class="data-table"><thead><tr><th>Data</th><th>Cliente</th><th>Pedido</th><th>Tipo</th><th>Valor</th><th>Saldo Após</th></tr></thead><tbody>';
   var movs = [
@@ -2814,26 +2819,38 @@ function renderAdminCupons() {
     return s + (c.usos * 25);
   },0);
 
-  var h = '<div class="admin-header"><h2>🎟️ Cupons de Desconto</h2><button class="btn btn-primary btn-sm" onclick="abrirCupomNovo()">+ Novo Cupom</button></div>';
-  h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Cupons Ativos</div><div class="stat-value">' + ativos.length + '/' + CUPONS.length + '</div><div class="stat-change up">' + ativos.length + ' válidos hoje</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Usos Totais</div><div class="stat-value">' + totalUsos + '</div><div class="stat-change up">↑ 28 nesta semana</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Desconto Concedido</div><div class="stat-value" style="color:var(--red)">R$ ' + formatMoney(descontoConcedido) + '</div><div class="stat-change">No mês</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Receita Adicional</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(descontoConcedido * 4.2) + '</div><div class="stat-change up">ROI ~4.2x</div></div>';
+  var h = '<div class="admin-header"><h2>Cupons</h2><button class="btn btn-primary btn-sm" onclick="abrirCupomNovo()">+ Novo cupom</button></div>';
+
+  // KPIs neutros
+  h += '<div class="stat-grid" style="margin-bottom:18px">';
+  h += '<div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-value">' + ativos.length + '/' + CUPONS.length + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Usos no mês</div><div class="stat-value">' + totalUsos + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Desconto concedido</div><div class="stat-value">R$ ' + formatMoney(descontoConcedido) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">ROI</div><div class="stat-value">4,2x</div></div>';
   h += '</div>';
 
-  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:24px">';
-  h += '<h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Lista de Cupons</h3>';
+  // Lista limpa em formato de tabela enxuta
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:700;color:var(--gray-700)">' + CUPONS.length + ' cupons cadastrados</div>';
   CUPONS.forEach(function(c, i) {
-    h += '<div class="coupon-card' + (c.ativo?'':' inactive') + '">';
-    h += '<div class="coupon-info"><span class="coupon-code-pill">' + c.codigo + '</span><div class="desc" style="margin-top:8px">' + c.desc + '</div>';
-    h += '<div class="meta">Mín: R$ ' + formatMoney(c.minimo) + ' · Validade: ' + c.validade + '</div></div>';
     var descTxt = c.tipo==='percent' ? '-' + c.valor + '%' : (c.tipo==='fixed' ? '-R$ ' + c.valor : 'Frete grátis');
-    h += '<div class="coupon-discount">' + descTxt + '<div class="sub">Desconto</div></div>';
-    h += '<div class="coupon-uses">' + c.usos + '<div class="sub">Usos</div></div>';
-    h += '<span class="badge-status ' + (c.ativo?'active':'') + '">' + (c.ativo?'Ativo':'Inativo') + '</span>';
-    h += '<div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="toggleCupom(' + i + ')">' + (c.ativo?'Pausar':'Ativar') + '</button>';
-    h += '<button class="btn btn-outline btn-sm" onclick="excluirCupom(' + i + ')" style="color:var(--red)">×</button></div>';
+    var bg = c.ativo ? '#fff' : 'var(--gray-50)';
+    var op = c.ativo ? '1' : '.5';
+    h += '<div style="display:grid;grid-template-columns:160px 1fr 110px 80px 90px 110px;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--gray-100);background:' + bg + ';opacity:' + op + '">';
+    // Código
+    h += '<div><span style="display:inline-block;background:var(--gray-100);color:var(--gray-900);font-family:monospace;font-size:12px;font-weight:800;padding:4px 10px;border-radius:5px;letter-spacing:.5px">' + c.codigo + '</span></div>';
+    // Descrição
+    h += '<div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--gray-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + c.desc + '</div>';
+    h += '<div style="font-size:11px;color:var(--gray-400);margin-top:2px">Mín R$ ' + formatMoney(c.minimo) + ' · até ' + c.validade + '</div></div>';
+    // Desconto
+    h += '<div style="font-size:14px;font-weight:800;text-align:center">' + descTxt + '</div>';
+    // Usos
+    h += '<div style="font-size:13px;font-weight:700;text-align:center;color:var(--gray-700)">' + c.usos + ' usos</div>';
+    // Status
+    h += '<div style="text-align:center"><span style="display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;background:' + (c.ativo?'#d1fae5':'var(--gray-200)') + ';color:' + (c.ativo?'#065f46':'var(--gray-500)') + '">' + (c.ativo?'Ativo':'Inativo') + '</span></div>';
+    // Ações
+    h += '<div style="text-align:right;display:flex;gap:5px;justify-content:flex-end"><button class="btn btn-outline btn-sm" onclick="toggleCupom(' + i + ')">' + (c.ativo?'Pausar':'Ativar') + '</button>';
+    h += '<button class="btn btn-outline btn-sm" onclick="excluirCupom(' + i + ')" title="Excluir" style="color:var(--red);border-color:var(--red);padding:7px 9px">×</button></div>';
     h += '</div>';
   });
   h += '</div>';
