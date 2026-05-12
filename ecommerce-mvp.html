@@ -2452,57 +2452,167 @@ function renderAdminVendedores() {
   var totalComissao = totalVendas * COMISSAO_PCT;
   var totalPedidos = VENDEDORES.reduce(function(s,v){return s+v.pedidos;},0);
   var bateramMeta = VENDEDORES.filter(function(v){return v.vendas >= v.meta;}).length;
-
-  var h = '<div class="admin-header"><h2>🏆 Competição de Vendedores</h2><span style="font-size:13px;color:var(--gray-400)">Ranking do mês — ' + new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) + '</span></div>';
-
-  h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Vendas Totais</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(totalVendas) + '</div><div class="stat-change up">↑ Equipe ' + VENDEDORES.length + ' vendedores</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Comissão a Pagar</div><div class="stat-value">R$ ' + formatMoney(totalComissao) + '</div><div class="stat-change">' + (COMISSAO_PCT*100) + '% sobre vendas</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Pedidos da Equipe</div><div class="stat-value">' + totalPedidos + '</div><div class="stat-change up">Ticket médio R$ ' + formatMoney(totalVendas/totalPedidos) + '</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Bateram a Meta</div><div class="stat-value" style="color:var(--green)">' + bateramMeta + '/' + VENDEDORES.length + '</div><div class="stat-change">' + Math.round(bateramMeta/VENDEDORES.length*100) + '% da equipe</div></div>';
-  h += '</div>';
-
-  // PÓDIO TOP 3
-  h += '<h3 style="font-size:16px;font-weight:800;margin-bottom:14px;letter-spacing:-0.01em">Pódio do Mês</h3>';
-  h += '<div class="podium-wrap">';
   var medals = ['🥇','🥈','🥉'];
-  var classes = ['gold','silver','bronze'];
-  var ordem = [1,0,2]; // visual: 2º à esquerda, 1º centro, 3º direita
-  ordem.forEach(function(idx) {
-    var s = sorted[idx];
-    if (!s) return;
-    var pct = Math.min(100, (s.vendas / s.meta) * 100);
-    h += '<div class="podium-card ' + classes[idx] + '">';
-    h += '<div class="podium-medal">' + medals[idx] + '</div>';
-    h += '<div class="podium-avatar" style="background:' + s.cor + '">' + s.inicial + '</div>';
-    h += '<div class="podium-name">' + s.nome + '</div>';
-    h += '<div class="podium-role">' + s.role + ' · ' + s.pedidos + ' pedidos</div>';
-    h += '<div class="podium-value">R$ ' + formatMoney(s.vendas) + '</div>';
-    h += '<div class="podium-meta">Meta R$ ' + formatMoney(s.meta) + ' · ' + Math.round(pct) + '%</div>';
-    h += '<div class="podium-progress"><div class="podium-progress-bar" style="width:' + pct + '%"></div></div>';
-    h += '<div style="font-size:12px;color:var(--green);font-weight:700;margin-top:10px">+ R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + ' comissão</div>';
-    h += '</div>';
-  });
+
+  var h = '<div class="admin-header"><h2>Vendedores</h2><span style="font-size:12px;color:var(--gray-400)">' + new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) + '</span></div>';
+
+  // KPIs compactos (sem mudança de cores agressivas)
+  h += '<div class="stat-grid" style="margin-bottom:18px">';
+  h += '<div class="stat-card"><div class="stat-label">Vendas</div><div class="stat-value">R$ ' + formatMoney(totalVendas) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">' + totalPedidos + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value">R$ ' + formatMoney(totalVendas/totalPedidos) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Bateram Meta</div><div class="stat-value">' + bateramMeta + '/' + VENDEDORES.length + '</div></div>';
   h += '</div>';
 
-  // RANKING COMPLETO
-  h += '<h3 style="font-size:16px;font-weight:800;margin-bottom:14px;letter-spacing:-0.01em">Ranking Completo</h3>';
-  h += '<div>';
+  // Lista minimalista — uma única tabela limpa
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:700;color:var(--gray-700)">Ranking · ' + VENDEDORES.length + ' vendedores</div>';
   sorted.forEach(function(s, i) {
     var pct = Math.min(100, (s.vendas / s.meta) * 100);
     var bateu = s.vendas >= s.meta;
-    h += '<div class="seller-card">';
-    h += '<div class="seller-rank">' + (i < 3 ? medals[i] : (i+1) + 'º') + '</div>';
-    h += '<div class="seller-info"><div class="seller-avatar" style="background:' + s.cor + '">' + s.inicial + '</div>';
-    h += '<div><div class="seller-name">' + s.nome + (bateu ? ' <span style="font-size:10px;color:var(--green);background:var(--green-light);padding:2px 8px;border-radius:99px;margin-left:6px;font-weight:700">META BATIDA</span>' : '') + '</div>';
-    h += '<div class="seller-meta">' + s.role + ' · ' + s.pedidos + ' pedidos</div></div></div>';
-    h += '<div class="seller-bar"><div class="seller-bar-track"><div class="seller-bar-fill" style="width:' + pct + '%;background:' + s.cor + '"></div></div><div class="seller-pct">' + Math.round(pct) + '% de R$ ' + (s.meta/1000) + 'k</div></div>';
-    h += '<div><div class="seller-vendas">R$ ' + formatMoney(s.vendas) + '</div><div class="seller-comm">+R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + ' comissão</div></div>';
-    h += '<div><button class="btn btn-outline btn-sm" onclick="alert(\'Detalhes de ' + s.nome + ' — em desenvolvimento\')">Detalhes</button></div>';
+    var rankLabel = i < 3 ? medals[i] : (i+1) + 'º';
+    h += '<div style="display:grid;grid-template-columns:40px 1fr 200px 140px 80px;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--gray-100);transition:background .15s" onmouseover="this.style.background=\'var(--gray-50)\'" onmouseout="this.style.background=\'\'">';
+    h += '<div style="font-size:18px;font-weight:700;text-align:center;color:var(--gray-400)">' + rankLabel + '</div>';
+    h += '<div style="display:flex;align-items:center;gap:12px">';
+    h += '<div style="width:36px;height:36px;border-radius:50%;background:' + s.cor + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + s.inicial + '</div>';
+    h += '<div><div style="font-size:14px;font-weight:700;color:var(--gray-900)">' + s.nome + (bateu?' <span style="font-size:9px;color:var(--green);background:var(--green-light);padding:1px 6px;border-radius:99px;margin-left:4px;font-weight:700">META</span>':'') + '</div>';
+    h += '<div style="font-size:11px;color:var(--gray-400);margin-top:2px">' + s.role + ' · ' + s.pedidos + ' pedidos</div></div>';
+    h += '</div>';
+    h += '<div><div style="height:6px;background:var(--gray-100);border-radius:99px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:' + pct + '%;background:' + s.cor + ';border-radius:99px"></div></div>';
+    h += '<div style="font-size:10px;color:var(--gray-500);font-weight:600">' + Math.round(pct) + '% da meta R$ ' + (s.meta/1000) + 'k</div></div>';
+    h += '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:var(--gray-900)">R$ ' + formatMoney(s.vendas) + '</div>';
+    h += '<div style="font-size:11px;color:var(--green);font-weight:600">+R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + '</div></div>';
+    h += '<div style="text-align:right"><button class="btn btn-outline btn-sm" onclick="abrirDetalhesVendedor(' + s.id + ')">Detalhes</button></div>';
     h += '</div>';
   });
   h += '</div>';
+
+  // Totais discretos no rodapé
+  h += '<div style="margin-top:14px;padding:10px 18px;font-size:12px;color:var(--gray-500);text-align:right">Comissão total a pagar este mês: <strong style="color:var(--gray-900)">R$ ' + formatMoney(totalComissao) + '</strong> (' + (COMISSAO_PCT*100) + '% sobre vendas)</div>';
+
   return h;
+}
+
+// Gera mock de clientes/produtos por vendedor (determinístico via seed) — substituir por dados reais quando tiver backend
+function _vendMockClientes(seedId) {
+  var nomes = [
+    {n:'Construtora ABC LTDA', t:'CNPJ', d:'12.345.678/0001-90'},
+    {n:'João da Silva',         t:'CPF',  d:'123.456.789-00'},
+    {n:'Reformas RJ ME',        t:'CNPJ', d:'45.678.901/0001-23'},
+    {n:'Maria Souza',           t:'CPF',  d:'987.654.321-00'},
+    {n:'Engenharia & Cia',      t:'CNPJ', d:'56.789.012/0001-34'},
+    {n:'Pedro Henrique',        t:'CPF',  d:'456.789.012-34'},
+    {n:'Empreiteira Oeste',     t:'CNPJ', d:'67.890.123/0001-45'},
+    {n:'Ana Carolina',          t:'CPF',  d:'789.012.345-67'},
+    {n:'Solar Brasil ME',       t:'CNPJ', d:'78.901.234/0001-56'},
+    {n:'Carlos Almeida',        t:'CPF',  d:'234.567.890-12'}
+  ];
+  // Mistura baseada no seedId pra dar variedade
+  return nomes.map(function(c, i){
+    return Object.assign({}, c, {
+      vendas: Math.floor((seedId*37 + i*13) % 12) + 1,
+      valor: Math.round(((seedId*97 + i*53) % 8000 + 1500) * 100)/100
+    });
+  }).sort(function(a,b){return b.valor - a.valor;});
+}
+function _vendMockProdutos(seedId) {
+  var pool = ALL_PRODUCTS.slice(0, 30);
+  return pool
+    .map(function(p,i){ return {p:p, qtd: Math.floor((seedId*31 + i*17) % 20) + 1}; })
+    .sort(function(a,b){return b.qtd - a.qtd;})
+    .slice(0, 5);
+}
+
+function abrirDetalhesVendedor(sid) {
+  var s = VENDEDORES.find(function(x){return x.id===sid;});
+  if (!s) return;
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-lg';
+
+  var pct = Math.min(100, (s.vendas / s.meta) * 100);
+  var bateu = s.vendas >= s.meta;
+  var ticket = s.vendas / s.pedidos;
+  var comissao = s.vendas * COMISSAO_PCT;
+  var clientes = _vendMockClientes(s.id);
+  var topProdutos = _vendMockProdutos(s.id);
+  var clientesUnicos = clientes.length;
+
+  var h = '<div class="modal-header" style="padding:20px 24px;border-bottom:1px solid var(--gray-100)">';
+  h += '<div style="display:flex;align-items:center;gap:14px">';
+  h += '<div style="width:48px;height:48px;border-radius:50%;background:' + s.cor + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800">' + s.inicial + '</div>';
+  h += '<div><div style="font-size:16px;font-weight:800">' + s.nome + (bateu?' <span style="font-size:10px;color:var(--green);background:var(--green-light);padding:2px 8px;border-radius:99px;margin-left:6px;font-weight:700">META BATIDA</span>':'') + '</div>';
+  h += '<div style="font-size:12px;color:var(--gray-500);margin-top:2px">' + s.role + ' · Vendedor</div></div></div>';
+  h += '<button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+  h += '</div>';
+
+  h += '<div class="modal-body" style="padding:24px">';
+
+  // KPIs
+  h += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">';
+  h += '<div style="background:var(--gray-50);border-radius:8px;padding:14px"><div style="font-size:10px;color:var(--gray-500);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Vendas no mês</div><div style="font-size:20px;font-weight:800">R$ ' + formatMoney(s.vendas) + '</div></div>';
+  h += '<div style="background:var(--gray-50);border-radius:8px;padding:14px"><div style="font-size:10px;color:var(--gray-500);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Pedidos</div><div style="font-size:20px;font-weight:800">' + s.pedidos + '</div></div>';
+  h += '<div style="background:var(--gray-50);border-radius:8px;padding:14px"><div style="font-size:10px;color:var(--gray-500);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Ticket Médio</div><div style="font-size:20px;font-weight:800">R$ ' + formatMoney(ticket) + '</div></div>';
+  h += '<div style="background:var(--green-light);border-radius:8px;padding:14px"><div style="font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Comissão (' + (COMISSAO_PCT*100) + '%)</div><div style="font-size:20px;font-weight:800;color:var(--green)">R$ ' + formatMoney(comissao) + '</div></div>';
+  h += '</div>';
+
+  // Performance vs meta
+  h += '<div style="margin-bottom:24px">';
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:13px;font-weight:700">Performance vs Meta</div><div style="font-size:13px;font-weight:800;color:' + (bateu?'var(--green)':'var(--gray-700)') + '">' + Math.round(pct) + '% — R$ ' + formatMoney(s.vendas) + ' de R$ ' + formatMoney(s.meta) + '</div></div>';
+  h += '<div style="height:10px;background:var(--gray-100);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + s.cor + ';border-radius:99px;transition:width .4s"></div></div>';
+  if (!bateu) {
+    var falta = s.meta - s.vendas;
+    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:6px">Faltam <strong>R$ ' + formatMoney(falta) + '</strong> pra bater a meta deste mês</div>';
+  } else {
+    var sobrou = s.vendas - s.meta;
+    h += '<div style="font-size:11px;color:var(--green);margin-top:6px">Já bateu a meta — <strong>R$ ' + formatMoney(sobrou) + '</strong> de excedente</div>';
+  }
+  h += '</div>';
+
+  // 2 colunas: clientes + produtos
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">';
+
+  // Clientes que comprou
+  h += '<div>';
+  h += '<div style="font-size:13px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>👥 Vendeu para</span><span style="font-size:10px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.5px">' + clientesUnicos + ' clientes</span></div>';
+  h += '<div style="background:#fff;border:1px solid var(--gray-100);border-radius:8px;overflow:hidden">';
+  clientes.slice(0,7).forEach(function(c, i){
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px' + (i<6?';border-bottom:1px solid var(--gray-100)':'') + '">';
+    h += '<div style="width:28px;height:28px;border-radius:50%;background:var(--gray-100);color:var(--gray-700);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">' + c.n.split(' ').map(function(x){return x[0];}).slice(0,2).join('') + '</div>';
+    h += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + c.n + '</div>';
+    h += '<div style="font-size:10px;color:var(--gray-400);font-family:monospace">' + c.t + ' ' + c.d + ' · ' + c.vendas + ' compra' + (c.vendas>1?'s':'') + '</div></div>';
+    h += '<div style="font-size:12px;font-weight:800;color:var(--green)">R$ ' + formatMoney(c.valor) + '</div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // Top produtos
+  h += '<div>';
+  h += '<div style="font-size:13px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>📦 Top produtos vendidos</span><span style="font-size:10px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Top 5</span></div>';
+  h += '<div style="background:#fff;border:1px solid var(--gray-100);border-radius:8px;overflow:hidden">';
+  topProdutos.forEach(function(tp, i){
+    var p = tp.p;
+    var thumb = (p.imgs && p.imgs[0] && typeof p.imgs[0]==='string' && p.imgs[0].indexOf('data:image')===0)
+      ? '<img src="'+p.imgs[0]+'" style="width:28px;height:28px;object-fit:contain;border-radius:4px">'
+      : '<span style="font-size:22px">' + p.emoji + '</span>';
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px' + (i<4?';border-bottom:1px solid var(--gray-100)':'') + '">';
+    h += '<div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center">' + thumb + '</div>';
+    h += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(p.name) + '</div>';
+    h += '<div style="font-size:10px;color:var(--gray-400)">' + escHtml(p.catLabel) + ' · ' + escHtml(p.sub) + '</div></div>';
+    h += '<div style="text-align:right"><div style="font-size:12px;font-weight:800">' + tp.qtd + ' un</div>';
+    h += '<div style="font-size:10px;color:var(--gray-500)">R$ ' + formatMoney(p.price * tp.qtd) + '</div></div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  h += '</div>'; // grid
+
+  h += '</div>'; // modal-body
+
+  h += '<div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div>';
+
+  content.innerHTML = h;
+  overlay.classList.add('open');
 }
 
 function renderAdminCashback() {
