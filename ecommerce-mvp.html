@@ -3668,22 +3668,17 @@ function saveFornecedores(list) {
   catch(e) {}
 }
 var FORN_PIPELINE = [
-  {id:'prospeccao', label:'Prospecção',    cor:'#94a3b8'},
-  {id:'contato',    label:'Em contato',    cor:'#0ea5e9'},
   {id:'avaliacao',  label:'Em avaliação',  cor:'#f59e0b'},
-  {id:'ativo',      label:'Ativo',         cor:'#10b981'},
-  {id:'inativo',    label:'Inativo',       cor:'#64748b'}
+  {id:'ativo',      label:'Ativos',        cor:'#10b981'},
+  {id:'inativo',    label:'Não ativos',    cor:'#64748b'}
 ];
 function _fornStatusCor(s) {
   return s==='ativo' ? {bg:'#d1fae5',fg:'#065f46'}
        : s==='avaliacao' ? {bg:'#fef3c7',fg:'#92400e'}
-       : s==='contato' ? {bg:'#dbeafe',fg:'#1e40af'}
-       : s==='bloqueado' ? {bg:'#fee2e2',fg:'#991b1b'}
-       : s==='prospeccao' ? {bg:'#f1f5f9',fg:'#475569'}
        : {bg:'var(--gray-200)',fg:'var(--gray-700)'};
 }
 function _fornStatusLabel(s){
-  return {ativo:'Ativo',inativo:'Inativo',avaliacao:'Em avaliação',contato:'Em contato',prospeccao:'Prospecção',bloqueado:'Bloqueado'}[s]||s;
+  return {ativo:'Ativo',inativo:'Não ativo',avaliacao:'Em avaliação'}[s]||s;
 }
 function _avancarFornecedor(id, novoStatus) {
   var lista = loadFornecedores();
@@ -3731,7 +3726,7 @@ function renderAdminFornecedores() {
   h += '<input class="form-input" style="flex:1;min-width:200px;max-width:340px" placeholder="🔍 Buscar razão social, CNPJ ou contato..." value="' + escHtml(filtro.search) + '" oninput="state.fornFilter.search=this.value;render();document.querySelector(\'.admin-content input[placeholder^=\\\'🔍 Buscar razao\\\']\')&&document.querySelector(\'.admin-content input[placeholder^=\\\'🔍 Buscar razao\\\']\').focus()">';
   h += '<select class="form-input" style="max-width:170px" onchange="state.fornFilter.status=this.value;render()">';
   h += '<option value="">Todas as etapas</option>';
-  ['prospeccao','contato','avaliacao','ativo','inativo','bloqueado'].forEach(function(s){
+  ['avaliacao','ativo','inativo'].forEach(function(s){
     h += '<option value="'+s+'"'+(filtro.status===s?' selected':'')+'>'+_fornStatusLabel(s)+'</option>';
   });
   h += '</select>';
@@ -3860,8 +3855,8 @@ function abrirFornecedor(id) {
   h += '<input class="form-input" id="fn-ie" value="' + escHtml(f?f.ie:'') + '" placeholder="000.000.000.000"></div>';
   h += '<div class="form-group"><label class="form-label">Status</label>';
   h += '<select class="form-input" id="fn-status">';
-  ['prospeccao','contato','avaliacao','ativo','inativo','bloqueado'].forEach(function(s){
-    h += '<option value="'+s+'"'+(f&&f.status===s?' selected':(s==='prospeccao'&&!f?' selected':''))+'>'+_fornStatusLabel(s)+'</option>';
+  ['avaliacao','ativo','inativo'].forEach(function(s){
+    h += '<option value="'+s+'"'+(f&&f.status===s?' selected':(s==='avaliacao'&&!f?' selected':''))+'>'+_fornStatusLabel(s)+'</option>';
   });
   h += '</select></div></div>';
 
