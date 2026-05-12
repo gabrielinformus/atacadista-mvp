@@ -73,8 +73,10 @@ img{max-width:100%;display:block;}
 .h-btn-home{width:42px;height:42px;border-radius:var(--radius-sm);background:rgba(226,0,49,0.06);color:#E20031;display:flex;align-items:center;justify-content:center;transition:var(--transition);flex-shrink:0;}
 .h-btn-home:hover{background:rgba(226,0,49,0.14);color:#B8002A;transform:scale(1.05);}
 .header-logo{display:flex;align-items:center;gap:10px;white-space:nowrap;position:relative;cursor:pointer;}
-.header-logo .logo-container{height:56px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;}
+.header-logo .logo-container{height:84px;min-width:120px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .15s}
+.header-logo .logo-container:hover{transform:scale(1.03)}
 .header-logo .logo-container img{height:100%;width:auto;object-fit:contain;transform-origin:center;transition:transform 0.2s;}
+@media(max-width:768px){.header-logo .logo-container{height:60px;min-width:80px}}
 .logo-edit-btn{position:absolute;top:-4px;right:-22px;width:22px;height:22px;border-radius:50%;background:rgba(226,0,49,0.1);color:#E20031;font-size:11px;border:none;cursor:pointer;opacity:0;transition:opacity .2s;display:flex;align-items:center;justify-content:center;line-height:1}
 .header-logo:hover .logo-edit-btn{opacity:1}
 .logo-edit-btn:hover{background:#E20031;color:#fff}
@@ -1185,7 +1187,7 @@ function render() {
   if (state.view === 'admin') { app.innerHTML = renderAdmin(); return; }
   document.body.classList.toggle('modo-simples', state.modoSimples);
   var h = '';
-  h += renderFreteBannerSticky();
+  // Faixa de frete grátis removida — info já está no topbar institucional
   if (!state.modoSimples) h += renderTopBar();
   h += renderHeader();
   if (state.view !== 'checkout' && !state.modoSimples) h += renderNav();
