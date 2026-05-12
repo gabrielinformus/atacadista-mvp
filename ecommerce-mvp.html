@@ -2954,8 +2954,23 @@ function renderAdminBuscasPerdidas() {
       h += '<td><span style="display:inline-block;min-width:32px;padding:3px 8px;background:' + (b.count>=5?'var(--red)':b.count>=3?'var(--orange)':'var(--blue)') + ';color:#fff;border-radius:20px;font-size:12px;font-weight:800;text-align:center">' + b.count + '</span></td>';
       h += '<td style="font-size:11px;color:var(--gray-500)">' + new Date(b.firstAt).toLocaleDateString('pt-BR') + '</td>';
       h += '<td style="font-size:11px;color:var(--gray-500)">' + (diasDesde === 0 ? 'hoje' : diasDesde === 1 ? 'ontem' : 'há ' + diasDesde + ' dias') + '</td>';
-      h += '<td style="font-size:11px;color:var(--gray-500)">' + (b.contatos && b.contatos.length ? b.contatos.length + ' cliente(s)' : '—') + '</td>';
-      h += '<td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">';
+      // Interessados — mostra avatares + nome do primeiro
+      var contatosNorm = (b.contatos||[]).map(_normalizarContato).filter(Boolean);
+      var temCadastrados = contatosNorm.length > 0;
+      if (temCadastrados) {
+        var primeiro = contatosNorm[0];
+        h += '<td style="font-size:11px">';
+        h += '<div style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">' + escHtml((primeiro.nome||'?').split(' ').map(function(x){return x[0];}).slice(0,2).join('').toUpperCase()) + '</div>';
+        h += '<div><div style="font-size:11px;font-weight:700;color:var(--gray-700)">' + escHtml(primeiro.nome||'Cliente') + '</div>';
+        h += '<div style="font-size:10px;color:var(--gray-500)">' + (contatosNorm.length>1 ? '+' + (contatosNorm.length-1) + ' outro(s)' : escHtml(primeiro.doc||'')) + '</div></div></div>';
+        h += '</td>';
+      } else {
+        h += '<td style="font-size:11px;color:var(--gray-400)">— anônimo</td>';
+      }
+      h += '<td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap">';
+      if (temCadastrados) {
+        h += '<button class="btn btn-sm" style="background:#25D366;color:#fff;border:0" onclick="abrirContatosBusca(\'' + b.q.replace(/'/g,"\\'") + '\')" title="Contatar clientes interessados por WhatsApp">💬 WhatsApp</button>';
+      }
       h += '<button class="btn btn-outline btn-sm" style="color:var(--green);border-color:var(--green)" onclick="marcarBuscaAtendida(\'' + b.q.replace(/'/g,"\\'") + '\')" title="Já cadastrei esse produto">✓ Atendido</button>';
       h += '<button class="btn btn-outline btn-sm" onclick="ignorarBusca(\'' + b.q.replace(/'/g,"\\'") + '\')" title="Não vou cadastrar">✕ Ignorar</button>';
       h += '</div></td>';
@@ -3522,13 +3537,30 @@ function registrarBuscaPerdida(query) {
     .replace(/\s+/g,' ');
   var list = loadBuscasPerdidas();
   var existing = list.find(function(b){ return b.q === norm; });
+  // Monta objeto de contato rico se o usuário estiver logado
+  var contato = null;
+  if (state.logged && state.user && state.user.telefone) {
+    contato = {
+      nome: state.user.nome || 'Cliente',
+      telefone: state.user.telefone,
+      doc: state.user.doc || '',
+      email: state.user.email || '',
+      tipo: state.user.tipo || 'pf',
+      when: new Date().toISOString()
+    };
+  }
   if (existing) {
     existing.count++;
     existing.lastAt = new Date().toISOString();
-    if (state.user && state.user.telefone) {
+    if (contato) {
       existing.contatos = existing.contatos || [];
-      if (existing.contatos.indexOf(state.user.telefone) === -1 && existing.contatos.length < 10) {
-        existing.contatos.push(state.user.telefone);
+      // Dedup por telefone (suporta formato antigo string)
+      var jaTem = existing.contatos.some(function(c){
+        if (typeof c === 'string') return c === contato.telefone;
+        return c.telefone === contato.telefone;
+      });
+      if (!jaTem && existing.contatos.length < 20) {
+        existing.contatos.push(contato);
       }
     }
   } else {
@@ -3540,10 +3572,68 @@ function registrarBuscaPerdida(query) {
       lastAt: new Date().toISOString(),
       atendido: false,
       ignorado: false,
-      contatos: state.user && state.user.telefone ? [state.user.telefone] : []
+      contatos: contato ? [contato] : []
     });
   }
   saveBuscasPerdidas(list);
+}
+
+// Normaliza contato (suporta formato antigo: string telefone) → sempre retorna objeto
+function _normalizarContato(c) {
+  if (!c) return null;
+  if (typeof c === 'string') return { nome: 'Cliente anônimo', telefone: c, doc: '', email: '', tipo: 'pf', when: null };
+  return c;
+}
+function _formatTelMostrar(tel) {
+  if (!tel) return '';
+  return String(tel).replace(/[^\d+]/g,'').replace(/^(\+?\d{2})?(\d{2})(\d{4,5})(\d{4})$/, function(_,p,d,a,b){ return (p?p+' ':'')+'('+d+') '+a+'-'+b; });
+}
+function _whatsappLink(tel, termo) {
+  var n = String(tel).replace(/[^\d]/g,'');
+  if (n.length === 11 || n.length === 10) n = '55' + n; // adiciona DDI Brasil
+  var msg = encodeURIComponent('Olá! Aqui é da *ZM Atacadista*. Você procurou por *"' + termo + '"* em nosso site e nós já temos esse produto disponível pra você. Posso te enviar mais informações?');
+  return 'https://wa.me/' + n + '?text=' + msg;
+}
+
+function abrirContatosBusca(q) {
+  var list = loadBuscasPerdidas();
+  var b = list.find(function(x){ return x.q === q; });
+  if (!b) return;
+  var contatos = (b.contatos || []).map(_normalizarContato).filter(Boolean);
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-md';
+
+  var h = '<div class="modal-header"><h3>📱 Interessados em "' + escHtml(b.qOriginal) + '"</h3>';
+  h += '<button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+
+  if (contatos.length === 0) {
+    h += '<div style="padding:30px;text-align:center;color:var(--gray-400)">';
+    h += '<div style="font-size:42px;margin-bottom:10px">👤</div>';
+    h += '<div style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:4px">Nenhum cliente cadastrado fez essa busca</div>';
+    h += '<div style="font-size:12px">As buscas foram feitas por visitantes não-logados. Quando um cliente cadastrado buscar esse termo, aparecerá aqui.</div>';
+    h += '</div>';
+  } else {
+    h += '<div style="font-size:12px;color:var(--gray-500);margin-bottom:14px">' + contatos.length + ' cliente' + (contatos.length>1?'s':'') + ' cadastrado' + (contatos.length>1?'s':'') + ' demonstrou interesse — mande mensagem direto pelo WhatsApp:</div>';
+    contatos.forEach(function(c){
+      var iniciais = (c.nome||'?').split(' ').map(function(x){return x[0];}).slice(0,2).join('').toUpperCase();
+      h += '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:8px;margin-bottom:8px">';
+      h += '<div style="width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + escHtml(iniciais) + '</div>';
+      h += '<div style="flex:1;min-width:0">';
+      h += '<div style="font-size:13px;font-weight:700">' + escHtml(c.nome||'Cliente') + ' <span style="font-size:9px;background:var(--gray-200);color:var(--gray-700);padding:1px 5px;border-radius:3px;margin-left:4px">' + (c.tipo==='pj'?'CNPJ':'CPF') + '</span></div>';
+      h += '<div style="font-size:11px;color:var(--gray-500);margin-top:2px">' + escHtml(c.doc||'—') + (c.email ? ' · ' + escHtml(c.email) : '') + '</div>';
+      h += '<div style="font-size:11px;color:var(--gray-600);font-family:monospace;margin-top:2px">📞 ' + _formatTelMostrar(c.telefone) + '</div>';
+      h += '</div>';
+      h += '<a href="' + _whatsappLink(c.telefone, b.qOriginal) + '" target="_blank" rel="noopener" class="btn btn-sm" style="background:#25D366;color:#fff;border:0;text-decoration:none;display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/></svg> WhatsApp</a>';
+      h += '</div>';
+    });
+  }
+
+  h += '</div>';
+  h += '<div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
 }
 function marcarBuscaAtendida(q) {
   var list = loadBuscasPerdidas();
