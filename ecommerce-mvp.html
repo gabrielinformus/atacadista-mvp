@@ -279,18 +279,20 @@ img{max-width:100%;display:block;}
 .admin-logo{font-size:18px;font-weight:900;color:#fff;padding:10px 14px;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
 .admin-logo small{font-size:10px;color:var(--gray-400);font-weight:500;}
 .admin-nav{list-style:none;}
-.admin-nav li{padding:10px 14px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.5);border-radius:var(--radius-xs);cursor:pointer;transition:var(--transition);margin-bottom:2px;display:flex;align-items:center;gap:10px;}
-.admin-nav li:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);}
+.admin-nav li{padding:8px 12px;font-size:12.5px;font-weight:500;color:rgba(255,255,255,0.55);border-radius:6px;cursor:pointer;transition:all .15s;margin-bottom:1px;display:flex;align-items:center;gap:10px;}
+.admin-nav li:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.95);}
 .admin-nav li.active{background:var(--blue);color:#fff;font-weight:600;}
-.admin-nav li svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
-.admin-content{padding:24px 32px;background:var(--gray-50);}
-.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
-.admin-header h2{font-size:24px;font-weight:800;letter-spacing:-0.02em;}
+.admin-nav li svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.admin-nav-group{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;padding:14px 12px 6px;margin-top:4px;}
+.admin-nav-group:first-child{margin-top:0;padding-top:4px;}
+.admin-content{padding:28px 36px;background:#f8fafc;}
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid #e2e8f0;}
+.admin-header h2{font-size:22px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;}
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-.stat-card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
-.stat-card .stat-label{font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
-.stat-card .stat-value{font-size:28px;font-weight:900;letter-spacing:-0.02em;}
-.stat-card .stat-change{font-size:12px;font-weight:600;margin-top:4px;}
+.stat-card{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.05);border:1px solid #e2e8f0;}
+.stat-card .stat-label{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.stat-card .stat-value{font-size:24px;font-weight:800;letter-spacing:-0.02em;color:#0f172a;}
+.stat-card .stat-change{font-size:11px;font-weight:600;margin-top:6px;}
 .stat-card .stat-change.up{color:var(--green);}
 .stat-card .stat-change.down{color:var(--red);}
 .data-table{width:100%;border-collapse:collapse;}
@@ -380,7 +382,7 @@ img{max-width:100%;display:block;}
 .seller-comm{font-size:11px;color:var(--green);font-weight:600;text-align:right;}
 
 /* CHART */
-.chart-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;}
+.chart-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,0.05);border:1px solid #e2e8f0;padding:22px;}
 .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
 .chart-header h3{font-size:15px;font-weight:700;}
 .chart-tabs{display:flex;gap:4px;background:var(--gray-100);padding:3px;border-radius:var(--radius-xs);}
@@ -1782,24 +1784,35 @@ function renderAdmin() {
   h += '<div class="admin-sidebar">';
   h += '<div class="admin-logo"><img src="logo-zm.png" alt="ZM" style="height:32px;filter:brightness(0) invert(1)"> <small>ADMIN</small></div>';
   h += '<ul class="admin-nav">';
-  var navItems = [
-    {id:'dashboard',icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',label:'Dashboard'},
-    {id:'produtos',icon:'<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',label:'Produtos'},
-    {id:'pedidos',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',label:'Pedidos'},
-    {id:'estoque',icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',label:'Estoque'},
-    {id:'pagamentos',icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',label:'Pagamentos'},
-    {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'},
-    {id:'vendedores',icon:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',label:'Vendedores'},
-    {id:'cashback',icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>',label:'Cashback'},
-    {id:'cupons',icon:'<svg viewBox="0 0 24 24"><path d="M21 5H3a2 2 0 0 0-2 2v3a3 3 0 1 1 0 6v3a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-3a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2z"/><line x1="13" y1="5" x2="13" y2="19"/></svg>',label:'Cupons'},
-    {id:'indicacoes',icon:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',label:'Indicações'},
-    {id:'pix',icon:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',label:'Pix & NF-e'},
-    {id:'tributacao',icon:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',label:'Tributação'}
+  var navGroups = [
+    { label: 'Principal', items: [
+      {id:'dashboard',icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',label:'Dashboard'},
+      {id:'pedidos',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',label:'Pedidos'},
+      {id:'pagamentos',icon:'<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',label:'Pagamentos'}
+    ]},
+    { label: 'Catálogo', items: [
+      {id:'produtos',icon:'<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',label:'Produtos'},
+      {id:'estoque',icon:'<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',label:'Estoque'}
+    ]},
+    { label: 'Marketing', items: [
+      {id:'vendedores',icon:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',label:'Vendedores'},
+      {id:'cashback',icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>',label:'Cashback'},
+      {id:'cupons',icon:'<svg viewBox="0 0 24 24"><path d="M21 5H3a2 2 0 0 0-2 2v3a3 3 0 1 1 0 6v3a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-3a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2z"/><line x1="13" y1="5" x2="13" y2="19"/></svg>',label:'Cupons'},
+      {id:'indicacoes',icon:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',label:'Indicações'}
+    ]},
+    { label: 'Fiscal', items: [
+      {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'},
+      {id:'pix',icon:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>',label:'Pix & NF-e'},
+      {id:'tributacao',icon:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>',label:'Tributação'}
+    ]}
   ];
-  navItems.forEach(function(n) {
-    h += '<li class="' + (state.adminView===n.id?'active':'') + '" onclick="state.adminView=\'' + n.id + '\';render()">' + n.icon + ' ' + n.label + '</li>';
+  navGroups.forEach(function(g) {
+    h += '<li class="admin-nav-group" style="list-style:none">' + g.label + '</li>';
+    g.items.forEach(function(n) {
+      h += '<li class="' + (state.adminView===n.id?'active':'') + '" onclick="state.adminView=\'' + n.id + '\';render()">' + n.icon + ' ' + n.label + '</li>';
+    });
   });
-  h += '<li style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px" onclick="navigate(\'home\')"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Voltar à Loja</li>';
+  h += '<li style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px" onclick="navigate(\'home\')"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Voltar à Loja</li>';
   h += '</ul></div>';
 
   h += '<div class="admin-content">';
@@ -1869,7 +1882,7 @@ function renderAdminDash() {
   h += '<div class="chart-card">';
   h += '<div class="chart-header"><h3>🏆 Top Vendedores do Mês</h3>';
   h += '<a onclick="state.adminView=\'vendedores\';render()" style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer">Ver ranking completo →</a></div>';
-  sortedSellers.slice(0,5).forEach(function(s, i) {
+  sortedSellers.slice(0,3).forEach(function(s, i) {
     var pct = Math.min(100, (s.vendas / s.meta) * 100);
     h += '<div class="seller-card" style="margin-bottom:6px">';
     h += '<div class="seller-rank">' + ['🥇','🥈','🥉','4°','5°'][i] + '</div>';
@@ -1882,8 +1895,8 @@ function renderAdminDash() {
   h += '</div>';
 
   // ESTOQUE BAIXO
-  h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">⚠️ Estoque Baixo</h3>';
-  ALL_PRODUCTS.filter(function(p){return p.stock < 10;}).slice(0,7).forEach(function(p){
+  h += '<div class="chart-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:15px;font-weight:700">⚠️ Estoque Baixo</h3><a onclick="state.adminView=\'estoque\';render()" style="font-size:11px;color:var(--blue);font-weight:600;cursor:pointer">Ver tudo →</a></div>';
+  ALL_PRODUCTS.filter(function(p){return p.stock < 10;}).slice(0,4).forEach(function(p){
     h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray-100)">';
     h += '<span style="font-size:12px;font-weight:600">' + p.emoji + ' ' + escHtml(p.name.substring(0,22)) + '</span>';
     h += '<span class="stock-low" style="font-size:12px">' + p.stock + ' un</span></div>';
