@@ -824,43 +824,50 @@ var BONUS_INDICACAO = 50;
 var DESCONTO_INDICADO_PCT = 10;
 
 // =============================================
-// BASE FISCAL (NCMs reais de material de construção)
+// BASE FISCAL (NCMs reais de material de construção - SIMPLES NACIONAL GO)
 // =============================================
+// Regime: Simples Nacional - Anexo I (Comércio)
+// ICMS interna GO: 19% (Decreto 9.104/2017) — usado como referência IBPT
+// PIS/COFINS/IPI: zerados pra Simples Nacional (todos vão no DAS)
+// CSOSN (substitui CST no Simples): 102 = sem permissão de crédito;
+//   500 = ICMS já recolhido por ST; 400 = não tributada (Simples Nacional)
+// ICMS-ST conforme Convênio ICMS 142/2018 (atualizado pelo 184/2024) - itens reais sujeitos a ST em GO
+// Carga tributária aproximada IBPT pra comércio Simples Anexo I faixa 2-3: ~5,5% (Lei 12.741)
 var NCM_DATABASE = {
   construcao: [
-    {ncm:'25232900',desc:'Cimento Portland',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},
-    {ncm:'25171000',desc:'Areia, brita, pedras',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},
-    {ncm:'32091000',desc:'Tintas e vernizes',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'39172300',desc:'Tubos e canos PVC',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'69072100',desc:'Pisos e azulejos cerâmicos',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'69101000',desc:'Louças sanitárias',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'72142000',desc:'Vergalhões de aço',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'73181500',desc:'Parafusos e ferragens',icms:18,ipi:8,pis:1.65,cofins:7.6,st:false,cst:'00'},
-    {ncm:'82041100',desc:'Chaves e ferramentas manuais',icms:18,ipi:8,pis:1.65,cofins:7.6,st:false,cst:'00'},
-    {ncm:'84672100',desc:'Furadeiras elétricas',icms:18,ipi:12,pis:1.65,cofins:7.6,st:false,cst:'00'},
-    {ncm:'84818090',desc:'Torneiras e registros',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'85444900',desc:'Fios e cabos elétricos',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'85365000',desc:'Interruptores e tomadas',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},
-    {ncm:'94054000',desc:'Luminárias e iluminação',icms:18,ipi:10,pis:1.65,cofins:7.6,st:false,cst:'00'},
-    {ncm:'68101100',desc:'Blocos e tijolos cimento',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'}
+    {ncm:'25232900',desc:'Cimento Portland',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.0}, // ST item 28 Anexo XVI
+    {ncm:'25171000',desc:'Areia, brita, pedras',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},
+    {ncm:'32091000',desc:'Tintas e vernizes',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:8.5}, // ST item 21
+    {ncm:'39172300',desc:'Tubos e canos PVC',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.5},
+    {ncm:'69072100',desc:'Pisos e azulejos cerâmicos',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},
+    {ncm:'69101000',desc:'Louças sanitárias',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},
+    {ncm:'72142000',desc:'Vergalhões de aço CA-50',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.5}, // ST item 47
+    {ncm:'73181500',desc:'Parafusos e ferragens',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},
+    {ncm:'82041100',desc:'Chaves e ferramentas manuais',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},
+    {ncm:'84672100',desc:'Furadeiras elétricas',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:6.0},
+    {ncm:'84818090',desc:'Torneiras e registros',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.5}, // ST item 24
+    {ncm:'85444900',desc:'Fios e cabos elétricos',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.5}, // ST item 26
+    {ncm:'85365000',desc:'Interruptores e tomadas',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.5}, // ST item 26
+    {ncm:'94054000',desc:'Luminárias e iluminação',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:6.0},
+    {ncm:'68101100',desc:'Blocos e tijolos cimento',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5}
   ],
-  eletronicos:   [{ncm:'85285200',desc:'Smart TVs',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'85171210',desc:'Smartphones',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'84713012',desc:'Notebooks',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'85183000',desc:'Fones de ouvido',icms:18,ipi:15,pis:1.65,cofins:7.6,st:false,cst:'00'}],
-  casa:          [{ncm:'94036000',desc:'Móveis de madeira',icms:18,ipi:5,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'63029100',desc:'Têxteis lar',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'73239900',desc:'Utilidades domésticas',icms:18,ipi:5,pis:1.65,cofins:7.6,st:false,cst:'00'}],
-  higiene:       [{ncm:'33049990',desc:'Cosméticos',icms:18,ipi:22,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'33051000',desc:'Xampus',icms:18,ipi:7,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'34011900',desc:'Sabonetes',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'}],
-  alimentos:     [{ncm:'22021000',desc:'Bebidas',icms:18,ipi:6,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'09011100',desc:'Café',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'10063000',desc:'Arroz, feijão',icms:7,ipi:0,pis:0,cofins:0,st:false,cst:'40'}],
-  escritorio:    [{ncm:'48201000',desc:'Cadernos e papelaria',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'96082000',desc:'Canetas',icms:18,ipi:5,pis:1.65,cofins:7.6,st:false,cst:'00'},{ncm:'84433100',desc:'Impressoras',icms:18,ipi:0,pis:1.65,cofins:7.6,st:false,cst:'00'}],
-  eletroport:    [{ncm:'85094000',desc:'Liquidificadores',icms:18,ipi:10,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'85162900',desc:'Aquecedores',icms:18,ipi:10,pis:1.65,cofins:7.6,st:true,cst:'60'}],
-  automotivo:    [{ncm:'27101921',desc:'Óleos lubrificantes',icms:18,ipi:0,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'40111000',desc:'Pneus',icms:18,ipi:15,pis:1.65,cofins:7.6,st:true,cst:'60'},{ncm:'85114000',desc:'Bateria automotiva',icms:18,ipi:5,pis:1.65,cofins:7.6,st:true,cst:'60'}]
+  eletronicos:   [{ncm:'85285200',desc:'Smart TVs',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:9.0},{ncm:'85171210',desc:'Smartphones',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:9.0},{ncm:'84713012',desc:'Notebooks',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:6.0},{ncm:'85183000',desc:'Fones de ouvido',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:7.0}],
+  casa:          [{ncm:'94036000',desc:'Móveis de madeira',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:6.0},{ncm:'63029100',desc:'Têxteis lar',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},{ncm:'73239900',desc:'Utilidades domésticas',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:6.0}],
+  higiene:       [{ncm:'33049990',desc:'Cosméticos',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:10.0},{ncm:'33051000',desc:'Xampus',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:8.5},{ncm:'34011900',desc:'Sabonetes',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:7.5}],
+  alimentos:     [{ncm:'22021000',desc:'Bebidas',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:9.0},{ncm:'09011100',desc:'Café',icms:7,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:3.5},{ncm:'10063000',desc:'Arroz, feijão',icms:7,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:3.5}], // cesta básica GO: ICMS 7%
+  escritorio:    [{ncm:'48201000',desc:'Cadernos e papelaria',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},{ncm:'96082000',desc:'Canetas',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:5.5},{ncm:'84433100',desc:'Impressoras',icms:19,ipi:0,pis:0,cofins:0,st:false,cst:'102',cargaIbpt:6.0}],
+  eletroport:    [{ncm:'85094000',desc:'Liquidificadores',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:8.0},{ncm:'85162900',desc:'Aquecedores',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:8.0}],
+  automotivo:    [{ncm:'27101921',desc:'Óleos lubrificantes',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:10.0},{ncm:'40111000',desc:'Pneus',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:9.0},{ncm:'85114000',desc:'Bateria automotiva',icms:19,ipi:0,pis:0,cofins:0,st:true,cst:'500',cargaIbpt:8.0}]
 };
 
 var TRIBUTACAO_API = {
-  provedor: 'Tecnospeed Tax Engine',
-  status: 'conectado',
+  provedor: 'IBPT - De Olho no Imposto (Lei 12.741/2012)',
+  status: 'mock',
   ultimaAtualizacao: new Date().toISOString(),
-  proximaAtualizacao: 'amanhã às 03:00',
+  proximaAtualizacao: 'sync trimestral IBPT',
   ncmsAtualizados: 12847,
   alteracoes24h: 23,
-  versaoTabela: '2026.05.07-001',
+  versaoTabela: 'IBPT 2026.T2',
   // Sede do contribuinte ZM Atacadista
   municipioSede: {
     nome: 'Águas Lindas de Goiás',
@@ -868,7 +875,12 @@ var TRIBUTACAO_API = {
     ibge: '5200258',
     cnaes: ['4744-0/01','4744-0/02','4744-0/05','4744-0/99','4742-3/00','4741-5/00'],
     aliquotaIssMedia: 5.0,
-    regimeIcms: 'Simples Nacional + ST',
+    regime: 'Simples Nacional',
+    anexo: 'Anexo I (Comércio)',
+    faixaReceita: 'Faixa 2-3 (R$ 360k a R$ 1.8M)',
+    aliquotaDasEfetiva: 7.30, // estimativa, varia conforme RBT12
+    aliquotaIcmsInterna: 19, // GO Decreto 9.104/2017
+    aliquotaIcmsCestaBasica: 7,
     convenioIcmsAtual: 'Convênio ICMS 142/2018 (atualizado pelo 184/2024)',
     sefazSync: true
   }
@@ -1455,22 +1467,25 @@ function renderProductDetail() {
   h += '<div style="font-size:12px;color:var(--gray-500)">🛡️ Garantia do vendedor</div>';
   h += '<div style="font-size:12px;color:var(--gray-500)">💳 Pix, cartão e boleto</div>';
   h += '</div>';
-  // FISCAL DO PRODUTO
+  // FISCAL DO PRODUTO (Simples Nacional - Lei 12.741)
   if (p.ncm) {
-    var totalImposto = p.price * (p.icms + p.ipi + p.pis + p.cofins) / 100;
+    // Carga tributária aproximada IBPT (já inclui DAS + ICMS-ST quando aplicável)
+    var cargaPct = p.cargaIbpt || 6.0;
+    var totalImposto = p.price * cargaPct / 100;
     h += '<div class="tax-breakdown" style="margin-top:18px">';
     h += '<h4>📋 Tributação deste produto</h4>';
     h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
     h += '<span class="fiscal-pill ncm">NCM ' + p.ncm + '</span>';
-    h += '<span class="fiscal-pill cst">CST ' + p.cst + '</span>';
+    h += '<span class="fiscal-pill cst">CSOSN ' + (p.cst||'102') + '</span>';
     if (p.icmsST) h += '<span class="fiscal-pill st">ICMS-ST</span>';
+    h += '<span class="fiscal-pill" style="background:#ECFDF5;color:#065F46">SIMPLES NACIONAL</span>';
     h += '</div>';
-    h += '<div class="tax-line"><span>ICMS</span><span>' + p.icms + '% · R$ ' + formatMoney(p.price * p.icms/100) + '</span></div>';
-    if (p.ipi > 0) h += '<div class="tax-line"><span>IPI</span><span>' + p.ipi + '% · R$ ' + formatMoney(p.price * p.ipi/100) + '</span></div>';
-    h += '<div class="tax-line"><span>PIS</span><span>' + p.pis + '% · R$ ' + formatMoney(p.price * p.pis/100) + '</span></div>';
-    h += '<div class="tax-line"><span>COFINS</span><span>' + p.cofins + '% · R$ ' + formatMoney(p.price * p.cofins/100) + '</span></div>';
-    h += '<div class="tax-total"><span>Tributos inclusos</span><span>R$ ' + formatMoney(totalImposto) + '</span></div>';
-    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:8px">Lei da Transparência (12.741/2012). Alíquotas via API ' + TRIBUTACAO_API.provedor + '.</div>';
+    h += '<div class="tax-line"><span>Carga tributária aproximada (IBPT)</span><span><strong>' + cargaPct.toFixed(1) + '%</strong></span></div>';
+    h += '<div class="tax-line"><span>↳ ICMS referência GO</span><span>' + p.icms + '%' + (p.icmsST?' (recolhido por ST)':'') + '</span></div>';
+    if (p.icmsST) h += '<div class="tax-line"><span>↳ Convênio ICMS</span><span>142/2018 (atualizado 184/2024)</span></div>';
+    h += '<div class="tax-line"><span>↳ DAS Simples Anexo I</span><span>~' + TRIBUTACAO_API.municipioSede.aliquotaDasEfetiva.toFixed(2) + '% sobre receita</span></div>';
+    h += '<div class="tax-total"><span>Tributos inclusos no preço</span><span>R$ ' + formatMoney(totalImposto) + '</span></div>';
+    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:8px">Lei da Transparência (12.741/2012). Fonte: ' + TRIBUTACAO_API.provedor + '. Empresa optante pelo Simples Nacional — tributos federais (PIS, COFINS, IRPJ, CSLL, CPP) e ICMS são recolhidos via DAS único.</div>';
     h += '</div>';
   }
   h += renderFreteCalc('produto');
@@ -2430,12 +2445,19 @@ function renderAdminTributacao() {
   h += '<button class="api-sync-btn" onclick="simularSyncAPI(this)">🔄 Sincronizar Agora</button>';
   h += '</div>';
 
-  // INFO DA SEDE (Águas Lindas)
-  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;margin-bottom:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:center">';
+  // INFO DA SEDE (Águas Lindas) + Regime Tributário
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;margin-bottom:20px">';
+  h += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--gray-100)">';
   h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Município (sede)</div><div style="font-size:14px;font-weight:800;margin-top:3px">' + mun.nome + '/' + mun.uf + '</div></div>';
   h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Cód. IBGE</div><div style="font-size:14px;font-weight:800;font-family:monospace;margin-top:3px">' + mun.ibge + '</div></div>';
-  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Regime ICMS</div><div style="font-size:13px;font-weight:700;margin-top:3px">' + mun.regimeIcms + '</div></div>';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">ICMS interno GO</div><div style="font-size:14px;font-weight:800;margin-top:3px">' + mun.aliquotaIcmsInterna + '% <span style="font-weight:400;font-size:11px;color:var(--gray-400)">(cesta básica ' + mun.aliquotaIcmsCestaBasica + '%)</span></div></div>';
   h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">ISS médio</div><div style="font-size:14px;font-weight:800;margin-top:3px">' + mun.aliquotaIssMedia + '%</div></div>';
+  h += '</div>';
+  h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:center">';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Regime tributário</div><div style="font-size:13px;font-weight:800;margin-top:3px;color:#065F46">' + mun.regime + '</div><div style="font-size:11px;color:var(--gray-500);margin-top:2px">' + mun.anexo + '</div></div>';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Faixa de receita</div><div style="font-size:12px;font-weight:700;margin-top:3px">' + mun.faixaReceita + '</div><div style="font-size:11px;color:var(--gray-500);margin-top:2px">DAS efetivo: ~' + mun.aliquotaDasEfetiva + '%</div></div>';
+  h += '<div><div style="font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Convênio ICMS-ST</div><div style="font-size:12px;font-weight:700;margin-top:3px">' + mun.convenioIcmsAtual + '</div></div>';
+  h += '</div>';
   h += '</div>';
 
   // STATS
