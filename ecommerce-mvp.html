@@ -3667,14 +3667,33 @@ function saveFornecedores(list) {
   try { localStorage.setItem('zm_fornecedores', JSON.stringify(list)); }
   catch(e) {}
 }
+var FORN_PIPELINE = [
+  {id:'prospeccao', label:'Prospecção',    cor:'#94a3b8'},
+  {id:'contato',    label:'Em contato',    cor:'#0ea5e9'},
+  {id:'avaliacao',  label:'Em avaliação',  cor:'#f59e0b'},
+  {id:'ativo',      label:'Ativo',         cor:'#10b981'},
+  {id:'inativo',    label:'Inativo',       cor:'#64748b'}
+];
 function _fornStatusCor(s) {
   return s==='ativo' ? {bg:'#d1fae5',fg:'#065f46'}
        : s==='avaliacao' ? {bg:'#fef3c7',fg:'#92400e'}
+       : s==='contato' ? {bg:'#dbeafe',fg:'#1e40af'}
        : s==='bloqueado' ? {bg:'#fee2e2',fg:'#991b1b'}
+       : s==='prospeccao' ? {bg:'#f1f5f9',fg:'#475569'}
        : {bg:'var(--gray-200)',fg:'var(--gray-700)'};
 }
 function _fornStatusLabel(s){
-  return {ativo:'Ativo',inativo:'Inativo',avaliacao:'Em avaliação',bloqueado:'Bloqueado'}[s]||s;
+  return {ativo:'Ativo',inativo:'Inativo',avaliacao:'Em avaliação',contato:'Em contato',prospeccao:'Prospecção',bloqueado:'Bloqueado'}[s]||s;
+}
+function _avancarFornecedor(id, novoStatus) {
+  var lista = loadFornecedores();
+  var f = lista.find(function(x){return x.id===id;});
+  if (!f) return;
+  f.status = novoStatus;
+  f.atualizadoEm = new Date().toISOString();
+  saveFornecedores(lista);
+  render();
+  toast('Movido para "'+_fornStatusLabel(novoStatus)+'"','success');
 }
 
 function renderAdminFornecedores() {
@@ -3711,8 +3730,8 @@ function renderAdminFornecedores() {
   h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);display:flex;gap:10px;align-items:center;flex-wrap:wrap">';
   h += '<input class="form-input" style="flex:1;min-width:200px;max-width:340px" placeholder="🔍 Buscar razão social, CNPJ ou contato..." value="' + escHtml(filtro.search) + '" oninput="state.fornFilter.search=this.value;render();document.querySelector(\'.admin-content input[placeholder^=\\\'🔍 Buscar razao\\\']\')&&document.querySelector(\'.admin-content input[placeholder^=\\\'🔍 Buscar razao\\\']\').focus()">';
   h += '<select class="form-input" style="max-width:170px" onchange="state.fornFilter.status=this.value;render()">';
-  h += '<option value="">Todos os status</option>';
-  ['ativo','avaliacao','inativo','bloqueado'].forEach(function(s){
+  h += '<option value="">Todas as etapas</option>';
+  ['prospeccao','contato','avaliacao','ativo','inativo','bloqueado'].forEach(function(s){
     h += '<option value="'+s+'"'+(filtro.status===s?' selected':'')+'>'+_fornStatusLabel(s)+'</option>';
   });
   h += '</select>';
@@ -3725,88 +3744,96 @@ function renderAdminFornecedores() {
   if (filtro.search || filtro.status || filtro.cat) h += '<button class="btn btn-outline btn-sm" onclick="state.fornFilter={search:\'\',status:\'\',cat:\'\'};render()">✕ Limpar</button>';
   h += '</div>';
 
-  h += '</div>'; // fecha toolbar wrap antes dos cards
+  h += '</div></div>'; // fecha toolbar inner + white wrap
 
   // Estado vazio
-  if (filtrada.length === 0) {
+  if (filtrada.length === 0 && lista.length === 0) {
     h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:60px 20px;text-align:center;color:var(--gray-400);margin-top:14px">';
     h += '<div style="font-size:48px;margin-bottom:12px">🏢</div>';
-    if (lista.length === 0) {
-      h += '<h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Sem fornecedores cadastrados</h3>';
-      h += '<p style="font-size:13px;margin-bottom:16px">Comece cadastrando seu primeiro fornecedor.</p>';
-      h += '<button class="btn btn-primary btn-sm" onclick="abrirFornecedor()">+ Cadastrar primeiro fornecedor</button>';
-    } else {
-      h += '<h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Nenhum resultado</h3>';
-      h += '<p style="font-size:13px">Tenta limpar os filtros ou busca outro termo.</p>';
-    }
+    h += '<h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Sem fornecedores cadastrados</h3>';
+    h += '<p style="font-size:13px;margin-bottom:16px">Comece cadastrando seu primeiro fornecedor.</p>';
+    h += '<button class="btn btn-primary btn-sm" onclick="abrirFornecedor()">+ Cadastrar primeiro fornecedor</button>';
     h += '</div>';
     return h;
   }
 
-  // CARDS estilo Macan — telefone bem destacado
-  h += '<div class="forn-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:14px">';
-  filtrada.forEach(function(f){
-    var s = _fornStatusCor(f.status);
-    var diasUlt = f.ultContato ? Math.floor((Date.now() - new Date(f.ultContato).getTime())/(1000*60*60*24)) : null;
-    var ultTxt = diasUlt == null ? '—' : (diasUlt === 0 ? 'hoje' : (diasUlt === 1 ? 'ontem' : 'há '+diasUlt+' dias'));
-    var catLabel = (CATEGORIES.find(function(c){return c.id===f.categoria;})||{}).label || (f.categoria||'—');
-    var inic = (f.razao||'?').split(' ').filter(function(p){return p.length>2;}).map(function(p){return p[0];}).slice(0,2).join('').toUpperCase() || '?';
-    var avatarCor = ['#E20031','#0F62FE','#7C3AED','#0891B2','#059669','#D97706','#DB2777','#475569'][(f.id||'').charCodeAt(5)%8] || '#0F62FE';
-    var ratingStars = '★'.repeat(f.rating||4) + '☆'.repeat(5-(f.rating||4));
-    var telLimpo = (f.telefone||'').replace(/[^\d]/g,'');
-    var temTel = telLimpo.length >= 10;
-
-    h += '<div class="forn-card" style="background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--gray-100);transition:all .15s" onmouseover="this.style.boxShadow=\'var(--shadow-md)\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.boxShadow=\'var(--shadow)\';this.style.transform=\'\'">';
-
-    // Cabeçalho — avatar + nome + status
-    h += '<div style="padding:16px;display:flex;gap:12px;align-items:flex-start;border-bottom:1px solid var(--gray-100)">';
-    h += '<div style="width:48px;height:48px;border-radius:12px;background:' + avatarCor + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">' + inic + '</div>';
-    h += '<div style="flex:1;min-width:0">';
-    h += '<div style="font-size:14px;font-weight:800;color:var(--gray-900);line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + escHtml(f.razao||'—') + '</div>';
-    if (f.fantasia) h += '<div style="font-size:11px;color:var(--gray-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(f.fantasia) + '</div>';
-    h += '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">';
-    h += '<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:' + s.bg + ';color:' + s.fg + '">' + _fornStatusLabel(f.status||'ativo') + '</span>';
-    if (catLabel !== '—') h += '<span style="font-size:10px;color:var(--gray-500);background:var(--gray-100);padding:2px 8px;border-radius:10px">' + escHtml(catLabel) + '</span>';
+  // KANBAN estilo Macan — colunas por etapa do funil
+  h += '<div class="forn-kanban" style="display:flex;gap:12px;overflow-x:auto;padding:14px 2px 8px;-webkit-overflow-scrolling:touch">';
+  FORN_PIPELINE.forEach(function(col){
+    var nelCol = filtrada.filter(function(f){return (f.status||'ativo')===col.id;});
+    var totalCol = nelCol.reduce(function(s,f){return s+(f.totalComprado||0);},0);
+    h += '<div class="kanban-col" style="flex:0 0 280px;background:#f8fafc;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;max-height:calc(100vh - 280px)">';
+    // Header da coluna
+    h += '<div style="padding:12px 14px;background:#fff;border-bottom:3px solid '+col.cor+';display:flex;justify-content:space-between;align-items:center">';
+    h += '<div><div style="font-size:12px;font-weight:800;color:var(--gray-900);text-transform:uppercase;letter-spacing:.5px">'+col.label+'</div>';
+    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:2px">R$ '+formatMoney(totalCol)+'</div></div>';
+    h += '<div style="background:'+col.cor+';color:#fff;font-size:11px;font-weight:800;min-width:24px;height:24px;padding:0 8px;border-radius:12px;display:flex;align-items:center;justify-content:center">'+nelCol.length+'</div>';
     h += '</div>';
-    h += '</div></div>';
 
-    // Telefone destaque (estilo Macan)
-    if (temTel) {
-      h += '<a href="tel:' + telLimpo + '" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);text-decoration:none;color:var(--gray-900);border-bottom:1px solid var(--gray-100);transition:background .15s" onmouseover="this.style.background=\'linear-gradient(135deg,#dcfce7,#bbf7d0)\'" onmouseout="this.style.background=\'linear-gradient(135deg,#f0fdf4,#dcfce7)\'">';
-      h += '<div style="width:36px;height:36px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">';
-      h += '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/></svg>';
-      h += '</div>';
-      h += '<div style="flex:1;min-width:0">';
-      h += '<div style="font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;font-weight:700">' + escHtml(f.contatoNome||'Contato comercial') + '</div>';
-      h += '<div style="font-size:17px;font-weight:800;color:var(--gray-900);letter-spacing:.3px">' + _formatTelMostrar(f.telefone) + '</div>';
-      h += '</div>';
-      h += '<button onclick="event.stopPropagation();event.preventDefault();window.open(\'' + _whatsappLink(f.telefone, f.razao||'fornecedor') + '\',\'_blank\')" style="background:#25D366;color:#fff;border:0;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px" title="Mensagem no WhatsApp">💬 WhatsApp</button>';
-      h += '</a>';
+    // Cards da coluna
+    h += '<div style="padding:10px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px">';
+    if (nelCol.length === 0) {
+      h += '<div style="padding:24px 12px;text-align:center;font-size:11px;color:var(--gray-400);border:2px dashed var(--gray-200);border-radius:8px">vazio</div>';
     } else {
-      h += '<div style="padding:14px 16px;background:var(--gray-50);border-bottom:1px solid var(--gray-100);color:var(--gray-400);font-size:12px;text-align:center">📵 Sem telefone cadastrado</div>';
+      nelCol.forEach(function(f){
+        var inic = (f.razao||'?').split(' ').filter(function(p){return p.length>2;}).map(function(p){return p[0];}).slice(0,2).join('').toUpperCase() || '?';
+        var catLabel = (CATEGORIES.find(function(c){return c.id===f.categoria;})||{}).label;
+        var ratingStars = '★'.repeat(f.rating||0) + '☆'.repeat(5-(f.rating||0));
+        var telLimpo = (f.telefone||'').replace(/[^\d]/g,'');
+        var temTel = telLimpo.length >= 10;
+
+        h += '<div class="kanban-card" style="background:#fff;border-radius:8px;padding:12px;border:1px solid var(--gray-100);box-shadow:0 1px 2px rgba(0,0,0,.04);cursor:pointer;transition:all .15s" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,.08)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 1px 2px rgba(0,0,0,.04)\';this.style.transform=\'\'" onclick="abrirFornecedor(\''+f.id+'\')">';
+
+        // Cabeçalho do card
+        h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+        h += '<div style="width:28px;height:28px;border-radius:50%;background:'+col.cor+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">'+inic+'</div>';
+        h += '<div style="flex:1;min-width:0;font-size:12px;font-weight:700;color:var(--gray-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escHtml(f.razao||'')+'">'+escHtml(f.razao||'—')+'</div>';
+        h += '</div>';
+
+        // Categoria (se tiver)
+        if (catLabel) h += '<div style="font-size:10px;color:var(--gray-500);background:var(--gray-100);padding:2px 7px;border-radius:8px;display:inline-block;margin-bottom:8px">'+escHtml(catLabel)+'</div>';
+
+        // Telefone — destaque
+        if (temTel) {
+          h += '<a href="tel:'+telLimpo+'" onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;text-decoration:none;color:var(--gray-900);margin-bottom:6px">';
+          h += '<svg viewBox="0 0 24 24" fill="#25D366" width="14" height="14"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/></svg>';
+          h += '<span style="flex:1;font-size:13px;font-weight:800;letter-spacing:.2px">'+_formatTelMostrar(f.telefone)+'</span>';
+          h += '<button onclick="event.stopPropagation();event.preventDefault();window.open(\''+_whatsappLink(f.telefone, f.razao||'fornecedor')+'\',\'_blank\')" style="background:#25D366;color:#fff;border:0;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer" title="WhatsApp">💬</button>';
+          h += '</a>';
+        }
+
+        // Linha de valor + rating
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">';
+        h += '<div style="font-size:13px;font-weight:800;color:#10b981">R$ '+formatMoney(f.totalComprado||0)+'</div>';
+        h += '<div style="color:#fbbf24;font-size:11px;letter-spacing:1px">'+ratingStars+'</div>';
+        h += '</div>';
+
+        // Ações: mover etapa (≪ ≫)
+        h += '<div style="display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-100)" onclick="event.stopPropagation()">';
+        var prev = _statusPipelineNeighbor(f.status, -1);
+        var next = _statusPipelineNeighbor(f.status, +1);
+        h += '<button class="btn btn-outline btn-sm" style="flex:1;font-size:10px;padding:5px 4px"'+(prev?' onclick="_avancarFornecedor(\''+f.id+'\',\''+prev+'\')"':'disabled style="flex:1;font-size:10px;padding:5px 4px;opacity:.3"')+' title="Voltar etapa">←</button>';
+        h += '<button class="btn btn-outline btn-sm" style="flex:1;font-size:10px;padding:5px 4px" onclick="abrirFornecedor(\''+f.id+'\')" title="Editar">✏️</button>';
+        h += '<button class="btn btn-outline btn-sm" style="flex:1;font-size:10px;padding:5px 4px"'+(next?' onclick="_avancarFornecedor(\''+f.id+'\',\''+next+'\')"':'disabled style="flex:1;font-size:10px;padding:5px 4px;opacity:.3"')+' title="Avançar etapa">→</button>';
+        h += '</div>';
+
+        h += '</div>'; // kanban-card
+      });
     }
-
-    // Info adicional — CNPJ, total, último contato
-    h += '<div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px">';
-    h += '<div><div style="color:var(--gray-400);text-transform:uppercase;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:2px">CNPJ</div><div style="font-family:monospace;font-weight:600;color:var(--gray-700)">' + escHtml(f.cnpj||'—') + '</div></div>';
-    h += '<div style="text-align:right"><div style="color:var(--gray-400);text-transform:uppercase;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:2px">Total comprado</div><div style="font-weight:800;color:var(--gray-900)">R$ ' + formatMoney(f.totalComprado||0) + '</div></div>';
-    h += '<div><div style="color:var(--gray-400);text-transform:uppercase;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:2px">Último contato</div><div style="color:var(--gray-700);font-weight:600">' + ultTxt + '</div></div>';
-    h += '<div style="text-align:right"><div style="color:var(--gray-400);text-transform:uppercase;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:2px">Avaliação</div><div style="color:#fbbf24;font-size:13px;letter-spacing:1px">' + ratingStars + '</div></div>';
-    h += '</div>';
-
-    // Rodapé com ações
-    h += '<div style="padding:10px 16px;border-top:1px solid var(--gray-100);display:flex;gap:6px;background:var(--gray-50)">';
-    if (f.email) h += '<a class="btn btn-outline btn-sm" style="flex:1;text-align:center;text-decoration:none" href="mailto:' + escHtml(f.email) + '">✉️ E-mail</a>';
-    h += '<button class="btn btn-outline btn-sm" style="flex:1" onclick="abrirFornecedor(\'' + f.id + '\')">✏️ Editar</button>';
-    h += '</div>';
-
-    h += '</div>';
+    h += '</div></div>'; // cards container + kanban-col
   });
   h += '</div>';
 
-  h += '<div style="padding:14px 4px;font-size:11px;color:var(--gray-400);text-align:right">Mostrando ' + filtrada.length + ' de ' + lista.length + ' fornecedores</div>';
+  h += '<div style="padding:10px 4px;font-size:11px;color:var(--gray-400);text-align:right">Mostrando ' + filtrada.length + ' de ' + lista.length + ' fornecedores no funil</div>';
 
   return h;
+}
+
+function _statusPipelineNeighbor(currentStatus, dir) {
+  var idx = FORN_PIPELINE.findIndex(function(c){return c.id===currentStatus;});
+  if (idx < 0) return null;
+  var ni = idx + dir;
+  return (ni >= 0 && ni < FORN_PIPELINE.length) ? FORN_PIPELINE[ni].id : null;
 }
 
 function abrirFornecedor(id) {
@@ -3834,8 +3861,8 @@ function abrirFornecedor(id) {
   h += '<input class="form-input" id="fn-ie" value="' + escHtml(f?f.ie:'') + '" placeholder="000.000.000.000"></div>';
   h += '<div class="form-group"><label class="form-label">Status</label>';
   h += '<select class="form-input" id="fn-status">';
-  ['ativo','avaliacao','inativo','bloqueado'].forEach(function(s){
-    h += '<option value="'+s+'"'+(f&&f.status===s?' selected':(s==='ativo'&&!f?' selected':''))+'>'+_fornStatusLabel(s)+'</option>';
+  ['prospeccao','contato','avaliacao','ativo','inativo','bloqueado'].forEach(function(s){
+    h += '<option value="'+s+'"'+(f&&f.status===s?' selected':(s==='prospeccao'&&!f?' selected':''))+'>'+_fornStatusLabel(s)+'</option>';
   });
   h += '</select></div></div>';
 
