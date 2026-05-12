@@ -144,6 +144,11 @@ img{max-width:100%;display:block;}
 .product-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:var(--transition);cursor:pointer;position:relative;}
 .product-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);}
 .product-img{width:100%;aspect-ratio:1;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden;}
+.pi-frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s ease;font-size:48px;}
+.pi-frame.on{opacity:1;}
+.pi-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:3;pointer-events:none;}
+.pi-dots span{width:5px;height:5px;border-radius:50%;background:rgba(0,0,0,.2);transition:background .3s;}
+.pi-dots span.on{background:var(--red);}
 .product-img .tag{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;letter-spacing:0.02em;}
 .product-img .tag-green{background:var(--green);}
 .product-body{padding:14px;}
@@ -950,6 +955,11 @@ function generateProducts() {
       var price = hasDiscount ? Math.round(basePrice * (1 - discount/100) * 100) / 100 : basePrice;
       var stock = Math.floor(Math.random() * 500) + 1;
       var fiscal = ncmList[i % ncmList.length];
+      var imgFrames = [
+        emojis[i % emojis.length],
+        emojis[(i+7) % emojis.length],
+        emojis[(i+13) % emojis.length]
+      ];
       products.push({
         id: id++,
         name: name,
@@ -957,6 +967,7 @@ function generateProducts() {
         catLabel: cat.label,
         sub: cat.subs[i % cat.subs.length],
         emoji: emojis[i % emojis.length],
+        imgs: imgFrames,
         price: price,
         oldPrice: hasDiscount ? basePrice : 0,
         discount: discount,
@@ -1470,7 +1481,16 @@ function clearFilters() {
 
 function productCard(p) {
   var h = '<div class="product-card" onclick="openProduct(' + p.id + ')">';
-  h += '<div class="product-img">' + p.emoji;
+  var frames = (p.imgs && p.imgs.length) ? p.imgs : [p.emoji];
+  h += '<div class="product-img" data-frames="' + frames.length + '" data-idx="0">';
+  frames.forEach(function(f, i){
+    h += '<span class="pi-frame' + (i===0?' on':'') + '">' + f + '</span>';
+  });
+  if (frames.length > 1) {
+    h += '<div class="pi-dots">';
+    frames.forEach(function(_, i){ h += '<span' + (i===0?' class="on"':'') + '></span>'; });
+    h += '</div>';
+  }
   if (p.discount) h += '<span class="tag">-' + p.discount + '%</span>';
   if (p.atacado) h += '<span class="tag tag-green" style="left:auto;right:8px">Atacado</span>';
   h += '</div><div class="product-body">';
@@ -1494,6 +1514,25 @@ function productCard(p) {
   h += '</div>';
   h += '</div></div></div>';
   return h;
+}
+
+// ── Carrossel automático das imagens de produto (3s por frame) ──
+if (!window.__piInterval) {
+  window.__piInterval = setInterval(function(){
+    document.querySelectorAll('.product-img[data-frames]').forEach(function(box){
+      var total = parseInt(box.getAttribute('data-frames'),10) || 1;
+      if (total < 2) return;
+      var idx = parseInt(box.getAttribute('data-idx'),10) || 0;
+      var next = (idx + 1) % total;
+      var frames = box.querySelectorAll('.pi-frame');
+      var dots = box.querySelectorAll('.pi-dots span');
+      if (frames[idx]) frames[idx].classList.remove('on');
+      if (frames[next]) frames[next].classList.add('on');
+      if (dots[idx]) dots[idx].classList.remove('on');
+      if (dots[next]) dots[next].classList.add('on');
+      box.setAttribute('data-idx', next);
+    });
+  }, 3000);
 }
 
 function renderProductDetail() {
