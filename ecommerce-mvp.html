@@ -177,12 +177,12 @@ img{max-width:100%;display:block;}
 .pagination button.active{background:var(--blue);color:#fff;border-color:var(--blue);}
 
 /* FOOTER */
-.footer{background:#1a0005;color:rgba(255,255,255,0.5);padding:48px 0 24px;margin-top:48px;}
-.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:32px;}
+.footer{background:#1a0005;color:rgba(255,255,255,0.5);padding:24px 0 16px;margin-top:32px;}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:32px;margin-bottom:18px;}
 .footer h3{color:#fff;font-size:14px;font-weight:700;margin-bottom:16px;}
 .footer p,.footer a{font-size:13px;line-height:1.8;color:var(--gray-400);}
 .footer a:hover{color:#fff;}
-.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;display:flex;justify-content:space-between;align-items:center;font-size:12px;}
 .footer-payments{display:flex;gap:8px;}
 .footer-payments span{background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:var(--gray-300);}
 
@@ -4184,29 +4184,30 @@ function renderFreteCalc(contexto) {
 function renderFooter() {
   return '<footer class="footer"><div class="container">' +
     '<div class="footer-grid">' +
+    // Coluna 1: Marca
     '<div>' +
-      '<img src="logo-zm.png" alt="ZM Atacadista" style="height:50px;margin-bottom:12px;filter:brightness(0) invert(1)">' +
-      '<p style="margin-bottom:14px">Referência em atacado e material de construção. Mais de 2.000 produtos para PF e PJ com entrega para todo Brasil.</p>' +
-      '<a href="https://zmfinanceira.com.br" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,rgba(255,214,10,0.15),rgba(255,214,10,0.05));border:1px solid rgba(255,214,10,0.3);border-radius:10px;text-decoration:none;color:#FFD60A;font-size:12px;font-weight:700;transition:all 0.2s">' +
-        '<span style="font-size:20px">💳</span>' +
-        '<span><span style="display:block;font-size:10px;color:#a8a8b3;text-transform:uppercase;letter-spacing:0.08em;font-weight:600">Conheça também</span><span>ZM Financeira →</span></span>' +
-      '</a>' +
+      '<img src="logo-zm.png" alt="ZM Atacadista" style="height:36px;margin-bottom:10px;filter:brightness(0) invert(1)">' +
+      '<p style="margin-bottom:10px;font-size:12px;line-height:1.5">Atacado e material de construção · 2.000+ produtos para PF e PJ.</p>' +
+      '<a href="https://zmfinanceira.com.br" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,214,10,0.1);border:1px solid rgba(255,214,10,0.3);border-radius:6px;text-decoration:none;color:#FFD60A;font-size:11px;font-weight:700">💳 ZM Financeira →</a>' +
     '</div>' +
-    '<div><h3>Institucional</h3><a href="#">Sobre Nós</a><br><a href="#">Trabalhe Conosco</a><br><a href="#">Política de Privacidade</a><br><a href="#">Termos de Uso</a><br><a href="https://zmfinanceira.com.br" target="_blank" rel="noopener" style="color:#FFD60A">💳 ZM Financeira</a></div>' +
-    '<div>' +
-      '<h3>Atendimento</h3>' +
-      '<div style="margin-bottom:10px"><strong style="color:#fff;display:block;font-size:12px;margin-bottom:2px">📍 Loja Física</strong>' +
-      '<span style="font-size:12px;line-height:1.6">Av. JK, 500 — Centro<br>Águas Lindas de Goiás/GO<br>CEP 72915-000</span></div>' +
-      '<div style="margin-bottom:8px"><strong style="color:#fff;display:block;font-size:12px;margin-bottom:2px">🕐 Horário</strong>' +
-      '<span style="font-size:12px">Seg a Sáb · 08h às 18h</span></div>' +
-      '<a href="https://wa.me/5534984282779" target="_blank">📱 WhatsApp: (34) 98428-2779</a><br>' +
-      '<a href="#">☎️ SAC: 0800 727 0909</a><br>' +
-      '<a href="#">Central de Ajuda</a><br>' +
-      '<a href="#">Trocas e Devoluções</a>' +
+    // Coluna 2: Links essenciais
+    '<div><h3>Institucional</h3>' +
+      '<a href="#">Sobre nós</a><br>' +
+      '<a href="#">Privacidade</a><br>' +
+      '<a href="#">Termos de uso</a><br>' +
+      '<a href="#">Trocas e devoluções</a>' +
     '</div>' +
-    '<div><h3>Formas de Pagamento</h3><div class="footer-payments"><span>PIX</span><span>VISA</span><span>MASTER</span><span>ELO</span><span>BOLETO</span></div><br><h3 style="margin-top:12px">Segurança</h3><p>🔒 Site 100% seguro<br>Certificado SSL</p></div>' +
+    // Coluna 3: Contato compacto
+    '<div><h3>Contato</h3>' +
+      '<a href="https://wa.me/5534984282779" target="_blank">📱 (34) 98428-2779</a><br>' +
+      '<span style="font-size:12px;color:#a8a8b3;line-height:1.7">Av. JK, 500 — Águas Lindas/GO<br>Seg a Sáb · 08h às 18h</span>' +
     '</div>' +
-    '<div class="footer-bottom"><span>© 2026 ZM Atacadista e Material de Construção. Todos os direitos reservados. CNPJ: 25.456.789/0001-90</span><span>Desenvolvido por Informus</span></div>' +
+    '</div>' +
+    // Rodapé final: copyright + pagamentos numa linha só
+    '<div class="footer-bottom" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">' +
+      '<span style="font-size:11px;color:#7a7a85">© 2026 ZM Atacadista · CNPJ 25.456.789/0001-90 · Desenvolvido por Informus</span>' +
+      '<div style="display:flex;gap:5px;flex-wrap:wrap"><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">PIX</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">VISA</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">MASTER</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">ELO</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">BOLETO</span><span style="color:#10b981;font-size:11px;font-weight:600;margin-left:6px">🔒 SSL</span></div>' +
+    '</div>' +
     '</div></footer>';
 }
 
