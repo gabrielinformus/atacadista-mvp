@@ -778,6 +778,66 @@ img{max-width:100%;display:block;}
   .bottom-nav-item svg{width:20px;height:20px;}
 }
 
+/* ═══ MOBILE PERFECT — auditoria final ═══ */
+@media(max-width:768px){
+  html,body{overflow-x:hidden;max-width:100vw;}
+
+  /* Admin no mobile — sidebar vira menu horizontal scrollável */
+  .admin-wrap{grid-template-columns:1fr !important;min-height:auto;}
+  .admin-sidebar{padding:10px 12px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+  .admin-logo{margin-bottom:10px;font-size:14px;padding:4px 0;}
+  .admin-nav{display:flex;overflow-x:auto;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .admin-nav::-webkit-scrollbar{display:none;}
+  .admin-nav li{flex:0 0 auto;padding:6px 12px;margin-bottom:0;white-space:nowrap;font-size:11px;}
+  .admin-nav li svg{display:none;}
+  .admin-nav-group{display:none;}
+  .admin-content{padding:14px 12px;}
+  .admin-header{padding-bottom:12px;margin-bottom:14px;}
+  .admin-header h2{font-size:18px;}
+
+  /* Kanban CRM mobile — 1 coluna empilhada (não scroll horizontal incômodo) */
+  .forn-kanban{flex-direction:column;overflow-x:hidden !important;padding:8px 0 !important;}
+  .forn-kanban .kanban-col{flex:1 1 auto !important;max-height:none !important;width:100%;}
+
+  /* Stat grid no mobile mais compacto */
+  .stat-grid{gap:6px !important;}
+  .stat-card{padding:10px !important;}
+  .stat-label{font-size:9px !important;}
+
+  /* Tabelas com data-table dentro do admin não cortam */
+  .admin-content .data-table{font-size:11px;}
+
+  /* Hero / banners do site não estouram a tela */
+  .hero-card,.referral-banner{box-sizing:border-box;max-width:100%;}
+
+  /* Bottom-sheet modal fica colado sem borda branca lateral */
+  .modal-overlay{padding:0 !important;}
+
+  /* Footer no mobile mais compacto ainda */
+  .footer{padding:18px 0 12px;margin-top:20px;}
+  .footer-grid{grid-template-columns:1fr;gap:14px;}
+  .footer h3{font-size:13px;margin-bottom:6px;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;gap:8px;text-align:left;}
+
+  /* Top bar do site mobile compacto */
+  .top-bar{padding:6px 0;font-size:11px;}
+
+  /* WPP float não cobre badge do bottom-nav */
+  .wpp-float{right:14px !important;width:48px;height:48px;}
+
+  /* Filtros do admin não estouram em mobile */
+  .admin-content select.form-input,
+  .admin-content input.form-input{max-width:none !important;}
+
+  /* Categorias com 4 col -> 3 col no mobile pequeno */
+  @media(max-width:480px){
+    .cat-grid{grid-template-columns:repeat(3,1fr);}
+  }
+}
+
+/* ─── ZERO horizontal overflow em qualquer viewport ─── */
+img,video{max-width:100%;height:auto;}
+
 /* ═══════════════════════════════════════════════════════════
    UX LEIGO — Ondas 1, 2 e 3
    ═══════════════════════════════════════════════════════════ */
