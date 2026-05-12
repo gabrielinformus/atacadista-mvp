@@ -1409,7 +1409,7 @@ function productCard(p) {
   h += '<div class="product-cat">' + escHtml(p.sub) + '</div>';
   h += '<div class="product-name">' + escHtml(p.name) + '</div>';
   // Estrelas + prova social
-  var rating = p.rating || 4.5;
+  var rating = parseFloat(p.rating) || 4.5;
   var fullStars = Math.floor(rating);
   var stars = '★★★★★'.slice(0, fullStars) + '☆☆☆☆☆'.slice(0, 5-fullStars);
   h += '<div class="card-stars"><span class="star-row">' + stars + '</span><span class="star-count">' + rating.toFixed(1) + ' · ' + (p.sold||0) + ' vendidos</span></div>';
