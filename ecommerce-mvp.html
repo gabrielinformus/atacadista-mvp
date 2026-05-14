@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZM — Atacadista e Material de Construção</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23E20031'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='system-ui' font-weight='900' font-size='28' fill='%23fff'%3EZM%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&family=Oswald:wght@400;500;600;700&family=Poppins:wght@400;600;700;800;900&family=Playfair+Display:wght@400;700;900&family=Rubik:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
   --blue: #E20031;
@@ -1530,98 +1530,293 @@ function renderNav() {
   return h;
 }
 
-// ─── Destaque media (foto/vídeo de cada flyer) ─────────────
+// ─── Destaques: configuração de mídia + texto + ajuste por slot ─────
+var DESTAQUE_DEFAULTS = {
+  cimento: {
+    badge: 'DESTAQUE DA SEMANA', badgeBg: '#E20031', badgeColor: '#fff',
+    eyebrow: 'Cimento CP-II 50kg',
+    title: 'A base da sua obra<br>chega sem atraso.',
+    desc: 'Estoque garantido das melhores marcas. Entrega no canteiro, palete inteiro ou saco avulso.',
+    cta: 'Falar com um vendedor →',
+    icon: '🪣'
+  },
+  tijolo: {
+    badge: 'EM ESTOQUE', badgeBg: 'rgba(255,255,255,0.18)', badgeColor: '#fff',
+    eyebrow: 'Tijolos & Blocos',
+    title: 'Tijolo baiano 8 furos',
+    desc: 'Entrega por milheiro com prazo de até 48h em Goiânia e região.',
+    cta: '',
+    icon: '🧱'
+  },
+  telha: {
+    badge: 'PRONTA ENTREGA', badgeBg: 'rgba(255,255,255,0.18)', badgeColor: '#fff',
+    eyebrow: 'Telhas & Coberturas',
+    title: 'Cobertura completa pra sua obra',
+    desc: 'Telha cerâmica, fibrocimento e barro. Frete combinado.',
+    cta: '',
+    icon: '🏠'
+  }
+};
 function loadDestaqueMedia(){
   try { return JSON.parse(localStorage.getItem('zm_destaque_media')||'{}'); }
   catch(e) { return {}; }
 }
 function saveDestaqueMedia(obj){
-  try { localStorage.setItem('zm_destaque_media', JSON.stringify(obj)); } catch(e){
+  try { localStorage.setItem('zm_destaque_media', JSON.stringify(obj)); return true; } catch(e){
     toast('Mídia muito grande — escolha um arquivo menor (max ~3MB).','warn');
+    return false;
   }
 }
-function uploadDestaqueMedia(slot){
+function getDestaque(slot){
+  var dq = loadDestaqueMedia();
+  var d = dq[slot] || {};
+  var def = DESTAQUE_DEFAULTS[slot] || {};
+  return {
+    slot: slot,
+    url: d.url || null,
+    type: d.type || null,
+    fit: d.fit || 'cover',
+    position: d.position || '50% 50%',
+    zoom: typeof d.zoom === 'number' ? d.zoom : 1,
+    overlay: typeof d.overlay === 'number' ? d.overlay : 0.55,
+    showText: d.showText !== false,
+    badge: d.badge != null ? d.badge : def.badge,
+    eyebrow: d.eyebrow != null ? d.eyebrow : def.eyebrow,
+    title: d.title != null ? d.title : def.title,
+    desc: d.desc != null ? d.desc : def.desc,
+    cta: d.cta != null ? d.cta : def.cta,
+    badgeBg: def.badgeBg,
+    badgeColor: def.badgeColor,
+    icon: def.icon,
+    // Tipografia
+    fontFamily: d.fontFamily || null,
+    align: d.align || 'left',
+    titleSize: typeof d.titleSize === 'number' ? d.titleSize : null,
+    descSize: typeof d.descSize === 'number' ? d.descSize : null,
+    color: d.color || '#fff'
+  };
+}
+var DESTAQUE_FONTS = [
+  { id: 'inter', label: 'Padrão (Inter)', css: "'Inter','Segoe UI',sans-serif" },
+  { id: 'mont', label: 'Montserrat (moderna)', css: "'Montserrat','Inter',sans-serif" },
+  { id: 'oswald', label: 'Oswald (impacto)', css: "'Oswald','Impact',sans-serif" },
+  { id: 'poppins', label: 'Poppins (amigável)', css: "'Poppins','Inter',sans-serif" },
+  { id: 'playfair', label: 'Playfair (elegante)', css: "'Playfair Display','Georgia',serif" },
+  { id: 'rubik', label: 'Rubik (descontraída)', css: "'Rubik','Inter',sans-serif" }
+];
+function abrirEditorDestaque(slot){
+  var d = getDestaque(slot);
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal';
+  content.style.maxWidth = '640px';
+  var label = slot.charAt(0).toUpperCase()+slot.slice(1);
+  var h = '';
+  h += '<div class="modal-header"><h3>Editar destaque · '+label+'</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body" style="max-height:70vh;overflow-y:auto;padding:18px 22px">';
+  // === MÍDIA ===
+  h += '<div class="form-section-title" style="margin-top:0">📷 Mídia (foto ou vídeo)</div>';
+  if (d.url) {
+    if (d.type === 'video') {
+      h += '<video src="'+d.url+'" autoplay loop muted playsinline style="width:100%;max-height:160px;border-radius:8px;background:#000;object-fit:cover"></video>';
+    } else {
+      h += '<img src="'+d.url+'" style="width:100%;max-height:160px;border-radius:8px;background:#000;object-fit:cover">';
+    }
+    h += '<div style="display:flex;gap:8px;margin:8px 0 14px"><button class="btn btn-outline btn-sm" onclick="uploadDestaqueMediaInline(\''+slot+'\')">🔄 Trocar mídia</button><button class="btn btn-outline btn-sm" style="color:#DC2626;border-color:#FCA5A5" onclick="removerDestaqueMediaInline(\''+slot+'\')">🗑 Remover</button></div>';
+  } else {
+    h += '<button class="btn btn-outline btn-block" style="padding:18px;border-style:dashed" onclick="uploadDestaqueMediaInline(\''+slot+'\')">📤 Enviar foto ou vídeo (até 5MB)</button>';
+  }
+
+  // === AJUSTE DA IMAGEM (só faz sentido se há mídia) ===
+  if (d.url) {
+    h += '<div class="form-section-title">🎛 Ajuste da imagem</div>';
+    h += '<div class="form-group"><label class="form-label">Preenchimento</label>';
+    h += '<div style="display:flex;gap:8px">'
+      + '<button class="btn btn-sm '+(d.fit==='cover'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'cover\')">Preencher (corta)</button>'
+      + '<button class="btn btn-sm '+(d.fit==='contain'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'contain\')">Inteira (com bordas)</button>'
+      + '</div></div>';
+    h += '<div class="form-group"><label class="form-label">Posição</label>';
+    h += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">'
+      + '<button class="btn btn-sm '+(d.position==='50% 0%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'50% 0%\')">↑ Topo</button>'
+      + '<button class="btn btn-sm '+(d.position==='0% 50%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'0% 50%\')">← Esq</button>'
+      + '<button class="btn btn-sm '+(d.position==='50% 50%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'50% 50%\')">● Centro</button>'
+      + '<button class="btn btn-sm '+(d.position==='100% 50%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'100% 50%\')">Dir →</button>'
+      + '<button class="btn btn-sm '+(d.position==='50% 100%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'50% 100%\')">↓ Base</button>'
+      + '</div></div>';
+    h += '<div class="form-group"><label class="form-label">Zoom · <span id="zoom-val">'+d.zoom.toFixed(2)+'×</span></label>';
+    h += '<input type="range" min="1" max="2.5" step="0.05" value="'+d.zoom+'" style="width:100%" oninput="document.getElementById(\'zoom-val\').textContent=parseFloat(this.value).toFixed(2)+\'×\';setDestaqueProp(\''+slot+'\',\'zoom\',parseFloat(this.value),true)"></div>';
+    h += '<div class="form-group"><label class="form-label">Escurecimento do fundo · <span id="ov-val">'+Math.round(d.overlay*100)+'%</span></label>';
+    h += '<input type="range" min="0" max="0.85" step="0.05" value="'+d.overlay+'" style="width:100%" oninput="document.getElementById(\'ov-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setDestaqueProp(\''+slot+'\',\'overlay\',parseFloat(this.value),true)"></div>';
+  }
+
+  // === TIPOGRAFIA ===
+  h += '<div class="form-section-title">🔤 Tipografia</div>';
+  h += '<div class="form-group"><label class="form-label">Fonte</label><select class="form-input" onchange="setDestaqueProp(\''+slot+'\',\'fontFamily\',this.value)">';
+  var curFF = d.fontFamily || DESTAQUE_FONTS[0].css;
+  DESTAQUE_FONTS.forEach(function(f){
+    h += '<option value="'+f.css.replace(/"/g,'&quot;')+'"'+(curFF===f.css?' selected':'')+' style="font-family:'+f.css+'">'+f.label+'</option>';
+  });
+  h += '</select></div>';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Tamanho do título · <span id="ts-val">'+(d.titleSize||'auto')+'px</span></label>';
+  h += '<input type="range" min="20" max="64" step="1" value="'+(d.titleSize||42)+'" style="width:100%" oninput="document.getElementById(\'ts-val\').textContent=this.value+\'px\';setDestaqueProp(\''+slot+'\',\'titleSize\',parseInt(this.value),true)"></div>';
+  h += '<div class="form-group"><label class="form-label">Tamanho da descrição · <span id="ds-val">'+(d.descSize||'auto')+'px</span></label>';
+  h += '<input type="range" min="10" max="22" step="1" value="'+(d.descSize||14)+'" style="width:100%" oninput="document.getElementById(\'ds-val\').textContent=this.value+\'px\';setDestaqueProp(\''+slot+'\',\'descSize\',parseInt(this.value),true)"></div></div>';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Alinhamento</label>';
+  h += '<div style="display:flex;gap:6px">'
+    + '<button class="btn btn-sm '+(d.align==='left'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'align\',\'left\')">⇤ Esquerda</button>'
+    + '<button class="btn btn-sm '+(d.align==='center'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'align\',\'center\')">⇔ Centro</button>'
+    + '<button class="btn btn-sm '+(d.align==='right'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'align\',\'right\')">⇥ Direita</button>'
+    + '</div></div>';
+  h += '<div class="form-group"><label class="form-label">Cor do texto</label>';
+  h += '<div style="display:flex;gap:6px">'
+    + '<button class="btn btn-sm '+(d.color==='#fff'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'color\',\'#fff\')">Branco</button>'
+    + '<button class="btn btn-sm '+(d.color==='#111'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'color\',\'#111\')">Preto</button>'
+    + '<button class="btn btn-sm '+(d.color==='#E20031'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'color\',\'#E20031\')">Vermelho ZM</button>'
+    + '</div></div></div>';
+
+  // === TEXTO ===
+  h += '<div class="form-section-title">📝 Texto</div>';
+  h += '<label class="filter-check" style="margin:0 0 14px"><input type="checkbox" '+(d.showText?'checked':'')+' onchange="setDestaqueProp(\''+slot+'\',\'showText\',this.checked)"> Mostrar texto sobre o destaque</label>';
+  h += '<div style="opacity:'+(d.showText?'1':'0.4')+';pointer-events:'+(d.showText?'auto':'none')+'" id="txt-fields">';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Selo (badge)</label><input class="form-input" id="ed-badge" value="'+escHtml(d.badge||'')+'"></div>';
+  h += '<div class="form-group"><label class="form-label">Eyebrow (subtítulo de topo)</label><input class="form-input" id="ed-eyebrow" value="'+escHtml(d.eyebrow||'')+'"></div></div>';
+  h += '<div class="form-group"><label class="form-label">Título <small style="color:var(--gray-400)">(use &lt;br&gt; para quebra de linha)</small></label><input class="form-input" id="ed-title" value="'+escHtml(d.title||'')+'"></div>';
+  h += '<div class="form-group"><label class="form-label">Descrição</label><textarea class="form-input" id="ed-desc" rows="2">'+escHtml(d.desc||'')+'</textarea></div>';
+  h += '<div class="form-group"><label class="form-label">CTA (texto do botão — vazio = sem botão)</label><input class="form-input" id="ed-cta" value="'+escHtml(d.cta||'')+'"></div>';
+  h += '</div>';
+
+  h += '</div>';
+  h += '<div class="modal-footer" style="padding:14px 22px;border-top:1px solid var(--gray-100);display:flex;justify-content:space-between;gap:8px;background:var(--gray-50)">';
+  h += '<button class="btn btn-outline" onclick="resetDestaque(\''+slot+'\')">↺ Restaurar padrão</button>';
+  h += '<div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarDestaqueTexto(\''+slot+'\')">💾 Salvar</button></div>';
+  h += '</div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+function setDestaqueProp(slot,key,value,silentRender){
+  var dq = loadDestaqueMedia();
+  dq[slot] = dq[slot] || {};
+  dq[slot][key] = value;
+  saveDestaqueMedia(dq);
+  if (key==='showText'){
+    var tf = document.getElementById('txt-fields');
+    if (tf){ tf.style.opacity = value?'1':'0.4'; tf.style.pointerEvents = value?'auto':'none'; }
+  }
+  // re-renderiza só a home no fundo (sem fechar modal)
+  if (!silentRender) render();
+  else {
+    // só refresca o flyer atrás sem reabrir modal
+    var hero = document.querySelector('.hero');
+    if (hero) {
+      var newH = '';
+      var oldHome = renderHome();
+      var temp = document.createElement('div'); temp.innerHTML = oldHome;
+      var newHero = temp.querySelector('.hero');
+      if (newHero && hero.parentNode) hero.parentNode.replaceChild(newHero, hero);
+    }
+  }
+}
+function salvarDestaqueTexto(slot){
+  var dq = loadDestaqueMedia();
+  dq[slot] = dq[slot] || {};
+  var badge = document.getElementById('ed-badge'); if (badge) dq[slot].badge = badge.value;
+  var eyebrow = document.getElementById('ed-eyebrow'); if (eyebrow) dq[slot].eyebrow = eyebrow.value;
+  var title = document.getElementById('ed-title'); if (title) dq[slot].title = title.value;
+  var desc = document.getElementById('ed-desc'); if (desc) dq[slot].desc = desc.value;
+  var cta = document.getElementById('ed-cta'); if (cta) dq[slot].cta = cta.value;
+  saveDestaqueMedia(dq);
+  toast('Destaque salvo','success');
+  closeModal();
+  render();
+}
+function uploadDestaqueMediaInline(slot){
   var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*,video/*';
+  input.type='file'; input.accept='image/*,video/*';
   input.onchange = function(e){
-    var f = e.target.files[0]; if (!f) return;
-    if (f.size > 5*1024*1024) { toast('Arquivo muito grande (máx 5MB)','warn'); return; }
+    var f = e.target.files[0]; if(!f) return;
+    if (f.size > 5*1024*1024){ toast('Arquivo muito grande (máx 5MB)','warn'); return; }
     var fr = new FileReader();
     fr.onload = function(){
       var dq = loadDestaqueMedia();
-      dq[slot] = { url: fr.result, type: f.type.indexOf('video')===0 ? 'video' : 'image', name: f.name };
-      saveDestaqueMedia(dq);
-      toast('Mídia atualizada no destaque ' + slot,'success');
-      render();
+      dq[slot] = dq[slot] || {};
+      dq[slot].url = fr.result;
+      dq[slot].type = f.type.indexOf('video')===0?'video':'image';
+      dq[slot].name = f.name;
+      if (!saveDestaqueMedia(dq)) return;
+      toast('Mídia carregada','success');
+      abrirEditorDestaque(slot); // re-abre editor com preview
     };
     fr.readAsDataURL(f);
   };
   input.click();
 }
-function removerDestaqueMedia(slot){
+function removerDestaqueMediaInline(slot){
   if (!confirm('Remover a mídia deste destaque?')) return;
+  var dq = loadDestaqueMedia();
+  if (dq[slot]){ delete dq[slot].url; delete dq[slot].type; delete dq[slot].name; }
+  saveDestaqueMedia(dq);
+  abrirEditorDestaque(slot);
+}
+function resetDestaque(slot){
+  if (!confirm('Restaurar todos os campos (texto, mídia, ajustes) ao padrão?')) return;
   var dq = loadDestaqueMedia();
   delete dq[slot];
   saveDestaqueMedia(dq);
+  closeModal();
   render();
 }
 
 function renderHome() {
   var h = '';
-  var dq = loadDestaqueMedia();
-  function flyerBg(slot, fallbackGradient) {
-    var m = dq[slot];
-    if (m && m.url && m.type === 'video') {
-      return '<video autoplay loop muted playsinline src="'+m.url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"></video><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.35) 60%,rgba(0,0,0,0.6) 100%);z-index:1"></div>';
+  function renderFlyer(slot, gradient, isMain) {
+    var d = getDestaque(slot);
+    var hasMedia = !!d.url;
+    var ff = d.fontFamily || "'Inter','Segoe UI',sans-serif";
+    var align = d.align || 'left';
+    var titleSize = d.titleSize || (isMain ? 42 : 26);
+    var descSize = d.descSize || (isMain ? 14 : 12);
+    var color = d.color || '#fff';
+    var bgHtml = '';
+    if (hasMedia) {
+      var mediaCss = 'position:absolute;inset:0;width:100%;height:100%;object-fit:'+d.fit+';object-position:'+d.position+';transform:scale('+d.zoom+');z-index:0;transition:transform 0.3s';
+      if (d.type === 'video') bgHtml = '<video autoplay loop muted playsinline src="'+d.url+'" style="'+mediaCss+'"></video>';
+      else bgHtml = '<img src="'+d.url+'" style="'+mediaCss+'">';
+      bgHtml += '<div style="position:absolute;inset:0;background:rgba(0,0,0,'+d.overlay+');z-index:1"></div>';
     }
-    if (m && m.url && m.type === 'image') {
-      return '<img src="'+m.url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.35) 60%,rgba(0,0,0,0.65) 100%);z-index:1"></div>';
+    var html = '<div class="flyer flyer-'+slot+'" style="position:relative;border-radius:var(--radius);overflow:hidden;background:'+gradient+';color:'+color+';padding:'+(isMain?'30px 32px':'24px')+';display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15);font-family:'+ff+';text-align:'+align+'" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
+    html += bgHtml;
+    if (!hasMedia && d.icon) html += '<div style="position:absolute;right:-20px;bottom:-20px;font-size:'+(isMain?160:170)+'px;opacity:0.13;line-height:1;z-index:1;pointer-events:none">'+d.icon+'</div>';
+
+    if (d.showText) {
+      // BADGE topo
+      html += '<div style="position:relative;z-index:2">';
+      if (d.badge) html += '<span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;background:'+(d.badgeBg||'rgba(255,255,255,0.18)')+';color:'+(d.badgeColor||'#fff')+';padding:4px 10px;border-radius:99px">'+escHtml(d.badge)+'</span>';
+      html += '</div>';
+      // CORPO
+      html += '<div style="position:relative;z-index:2">';
+      if (d.eyebrow) html += '<div style="font-size:'+(isMain?13:11)+'px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px">'+escHtml(d.eyebrow)+'</div>';
+      if (d.title) html += '<h2 style="font-size:'+titleSize+'px;font-weight:900;letter-spacing:-0.03em;line-height:1.08;margin-bottom:10px;font-family:inherit">'+d.title+'</h2>';
+      if (d.desc) html += '<p style="font-size:'+descSize+'px;opacity:0.85;line-height:1.5;max-width:'+(isMain?340:200)+'px;margin-bottom:14px">'+escHtml(d.desc)+'</p>';
+      if (d.cta) html += '<a class="hero-cta" style="display:inline-flex;align-items:center;gap:8px;background:'+(isMain?'#99CC00':'rgba(255,255,255,0.95)')+';color:'+(isMain?'#fff':'#111')+';padding:11px 22px;border-radius:99px;font-weight:700;font-size:12px;letter-spacing:0.02em">'+escHtml(d.cta)+'</a>';
+      html += '</div>';
+    } else {
+      html += '<div></div><div></div>'; // mantém o justify-content:space-between
     }
-    return '';
-  }
-  function uploadBtn(slot) {
-    var has = dq[slot] && dq[slot].url;
-    return '<div style="position:absolute;bottom:10px;right:10px;z-index:3;display:flex;gap:6px">'
-      + (has ? '<button onclick="event.stopPropagation();removerDestaqueMedia(\''+slot+'\')" title="Remover mídia" style="background:rgba(0,0,0,0.55);color:#fff;border:0;border-radius:99px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px)">🗑</button>' : '')
-      + '<button onclick="event.stopPropagation();uploadDestaqueMedia(\''+slot+'\')" title="Adicionar foto ou vídeo" style="background:rgba(255,255,255,0.92);color:#111;border:0;border-radius:99px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px)">'+(has?'🔄 Trocar':'📷 Mídia')+'</button>'
+
+    // Botão "Editar destaque" — visível no canto inferior direito
+    html += '<div style="position:absolute;bottom:10px;right:10px;z-index:3">'
+      + '<button onclick="event.stopPropagation();abrirEditorDestaque(\''+slot+'\')" title="Editar destaque" style="background:rgba(255,255,255,0.94);color:#111;border:0;border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,0.2)">✎ Editar</button>'
       + '</div>';
+    html += '</div>';
+    return html;
   }
 
-  // Hero — flyers de cimento / tijolo / telha (SEM VALOR — só destaque do produto)
+  // Hero — 3 destaques editáveis (cimento principal + tijolo + telha)
   h += '<div class="hero">';
   h += '<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;min-height:280px" class="flyer-grid">';
-  // CIMENTO — flyer principal
-  h += '<div class="flyer flyer-cimento" style="position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#2D3748 0%,#1A202C 60%,#171923 100%);color:#fff;padding:30px 32px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
-  h += flyerBg('cimento');
-  h += '<div style="position:relative;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.15em;background:#E20031;color:#fff;padding:4px 10px;border-radius:99px">DESTAQUE DA SEMANA</span></div>';
-  h += '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:140px;opacity:'+(dq.cimento&&dq.cimento.url?'0':'0.15')+';line-height:1;z-index:1">🪣</div>';
-  h += '<div style="position:relative;z-index:2"><div style="font-size:13px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px">Cimento CP-II 50kg</div>';
-  h += '<h2 style="font-size:42px;font-weight:900;letter-spacing:-0.04em;line-height:1.05;margin-bottom:10px">A base da sua obra<br>chega sem atraso.</h2>';
-  h += '<p style="font-size:14px;opacity:0.85;line-height:1.45;max-width:340px;margin-bottom:18px">Estoque garantido das melhores marcas. Entrega no canteiro, palete inteiro ou saco avulso.</p>';
-  h += '<a class="hero-cta" style="display:inline-flex;align-items:center;gap:8px;background:#99CC00;color:#fff;padding:12px 22px;border-radius:99px;font-weight:700;font-size:13px">Falar com um vendedor →</a></div>';
-  h += uploadBtn('cimento');
-  h += '</div>';
-  // TIJOLO
-  h += '<div class="flyer flyer-tijolo" style="position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#7B2D26 0%,#8E342B 50%,#5C201A 100%);color:#fff;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
-  h += flyerBg('tijolo');
-  h += '<div style="position:relative;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;background:rgba(255,255,255,0.18);backdrop-filter:blur(4px);padding:3px 10px;border-radius:99px">EM ESTOQUE</span></div>';
-  h += '<div style="position:absolute;right:-30px;bottom:-30px;font-size:180px;opacity:'+(dq.tijolo&&dq.tijolo.url?'0':'0.12')+';line-height:1;transform:rotate(-12deg);z-index:1">🧱</div>';
-  h += '<div style="position:relative;z-index:2"><div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Tijolos & Blocos</div>';
-  h += '<h3 style="font-size:26px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:6px">Tijolo baiano 8 furos</h3>';
-  h += '<p style="font-size:12px;opacity:0.88;line-height:1.5;max-width:200px">Entrega por milheiro com prazo de até 48h em Goiânia e região.</p></div>';
-  h += uploadBtn('tijolo');
-  h += '</div>';
-  // TELHA
-  h += '<div class="flyer flyer-telha" style="position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%);color:#fff;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
-  h += flyerBg('telha');
-  h += '<div style="position:relative;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;background:rgba(255,255,255,0.18);backdrop-filter:blur(4px);padding:3px 10px;border-radius:99px">PRONTA ENTREGA</span></div>';
-  h += '<div style="position:absolute;right:-20px;bottom:-20px;font-size:170px;opacity:'+(dq.telha&&dq.telha.url?'0':'0.15')+';line-height:1;transform:rotate(8deg);z-index:1">🏠</div>';
-  h += '<div style="position:relative;z-index:2"><div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Telhas & Coberturas</div>';
-  h += '<h3 style="font-size:26px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:6px">Cobertura completa pra sua obra</h3>';
-  h += '<p style="font-size:12px;opacity:0.88;line-height:1.5;max-width:200px">Telha cerâmica, fibrocimento e barro. Frete combinado.</p></div>';
-  h += uploadBtn('telha');
-  h += '</div>';
+  h += renderFlyer('cimento', 'linear-gradient(135deg,#2D3748 0%,#1A202C 60%,#171923 100%)', true);
+  h += renderFlyer('tijolo', 'linear-gradient(135deg,#7B2D26 0%,#8E342B 50%,#5C201A 100%)', false);
+  h += renderFlyer('telha', 'linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%)', false);
   h += '</div></div>';
 
   // Categories
