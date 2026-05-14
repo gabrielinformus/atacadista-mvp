@@ -1579,6 +1579,10 @@ function getDestaque(slot){
     position: d.position || '50% 50%',
     zoom: typeof d.zoom === 'number' ? d.zoom : 1,
     overlay: typeof d.overlay === 'number' ? d.overlay : 0.55,
+    vignette: d.vignette !== false, // sombra radial nos cantos
+    shadow: d.shadow || 'soft', // none | soft | dramatic | spotlight
+    posX: typeof d.posX === 'number' ? d.posX : 50, // 0-100
+    posY: typeof d.posY === 'number' ? d.posY : 50, // 0-100
     showText: d.showText !== false,
     badge: d.badge != null ? d.badge : def.badge,
     eyebrow: d.eyebrow != null ? d.eyebrow : def.eyebrow,
@@ -1632,21 +1636,30 @@ function abrirEditorDestaque(slot){
     h += '<div class="form-section-title">🎛 Ajuste da imagem</div>';
     h += '<div class="form-group"><label class="form-label">Preenchimento</label>';
     h += '<div style="display:flex;gap:8px">'
-      + '<button class="btn btn-sm '+(d.fit==='cover'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'cover\')">Preencher (corta)</button>'
+      + '<button class="btn btn-sm '+(d.fit==='cover'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'cover\')">Preencher (corta excessos)</button>'
       + '<button class="btn btn-sm '+(d.fit==='contain'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'contain\')">Inteira (com bordas)</button>'
       + '</div></div>';
-    h += '<div class="form-group"><label class="form-label">Posição</label>';
-    h += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">'
-      + '<button class="btn btn-sm '+(d.position==='50% 0%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'50% 0%\')">↑ Topo</button>'
-      + '<button class="btn btn-sm '+(d.position==='0% 50%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'0% 50%\')">← Esq</button>'
-      + '<button class="btn btn-sm '+(d.position==='50% 50%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'50% 50%\')">● Centro</button>'
-      + '<button class="btn btn-sm '+(d.position==='100% 50%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'100% 50%\')">Dir →</button>'
-      + '<button class="btn btn-sm '+(d.position==='50% 100%'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'position\',\'50% 100%\')">↓ Base</button>'
+    // Zoom amplo
+    var zoomPct = Math.round(d.zoom*100);
+    h += '<div class="form-group"><label class="form-label">Tamanho · <span id="zoom-val">'+zoomPct+'%</span> <button onclick="setDestaqueProp(\''+slot+'\',\'zoom\',1);abrirEditorDestaque(\''+slot+'\')" style="background:transparent;border:0;color:var(--blue);font-size:11px;cursor:pointer;margin-left:8px">↺ resetar</button></label>';
+    h += '<input type="range" min="0.4" max="3.5" step="0.02" value="'+d.zoom+'" style="width:100%" oninput="document.getElementById(\'zoom-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setDestaqueProp(\''+slot+'\',\'zoom\',parseFloat(this.value),true)"></div>';
+    // Posição livre X/Y por slider
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Posição horizontal · <span id="px-val">'+d.posX+'%</span></label>';
+    h += '<input type="range" min="0" max="100" step="1" value="'+d.posX+'" style="width:100%" oninput="document.getElementById(\'px-val\').textContent=this.value+\'%\';setDestaqueProp(\''+slot+'\',\'posX\',parseInt(this.value),true)"></div>';
+    h += '<div class="form-group"><label class="form-label">Posição vertical · <span id="py-val">'+d.posY+'%</span></label>';
+    h += '<input type="range" min="0" max="100" step="1" value="'+d.posY+'" style="width:100%" oninput="document.getElementById(\'py-val\').textContent=this.value+\'%\';setDestaqueProp(\''+slot+'\',\'posY\',parseInt(this.value),true)"></div></div>';
+    // Sombra realista
+    h += '<div class="form-group"><label class="form-label">Sombra do produto <small style="color:var(--gray-400)">(realista p/ fotos com fundo transparente)</small></label>';
+    h += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'
+      + '<button class="btn btn-sm '+(d.shadow==='none'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'none\')">Nenhuma</button>'
+      + '<button class="btn btn-sm '+(d.shadow==='soft'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'soft\')">Suave</button>'
+      + '<button class="btn btn-sm '+(d.shadow==='dramatic'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'dramatic\')">Dramática</button>'
+      + '<button class="btn btn-sm '+(d.shadow==='spotlight'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'spotlight\')">Holofote</button>'
       + '</div></div>';
-    h += '<div class="form-group"><label class="form-label">Zoom · <span id="zoom-val">'+d.zoom.toFixed(2)+'×</span></label>';
-    h += '<input type="range" min="1" max="2.5" step="0.05" value="'+d.zoom+'" style="width:100%" oninput="document.getElementById(\'zoom-val\').textContent=parseFloat(this.value).toFixed(2)+\'×\';setDestaqueProp(\''+slot+'\',\'zoom\',parseFloat(this.value),true)"></div>';
-    h += '<div class="form-group"><label class="form-label">Escurecimento do fundo · <span id="ov-val">'+Math.round(d.overlay*100)+'%</span></label>';
-    h += '<input type="range" min="0" max="0.85" step="0.05" value="'+d.overlay+'" style="width:100%" oninput="document.getElementById(\'ov-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setDestaqueProp(\''+slot+'\',\'overlay\',parseFloat(this.value),true)"></div>';
+    // Vignette toggle
+    h += '<label class="filter-check" style="margin:0 0 10px"><input type="checkbox" '+(d.vignette?'checked':'')+' onchange="setDestaqueProp(\''+slot+'\',\'vignette\',this.checked)"> Vinheta (escurece bordas suavemente — mais natural)</label>';
+    h += '<div class="form-group"><label class="form-label">Intensidade da vinheta · <span id="ov-val">'+Math.round(d.overlay*100)+'%</span></label>';
+    h += '<input type="range" min="0" max="0.85" step="0.02" value="'+d.overlay+'" style="width:100%" oninput="document.getElementById(\'ov-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setDestaqueProp(\''+slot+'\',\'overlay\',parseFloat(this.value),true)"></div>';
   }
 
   // === TIPOGRAFIA ===
@@ -1778,10 +1791,25 @@ function renderHome() {
     var color = d.color || '#fff';
     var bgHtml = '';
     if (hasMedia) {
-      var mediaCss = 'position:absolute;inset:0;width:100%;height:100%;object-fit:'+d.fit+';object-position:'+d.position+';transform:scale('+d.zoom+');z-index:0;transition:transform 0.3s';
+      // Filtro de sombra realista (drop-shadow funciona em PNGs transparentes)
+      var shadowFilter = '';
+      if (d.shadow === 'soft') shadowFilter = 'drop-shadow(0 18px 30px rgba(0,0,0,0.5))';
+      else if (d.shadow === 'dramatic') shadowFilter = 'drop-shadow(0 24px 40px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(0,0,0,0.5))';
+      else if (d.shadow === 'spotlight') shadowFilter = 'drop-shadow(0 30px 50px rgba(0,0,0,0.85)) drop-shadow(0 10px 18px rgba(0,0,0,0.4))';
+      var posStr = d.posX+'% '+d.posY+'%';
+      var mediaCss = 'position:absolute;inset:0;width:100%;height:100%;object-fit:'+d.fit+';object-position:'+posStr+';transform:scale('+d.zoom+');transform-origin:'+posStr+';z-index:0;transition:transform 0.25s, object-position 0.25s'+(shadowFilter?';filter:'+shadowFilter:'');
       if (d.type === 'video') bgHtml = '<video autoplay loop muted playsinline src="'+d.url+'" style="'+mediaCss+'"></video>';
       else bgHtml = '<img src="'+d.url+'" style="'+mediaCss+'">';
-      bgHtml += '<div style="position:absolute;inset:0;background:rgba(0,0,0,'+d.overlay+');z-index:1"></div>';
+      // Overlay: vignette radial (mais natural) ou plano
+      if (d.vignette) {
+        bgHtml += '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(0,0,0,'+(d.overlay*0.3)+') 0%,rgba(0,0,0,'+(d.overlay*0.7)+') 60%,rgba(0,0,0,'+d.overlay+') 100%);z-index:1;pointer-events:none"></div>';
+      } else {
+        bgHtml += '<div style="position:absolute;inset:0;background:rgba(0,0,0,'+d.overlay+');z-index:1;pointer-events:none"></div>';
+      }
+      // Sombra "chão" extra (caso shadow=spotlight, simula luz de cima)
+      if (d.shadow === 'spotlight') {
+        bgHtml += '<div style="position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.55) 100%);z-index:1;pointer-events:none"></div>';
+      }
     }
     var html = '<div class="flyer flyer-'+slot+'" style="position:relative;border-radius:var(--radius);overflow:hidden;background:'+gradient+';color:'+color+';padding:'+(isMain?'30px 32px':'24px')+';display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15);font-family:'+ff+';text-align:'+align+'" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
     html += bgHtml;
