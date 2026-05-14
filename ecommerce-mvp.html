@@ -6,7 +6,7 @@
 <title>ZM — Atacadista e Material de Construção</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23E20031'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='system-ui' font-weight='900' font-size='28' fill='%23fff'%3EZM%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&family=Oswald:wght@400;500;600;700&family=Poppins:wght@400;600;700;800;900&family=Playfair+Display:wght@400;700;900&family=Rubik:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <style>
 :root {
   --blue: #E20031;
@@ -165,43 +165,20 @@ img{max-width:100%;display:block;}
 .product-actions .btn-fav:hover{background:var(--red-light);color:var(--red);}
 
 /* CATEGORIES BAR */
-.cat-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:14px;margin-bottom:8px;}
-.cat-card{background:#fff;border-radius:14px;padding:18px 10px 14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.04);cursor:pointer;transition:transform 0.25s cubic-bezier(.4,0,.2,1),box-shadow 0.25s;border:1px solid #F1F3F5;position:relative;overflow:hidden;}
-.cat-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 28px rgba(0,0,0,0.12);}
-.cat-card:hover .cat-bubble{transform:scale(1.08) rotate(-3deg);}
+.cat-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-bottom:8px;}
+.cat-card{background:#fff;border-radius:12px;padding:18px 10px 14px;text-align:center;border:1px solid #EFF0F2;cursor:pointer;transition:border-color 0.2s,transform 0.2s;}
+.cat-card:hover{border-color:var(--gray-300);transform:translateY(-1px);}
+.cat-card:hover .cat-bubble i{color:#111;}
 .cat-bubble{
-  width:64px;height:64px;border-radius:18px;margin:0 auto 10px;
+  width:48px;height:48px;border-radius:50%;margin:0 auto 10px;
   display:flex;align-items:center;justify-content:center;
-  position:relative;
-  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);
+  background:#F5F6F8;
+  transition:background 0.2s;
 }
-.cat-bubble::before{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,0.28) 0%,rgba(255,255,255,0) 50%);
-  pointer-events:none;
-}
-.cat-bubble::after{
-  content:'';position:absolute;left:8%;right:8%;bottom:-8px;height:14px;border-radius:50%;
-  background:radial-gradient(ellipse at center,rgba(0,0,0,0.18) 0%,transparent 70%);
-  filter:blur(2px);z-index:-1;
-}
-.cat-bubble i{
-  font-size:34px;color:#fff;
-  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.22));
-  position:relative;z-index:1;
-}
-.cat-bubble i .ph-duotone-secondary{opacity:0.5;}
-.cat-card .cat-label{font-size:12.5px;font-weight:700;color:var(--gray-800);letter-spacing:-0.01em;line-height:1.2;}
-.cat-card .cat-count{font-size:10.5px;color:var(--gray-400);font-weight:500;margin-top:3px;}
-/* Cores específicas com gradiente "3D" */
-.cat-bubble.b-cons{background:linear-gradient(145deg,#F59E0B 0%,#D97706 100%);box-shadow:0 8px 16px -4px rgba(217,119,6,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-elet{background:linear-gradient(145deg,#3B82F6 0%,#1D4ED8 100%);box-shadow:0 8px 16px -4px rgba(29,78,216,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-casa{background:linear-gradient(145deg,#EC4899 0%,#BE185D 100%);box-shadow:0 8px 16px -4px rgba(190,24,93,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-higi{background:linear-gradient(145deg,#A855F7 0%,#7E22CE 100%);box-shadow:0 8px 16px -4px rgba(126,34,206,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-alim{background:linear-gradient(145deg,#22C55E 0%,#15803D 100%);box-shadow:0 8px 16px -4px rgba(21,128,61,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-escr{background:linear-gradient(145deg,#64748B 0%,#334155 100%);box-shadow:0 8px 16px -4px rgba(51,65,85,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-eport{background:linear-gradient(145deg,#FACC15 0%,#CA8A04 100%);box-shadow:0 8px 16px -4px rgba(202,138,4,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
-.cat-bubble.b-auto{background:linear-gradient(145deg,#EF4444 0%,#B91C1C 100%);box-shadow:0 8px 16px -4px rgba(185,28,28,0.45),inset 0 -3px 0 rgba(0,0,0,0.12),inset 0 2px 0 rgba(255,255,255,0.18);}
+.cat-card:hover .cat-bubble{background:#ECEEF1;}
+.cat-bubble i{font-size:24px;color:#374151;transition:color 0.2s;line-height:1;}
+.cat-card .cat-label{font-size:12px;font-weight:600;color:var(--gray-800);letter-spacing:-0.01em;line-height:1.3;}
+.cat-card .cat-count{font-size:10.5px;color:var(--gray-400);font-weight:500;margin-top:2px;}
 
 /* PAGINATION */
 .pagination{display:flex;justify-content:center;gap:6px;padding:32px 0;}
@@ -994,14 +971,14 @@ body.modo-simples .nav-bar{display:none}
 // DATA — PRODUTOS (~2000)
 // =============================================
 var CATEGORIES = [
-  {id:'construcao', label:'Construção',       phIcon:'ph-duotone ph-hard-hat',          color:'b-cons',  subs:['Hidráulica','Elétrica','Ferramentas','Pisos','Tintas','Cimento','Ferragens','Iluminação']},
-  {id:'eletronicos',label:'Eletrônicos',      phIcon:'ph-duotone ph-device-mobile',     color:'b-elet',  subs:['Smartphones','TVs','Notebooks','Tablets','Fones','Câmeras','Smartwatch','Acessórios']},
-  {id:'casa',       label:'Casa e Decoração', phIcon:'ph-duotone ph-armchair',          color:'b-casa',  subs:['Móveis','Cozinha','Banheiro','Decoração','Organização','Têxtil','Jardim','Lavanderia']},
-  {id:'higiene',    label:'Higiene e Beleza', phIcon:'ph-duotone ph-spray-bottle',      color:'b-higi',  subs:['Desodorante','Shampoo','Sabonete','Creme','Perfume','Dental','Cabelo','Corpo']},
-  {id:'alimentos',  label:'Alimentos',        phIcon:'ph-duotone ph-shopping-bag',      color:'b-alim',  subs:['Bebidas','Snacks','Enlatados','Grãos','Limpeza','Descartáveis','Temperos','Cereais']},
-  {id:'escritorio', label:'Escritório',       phIcon:'ph-duotone ph-briefcase',         color:'b-escr',  subs:['Papelaria','Calculadoras','Impressoras','Cadeiras','Mesas','Arquivo','Canetas','Agendas']},
-  {id:'eletroport', label:'Eletroportáteis',  phIcon:'ph-duotone ph-coffee',            color:'b-eport', subs:['Liquidificador','Cafeteira','Ventilador','Ferro','Aspirador','Batedeira','Fritadeira','Mixer']},
-  {id:'automotivo', label:'Automotivo',       phIcon:'ph-duotone ph-car-profile',       color:'b-auto',  subs:['Óleos','Pneus','Acessórios','Lâmpadas','Ferramentas','Limpeza','Som','Câmeras']}
+  {id:'construcao', label:'Construção',       phIcon:'ph ph-hard-hat',      subs:['Hidráulica','Elétrica','Ferramentas','Pisos','Tintas','Cimento','Ferragens','Iluminação']},
+  {id:'eletronicos',label:'Eletrônicos',      phIcon:'ph ph-device-mobile', subs:['Smartphones','TVs','Notebooks','Tablets','Fones','Câmeras','Smartwatch','Acessórios']},
+  {id:'casa',       label:'Casa e Decoração', phIcon:'ph ph-armchair',      subs:['Móveis','Cozinha','Banheiro','Decoração','Organização','Têxtil','Jardim','Lavanderia']},
+  {id:'higiene',    label:'Higiene e Beleza', phIcon:'ph ph-spray-bottle',  subs:['Desodorante','Shampoo','Sabonete','Creme','Perfume','Dental','Cabelo','Corpo']},
+  {id:'alimentos',  label:'Alimentos',        phIcon:'ph ph-shopping-bag',  subs:['Bebidas','Snacks','Enlatados','Grãos','Limpeza','Descartáveis','Temperos','Cereais']},
+  {id:'escritorio', label:'Escritório',       phIcon:'ph ph-briefcase',     subs:['Papelaria','Calculadoras','Impressoras','Cadeiras','Mesas','Arquivo','Canetas','Agendas']},
+  {id:'eletroport', label:'Eletroportáteis',  phIcon:'ph ph-coffee',        subs:['Liquidificador','Cafeteira','Ventilador','Ferro','Aspirador','Batedeira','Fritadeira','Mixer']},
+  {id:'automotivo', label:'Automotivo',       phIcon:'ph ph-car-profile',   subs:['Óleos','Pneus','Acessórios','Lâmpadas','Ferramentas','Limpeza','Som','Câmeras']}
 ];
 
 var VENDEDORES = [
@@ -2136,7 +2113,7 @@ function renderHome() {
   CATEGORIES.forEach(function(c) {
     var count = ALL_PRODUCTS.filter(function(p){return p.cat===c.id;}).length;
     h += '<div class="cat-card" onclick="filterCat(\'' + c.id + '\');navigate(\'catalog\')">';
-    h += '<div class="cat-bubble ' + c.color + '"><i class="' + c.phIcon + '"></i></div>';
+    h += '<div class="cat-bubble"><i class="' + c.phIcon + '"></i></div>';
     h += '<div class="cat-label">' + c.label + '</div>';
     h += '<div class="cat-count">' + count + ' produtos</div>';
     h += '</div>';
