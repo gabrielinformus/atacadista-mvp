@@ -1546,14 +1546,22 @@ function startDestaqueCarousels(){
     var items = document.querySelectorAll('[data-carousel="'+slot+'"]');
     var dots = document.querySelectorAll('[data-carousel-dot="'+slot+'"]');
     if (items.length < 2) return;
+    function showItem(i){
+      items.forEach(function(it,k){ it.style.opacity = k===i?'1':'0'; });
+      // overlays acompanham (cada mídia tem seus próprios overlays com data-idx)
+      document.querySelectorAll('[data-carousel-ov="'+slot+'"]').forEach(function(ov){
+        ov.style.opacity = (parseInt(ov.getAttribute('data-idx'),10) === i) ? '1' : '0';
+      });
+      dots.forEach(function(dot,k){
+        dot.style.background = k===i?'rgba(255,255,255,0.95)':'rgba(255,255,255,0.4)';
+        dot.style.width = k===i?'18px':'6px';
+      });
+    }
     var idx = 0;
     var intervalMs = Math.max(2, d.intervalSec) * 1000;
     window._destaqueCarousels[slot] = setInterval(function(){
-      items[idx].style.opacity = '0';
-      if (dots[idx]) { dots[idx].style.background = 'rgba(255,255,255,0.4)'; dots[idx].style.width = '6px'; }
       idx = (idx + 1) % items.length;
-      items[idx].style.opacity = '1';
-      if (dots[idx]) { dots[idx].style.background = 'rgba(255,255,255,0.95)'; dots[idx].style.width = '18px'; }
+      showItem(idx);
     }, intervalMs);
   });
 }
@@ -1621,6 +1629,18 @@ function getDestaque(slot){
     if (d.url) media = [{ url: d.url, type: d.type, name: d.name }];
     else media = [];
   }
+  // Para cada mídia, garante propriedades de ajuste individuais (com fallback ao slot)
+  media = media.map(function(m){
+    return Object.assign({
+      fit: d.fit || 'cover',
+      posX: typeof d.posX === 'number' ? d.posX : 50,
+      posY: typeof d.posY === 'number' ? d.posY : 50,
+      zoom: typeof d.zoom === 'number' ? d.zoom : 1,
+      shadow: d.shadow || 'soft',
+      vignette: d.vignette !== false,
+      overlay: typeof d.overlay === 'number' ? d.overlay : 0.55
+    }, m);
+  });
   return {
     slot: slot,
     media: media,
@@ -1661,6 +1681,8 @@ var DESTAQUE_FONTS = [
   { id: 'playfair', label: 'Playfair (elegante)', css: "'Playfair Display','Georgia',serif" },
   { id: 'rubik', label: 'Rubik (descontraída)', css: "'Rubik','Inter',sans-serif" }
 ];
+window._editIdx = window._editIdx || {};
+function selecionarMidiaEdicao(slot, idx){ window._editIdx[slot] = idx; abrirEditorDestaque(slot); }
 function abrirEditorDestaque(slot){
   var d = getDestaque(slot);
   var overlay = document.getElementById('modal-overlay');
@@ -1668,6 +1690,10 @@ function abrirEditorDestaque(slot){
   content.className = 'modal';
   content.style.maxWidth = '640px';
   var label = slot.charAt(0).toUpperCase()+slot.slice(1);
+  // foto selecionada para edição de ajuste
+  var selIdx = typeof window._editIdx[slot] === 'number' ? window._editIdx[slot] : 0;
+  if (selIdx >= d.media.length) selIdx = 0;
+  var sel = d.media[selIdx] || null;
   var h = '';
   h += '<div class="modal-header"><h3>Editar destaque · '+label+'</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
   h += '<div class="modal-body" style="max-height:70vh;overflow-y:auto;padding:18px 22px">';
@@ -1676,13 +1702,12 @@ function abrirEditorDestaque(slot){
   if (d.media.length > 0) {
     h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:10px">';
     d.media.forEach(function(m, idx){
-      h += '<div style="position:relative;border-radius:8px;overflow:hidden;background:#000;aspect-ratio:16/10">';
+      var isSel = idx === selIdx;
+      h += '<div onclick="selecionarMidiaEdicao(\''+slot+'\','+idx+')" style="position:relative;border-radius:8px;overflow:hidden;background:#000;aspect-ratio:16/10;cursor:pointer;border:'+(isSel?'3px solid var(--blue)':'3px solid transparent')+';box-shadow:'+(isSel?'0 4px 12px rgba(37,99,235,0.4)':'none')+';transition:all 0.2s">';
       if (m.type === 'video') h += '<video src="'+m.url+'" muted style="width:100%;height:100%;object-fit:cover" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>';
       else h += '<img src="'+m.url+'" style="width:100%;height:100%;object-fit:cover">';
-      // Badge ordem
-      h += '<div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px">'+(idx+1)+'</div>';
-      // Botões: mover esq/dir + remover
-      h += '<div style="position:absolute;bottom:4px;right:4px;display:flex;gap:3px">';
+      h += '<div style="position:absolute;top:4px;left:4px;background:'+(isSel?'var(--blue)':'rgba(0,0,0,0.7)')+';color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:99px">'+(idx+1)+(isSel?' · editando':'')+'</div>';
+      h += '<div style="position:absolute;bottom:4px;right:4px;display:flex;gap:3px" onclick="event.stopPropagation()">';
       if (idx>0) h += '<button onclick="moverDestaqueMedia(\''+slot+'\','+idx+',-1)" style="background:rgba(0,0,0,0.7);color:#fff;border:0;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer" title="Mover esquerda">←</button>';
       if (idx<d.media.length-1) h += '<button onclick="moverDestaqueMedia(\''+slot+'\','+idx+',1)" style="background:rgba(0,0,0,0.7);color:#fff;border:0;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer" title="Mover direita">→</button>';
       h += '<button onclick="removerMidiaIdx(\''+slot+'\','+idx+')" style="background:rgba(220,38,38,0.85);color:#fff;border:0;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer" title="Remover">×</button>';
@@ -1696,35 +1721,36 @@ function abrirEditorDestaque(slot){
     h += '<input type="range" min="2" max="15" step="1" value="'+d.intervalSec+'" style="width:100%" oninput="document.getElementById(\'int-val\').textContent=this.value+\'s\';setDestaqueProp(\''+slot+'\',\'intervalSec\',parseInt(this.value),true)"></div>';
   }
 
-  // === AJUSTE DA IMAGEM (só faz sentido se há mídia) ===
-  if (d.url) {
-    h += '<div class="form-section-title">🎛 Ajuste da imagem</div>';
+  // === AJUSTE DA FOTO SELECIONADA ===
+  if (sel) {
+    h += '<div class="form-section-title">🎛 Ajuste da foto '+(selIdx+1)+' <small style="color:var(--blue);font-weight:600">(individual)</small></div>';
+    h += '<div style="background:var(--gray-50);border:1px dashed var(--gray-300);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:var(--gray-600)">💡 Os ajustes abaixo se aplicam APENAS à foto selecionada (com borda azul). Clique em outra miniatura pra editá-la.</div>';
     h += '<div class="form-group"><label class="form-label">Preenchimento</label>';
     h += '<div style="display:flex;gap:8px">'
-      + '<button class="btn btn-sm '+(d.fit==='cover'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'cover\')">Preencher (corta excessos)</button>'
-      + '<button class="btn btn-sm '+(d.fit==='contain'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'fit\',\'contain\')">Inteira (com bordas)</button>'
+      + '<button class="btn btn-sm '+(sel.fit==='cover'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'fit\',\'cover\')">Preencher (corta excessos)</button>'
+      + '<button class="btn btn-sm '+(sel.fit==='contain'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'fit\',\'contain\')">Inteira (com bordas)</button>'
       + '</div></div>';
-    // Zoom amplo
-    var zoomPct = Math.round(d.zoom*100);
-    h += '<div class="form-group"><label class="form-label">Tamanho · <span id="zoom-val">'+zoomPct+'%</span> <button onclick="setDestaqueProp(\''+slot+'\',\'zoom\',1);abrirEditorDestaque(\''+slot+'\')" style="background:transparent;border:0;color:var(--blue);font-size:11px;cursor:pointer;margin-left:8px">↺ resetar</button></label>';
-    h += '<input type="range" min="0.4" max="3.5" step="0.02" value="'+d.zoom+'" style="width:100%" oninput="document.getElementById(\'zoom-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setDestaqueProp(\''+slot+'\',\'zoom\',parseFloat(this.value),true)"></div>';
-    // Posição livre X/Y por slider
-    h += '<div class="form-row"><div class="form-group"><label class="form-label">Posição horizontal · <span id="px-val">'+d.posX+'%</span></label>';
-    h += '<input type="range" min="0" max="100" step="1" value="'+d.posX+'" style="width:100%" oninput="document.getElementById(\'px-val\').textContent=this.value+\'%\';setDestaqueProp(\''+slot+'\',\'posX\',parseInt(this.value),true)"></div>';
-    h += '<div class="form-group"><label class="form-label">Posição vertical · <span id="py-val">'+d.posY+'%</span></label>';
-    h += '<input type="range" min="0" max="100" step="1" value="'+d.posY+'" style="width:100%" oninput="document.getElementById(\'py-val\').textContent=this.value+\'%\';setDestaqueProp(\''+slot+'\',\'posY\',parseInt(this.value),true)"></div></div>';
-    // Sombra realista
+    var zoomPct = Math.round(sel.zoom*100);
+    h += '<div class="form-group"><label class="form-label">Tamanho · <span id="zoom-val">'+zoomPct+'%</span> <button onclick="setMediaProp(\''+slot+'\','+selIdx+',\'zoom\',1);abrirEditorDestaque(\''+slot+'\')" style="background:transparent;border:0;color:var(--blue);font-size:11px;cursor:pointer;margin-left:8px">↺ resetar</button></label>';
+    h += '<input type="range" min="0.4" max="3.5" step="0.02" value="'+sel.zoom+'" style="width:100%" oninput="document.getElementById(\'zoom-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setMediaProp(\''+slot+'\','+selIdx+',\'zoom\',parseFloat(this.value),true)"></div>';
+    h += '<div class="form-row"><div class="form-group"><label class="form-label">Posição horizontal · <span id="px-val">'+sel.posX+'%</span></label>';
+    h += '<input type="range" min="0" max="100" step="1" value="'+sel.posX+'" style="width:100%" oninput="document.getElementById(\'px-val\').textContent=this.value+\'%\';setMediaProp(\''+slot+'\','+selIdx+',\'posX\',parseInt(this.value),true)"></div>';
+    h += '<div class="form-group"><label class="form-label">Posição vertical · <span id="py-val">'+sel.posY+'%</span></label>';
+    h += '<input type="range" min="0" max="100" step="1" value="'+sel.posY+'" style="width:100%" oninput="document.getElementById(\'py-val\').textContent=this.value+\'%\';setMediaProp(\''+slot+'\','+selIdx+',\'posY\',parseInt(this.value),true)"></div></div>';
     h += '<div class="form-group"><label class="form-label">Sombra do produto <small style="color:var(--gray-400)">(realista p/ fotos com fundo transparente)</small></label>';
     h += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'
-      + '<button class="btn btn-sm '+(d.shadow==='none'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'none\')">Nenhuma</button>'
-      + '<button class="btn btn-sm '+(d.shadow==='soft'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'soft\')">Suave</button>'
-      + '<button class="btn btn-sm '+(d.shadow==='dramatic'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'dramatic\')">Dramática</button>'
-      + '<button class="btn btn-sm '+(d.shadow==='spotlight'?'btn-primary':'btn-outline')+'" onclick="setDestaqueProp(\''+slot+'\',\'shadow\',\'spotlight\')">Holofote</button>'
+      + '<button class="btn btn-sm '+(sel.shadow==='none'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'shadow\',\'none\')">Nenhuma</button>'
+      + '<button class="btn btn-sm '+(sel.shadow==='soft'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'shadow\',\'soft\')">Suave</button>'
+      + '<button class="btn btn-sm '+(sel.shadow==='dramatic'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'shadow\',\'dramatic\')">Dramática</button>'
+      + '<button class="btn btn-sm '+(sel.shadow==='spotlight'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'shadow\',\'spotlight\')">Holofote</button>'
       + '</div></div>';
-    // Vignette toggle
-    h += '<label class="filter-check" style="margin:0 0 10px"><input type="checkbox" '+(d.vignette?'checked':'')+' onchange="setDestaqueProp(\''+slot+'\',\'vignette\',this.checked)"> Vinheta (escurece bordas suavemente — mais natural)</label>';
-    h += '<div class="form-group"><label class="form-label">Intensidade da vinheta · <span id="ov-val">'+Math.round(d.overlay*100)+'%</span></label>';
-    h += '<input type="range" min="0" max="0.85" step="0.02" value="'+d.overlay+'" style="width:100%" oninput="document.getElementById(\'ov-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setDestaqueProp(\''+slot+'\',\'overlay\',parseFloat(this.value),true)"></div>';
+    h += '<label class="filter-check" style="margin:0 0 10px"><input type="checkbox" '+(sel.vignette?'checked':'')+' onchange="setMediaProp(\''+slot+'\','+selIdx+',\'vignette\',this.checked)"> Vinheta (escurece bordas suavemente — mais natural)</label>';
+    h += '<div class="form-group"><label class="form-label">Intensidade da vinheta · <span id="ov-val">'+Math.round(sel.overlay*100)+'%</span></label>';
+    h += '<input type="range" min="0" max="0.85" step="0.02" value="'+sel.overlay+'" style="width:100%" oninput="document.getElementById(\'ov-val\').textContent=Math.round(parseFloat(this.value)*100)+\'%\';setMediaProp(\''+slot+'\','+selIdx+',\'overlay\',parseFloat(this.value),true)"></div>';
+    // Botão "copiar ajustes para todas as fotos"
+    if (d.media.length > 1) {
+      h += '<button class="btn btn-outline btn-sm" style="margin-top:6px" onclick="copiarAjustesParaTodas(\''+slot+'\','+selIdx+')">📋 Copiar estes ajustes para todas as fotos</button>';
+    }
   }
 
   // === TIPOGRAFIA ===
@@ -1771,6 +1797,46 @@ function abrirEditorDestaque(slot){
   content.innerHTML = h;
   overlay.classList.add('open');
 }
+// Ajuste de UMA mídia específica da galeria (zoom/posição/sombra individuais)
+function setMediaProp(slot, idx, key, value, silentRender){
+  var dq = _ensureSlotMedia(slot);
+  if (!dq[slot].media[idx]) return;
+  dq[slot].media[idx][key] = value;
+  saveDestaqueMedia(dq);
+  if (!silentRender) render();
+  else {
+    // Atualiza apenas o elemento dessa mídia ao vivo sem fechar modal
+    var item = document.querySelector('[data-carousel="'+slot+'"][data-idx="'+idx+'"]');
+    if (item) {
+      var m = dq[slot].media[idx];
+      var posStr = m.posX+'% '+m.posY+'%';
+      var sf = '';
+      if (m.shadow === 'soft') sf = 'drop-shadow(0 18px 30px rgba(0,0,0,0.5))';
+      else if (m.shadow === 'dramatic') sf = 'drop-shadow(0 24px 40px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(0,0,0,0.5))';
+      else if (m.shadow === 'spotlight') sf = 'drop-shadow(0 30px 50px rgba(0,0,0,0.85)) drop-shadow(0 10px 18px rgba(0,0,0,0.4))';
+      item.style.objectFit = m.fit;
+      item.style.objectPosition = posStr;
+      item.style.transform = 'scale('+m.zoom+')';
+      item.style.transformOrigin = posStr;
+      item.style.filter = sf;
+    }
+  }
+}
+function copiarAjustesParaTodas(slot, srcIdx){
+  if (!confirm('Copiar zoom, posição, sombra e vinheta da foto '+(srcIdx+1)+' para todas as outras fotos deste destaque?')) return;
+  var dq = _ensureSlotMedia(slot);
+  var src = dq[slot].media[srcIdx];
+  if (!src) return;
+  var copyKeys = ['fit','posX','posY','zoom','shadow','vignette','overlay'];
+  dq[slot].media.forEach(function(m, i){
+    if (i === srcIdx) return;
+    copyKeys.forEach(function(k){ m[k] = src[k]; });
+  });
+  saveDestaqueMedia(dq);
+  toast('Ajustes copiados para todas as fotos','success');
+  abrirEditorDestaque(slot);
+}
+
 function setDestaqueProp(slot,key,value,silentRender){
   var dq = loadDestaqueMedia();
   dq[slot] = dq[slot] || {};
@@ -1894,36 +1960,38 @@ function renderHome() {
     var color = d.color || '#fff';
     var bgHtml = '';
     if (hasMedia) {
-      // Filtro de sombra realista (drop-shadow funciona em PNGs transparentes)
-      var shadowFilter = '';
-      if (d.shadow === 'soft') shadowFilter = 'drop-shadow(0 18px 30px rgba(0,0,0,0.5))';
-      else if (d.shadow === 'dramatic') shadowFilter = 'drop-shadow(0 24px 40px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(0,0,0,0.5))';
-      else if (d.shadow === 'spotlight') shadowFilter = 'drop-shadow(0 30px 50px rgba(0,0,0,0.85)) drop-shadow(0 10px 18px rgba(0,0,0,0.4))';
-      var posStr = d.posX+'% '+d.posY+'%';
-      var mediaCssBase = 'position:absolute;inset:0;width:100%;height:100%;object-fit:'+d.fit+';object-position:'+posStr+';transform:scale('+d.zoom+');transform-origin:'+posStr+';z-index:0;transition:opacity 0.8s ease'+(shadowFilter?';filter:'+shadowFilter:'');
-      // Empilha todas as mídias; primeira visível, demais com opacity 0
+      function shadowFor(s){
+        if (s === 'soft') return 'drop-shadow(0 18px 30px rgba(0,0,0,0.5))';
+        if (s === 'dramatic') return 'drop-shadow(0 24px 40px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(0,0,0,0.5))';
+        if (s === 'spotlight') return 'drop-shadow(0 30px 50px rgba(0,0,0,0.85)) drop-shadow(0 10px 18px rgba(0,0,0,0.4))';
+        return '';
+      }
+      // Empilha cada mídia com SEUS PRÓPRIOS ajustes (fit/posX/posY/zoom/shadow)
       d.media.forEach(function(m, idx){
         var op = idx === 0 ? '1' : '0';
-        var attrs = 'data-carousel="'+slot+'" data-idx="'+idx+'" style="'+mediaCssBase+';opacity:'+op+'"';
+        var posStr = m.posX+'% '+m.posY+'%';
+        var sf = shadowFor(m.shadow);
+        var css = 'position:absolute;inset:0;width:100%;height:100%;object-fit:'+m.fit+';object-position:'+posStr+';transform:scale('+m.zoom+');transform-origin:'+posStr+';z-index:0;transition:opacity 0.8s ease;opacity:'+op+(sf?';filter:'+sf:'');
+        var attrs = 'data-carousel="'+slot+'" data-idx="'+idx+'" style="'+css+'"';
         if (m.type === 'video') bgHtml += '<video autoplay loop muted playsinline src="'+m.url+'" '+attrs+'></video>';
         else bgHtml += '<img src="'+m.url+'" '+attrs+'>';
+        // Overlay individual (apenas o da mídia ativa fica visível pela mesma opacity da img)
+        if (m.vignette) {
+          bgHtml += '<div data-carousel-ov="'+slot+'" data-idx="'+idx+'" style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(0,0,0,'+(m.overlay*0.3)+') 0%,rgba(0,0,0,'+(m.overlay*0.7)+') 60%,rgba(0,0,0,'+m.overlay+') 100%);z-index:1;pointer-events:none;opacity:'+op+';transition:opacity 0.8s ease"></div>';
+        } else {
+          bgHtml += '<div data-carousel-ov="'+slot+'" data-idx="'+idx+'" style="position:absolute;inset:0;background:rgba(0,0,0,'+m.overlay+');z-index:1;pointer-events:none;opacity:'+op+';transition:opacity 0.8s ease"></div>';
+        }
+        if (m.shadow === 'spotlight') {
+          bgHtml += '<div data-carousel-ov="'+slot+'" data-idx="'+idx+'" style="position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.55) 100%);z-index:1;pointer-events:none;opacity:'+op+';transition:opacity 0.8s ease"></div>';
+        }
       });
-      // Indicador de quantas fotos (só aparece se >1)
+      // Indicador (dots) — só se >1 mídia
       if (d.media.length > 1) {
         bgHtml += '<div style="position:absolute;top:10px;right:10px;z-index:3;display:flex;gap:4px">';
         d.media.forEach(function(_, idx){
-          bgHtml += '<div data-carousel-dot="'+slot+'" data-idx="'+idx+'" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,'+(idx===0?'0.95':'0.4')+');transition:background 0.4s,width 0.4s"></div>';
+          bgHtml += '<div data-carousel-dot="'+slot+'" data-idx="'+idx+'" style="width:'+(idx===0?'18px':'6px')+';height:6px;border-radius:99px;background:rgba(255,255,255,'+(idx===0?'0.95':'0.4')+');transition:background 0.4s,width 0.4s"></div>';
         });
         bgHtml += '</div>';
-      }
-      // Overlay: vignette radial (mais natural) ou plano
-      if (d.vignette) {
-        bgHtml += '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(0,0,0,'+(d.overlay*0.3)+') 0%,rgba(0,0,0,'+(d.overlay*0.7)+') 60%,rgba(0,0,0,'+d.overlay+') 100%);z-index:1;pointer-events:none"></div>';
-      } else {
-        bgHtml += '<div style="position:absolute;inset:0;background:rgba(0,0,0,'+d.overlay+');z-index:1;pointer-events:none"></div>';
-      }
-      if (d.shadow === 'spotlight') {
-        bgHtml += '<div style="position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.55) 100%);z-index:1;pointer-events:none"></div>';
       }
     }
     var html = '<div class="flyer flyer-'+slot+'" style="position:relative;border-radius:var(--radius);overflow:hidden;background:'+gradient+';color:'+color+';padding:'+(isMain?'30px 32px':'24px')+';display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15);font-family:'+ff+';text-align:'+align+'" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
