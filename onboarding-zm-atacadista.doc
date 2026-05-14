@@ -1,0 +1,548 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word">
+<title>Processo de Onboarding — ZM Atacadista</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+  size: A4;
+  margin: 2.5cm 2.2cm 2.5cm 2.2cm;
+  mso-page-orientation: portrait;
+  mso-header-margin: 1.0cm;
+  mso-footer-margin: 1.0cm;
+}
+body {
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  font-size: 11pt;
+  color: #1F2937;
+  line-height: 1.5;
+}
+h1 {
+  font-size: 26pt;
+  color: #E20031;
+  font-weight: 800;
+  letter-spacing: -0.5pt;
+  margin: 0 0 6pt 0;
+  page-break-after: avoid;
+}
+h2 {
+  font-size: 16pt;
+  color: #111827;
+  font-weight: 700;
+  margin: 22pt 0 8pt 0;
+  padding-bottom: 4pt;
+  border-bottom: 2pt solid #E20031;
+  page-break-after: avoid;
+}
+h3 {
+  font-size: 12.5pt;
+  color: #111827;
+  font-weight: 700;
+  margin: 14pt 0 6pt 0;
+  page-break-after: avoid;
+}
+p { margin: 0 0 8pt 0; }
+ul, ol { margin: 0 0 10pt 0; padding-left: 24pt; }
+li { margin-bottom: 4pt; }
+.cover {
+  text-align: left;
+  padding: 60pt 0 30pt 0;
+  border-bottom: 4pt solid #E20031;
+  margin-bottom: 30pt;
+}
+.brand {
+  font-size: 11pt;
+  color: #6B7280;
+  letter-spacing: 2pt;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12pt;
+}
+.subtitle {
+  font-size: 14pt;
+  color: #4B5563;
+  font-weight: 400;
+  margin-top: 6pt;
+}
+.meta {
+  font-size: 10pt;
+  color: #6B7280;
+  margin-top: 28pt;
+}
+.meta b { color: #111827; }
+table.field {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8pt 0 14pt 0;
+  font-size: 10.5pt;
+}
+table.field td {
+  border: 1pt solid #D1D5DB;
+  padding: 8pt 10pt;
+  vertical-align: top;
+}
+table.field td.label {
+  background: #F3F4F6;
+  font-weight: 700;
+  width: 32%;
+  color: #374151;
+}
+.checklist {
+  margin: 8pt 0 14pt 0;
+}
+.checklist p {
+  margin: 4pt 0;
+  padding-left: 22pt;
+  text-indent: -22pt;
+}
+.note {
+  background: #FEF3C7;
+  border-left: 3pt solid #D97706;
+  padding: 8pt 12pt;
+  margin: 10pt 0;
+  font-size: 10pt;
+  color: #92400E;
+}
+.callout {
+  background: #EFF6FF;
+  border-left: 3pt solid #2563EB;
+  padding: 10pt 14pt;
+  margin: 12pt 0;
+  font-size: 10.5pt;
+  color: #1E3A8A;
+}
+.signature-box {
+  margin-top: 36pt;
+  padding-top: 14pt;
+  border-top: 1pt solid #9CA3AF;
+}
+table.sig {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24pt;
+}
+table.sig td {
+  width: 50%;
+  padding: 30pt 16pt 6pt 16pt;
+  border-top: 1pt solid #111827;
+  font-size: 10pt;
+  text-align: center;
+  vertical-align: top;
+}
+.toc {
+  background: #F9FAFB;
+  border: 1pt solid #E5E7EB;
+  padding: 16pt 20pt;
+  margin: 20pt 0 28pt 0;
+}
+.toc h3 { margin-top: 0; }
+.toc ol { padding-left: 18pt; }
+.toc li { font-size: 11pt; margin-bottom: 3pt; }
+.footer-info {
+  font-size: 9pt;
+  color: #9CA3AF;
+  text-align: center;
+  margin-top: 30pt;
+  padding-top: 10pt;
+  border-top: 1pt solid #E5E7EB;
+}
+.tag {
+  display: inline-block;
+  background: #E20031;
+  color: #fff;
+  font-size: 8.5pt;
+  font-weight: 700;
+  padding: 2pt 8pt;
+  letter-spacing: 1pt;
+  border-radius: 99pt;
+  text-transform: uppercase;
+}
+.phase {
+  background: #F3F4F6;
+  border-left: 4pt solid #E20031;
+  padding: 10pt 14pt;
+  margin: 8pt 0;
+}
+.phase b { color: #E20031; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="brand">INFORMUS · Desenvolvimento Digital</div>
+  <h1>Processo de Onboarding</h1>
+  <div class="subtitle">ZM Atacadista e Material de Construção</div>
+  <div class="meta">
+    <p><b>Documento:</b> Onboarding inicial — entrega da plataforma digital</p>
+    <p><b>Cliente:</b> ZM Atacadista e Material de Construção LTDA</p>
+    <p><b>Responsável Informus:</b> Klécio Fernandes (kleciofdes@gmail.com)</p>
+    <p><b>Data de emissão:</b> 14 de maio de 2026</p>
+    <p><b>Versão:</b> 1.0</p>
+  </div>
+</div>
+
+<div class="toc">
+  <h3>Sumário</h3>
+  <ol>
+    <li>Propósito deste documento</li>
+    <li>Dados cadastrais da empresa</li>
+    <li>Responsáveis e decisores</li>
+    <li>Acessos e credenciais</li>
+    <li>Identidade visual e branding</li>
+    <li>Catálogo de produtos</li>
+    <li>Política comercial</li>
+    <li>Política de trocas e devoluções</li>
+    <li>Atendimento ao cliente</li>
+    <li>Fluxo operacional do pedido</li>
+    <li>Documentos fiscais e legais</li>
+    <li>Marketing de lançamento</li>
+    <li>Cronograma de implementação</li>
+    <li>Investimento e condições</li>
+    <li>Checklist final de entrega</li>
+    <li>Termo de aprovação</li>
+  </ol>
+</div>
+
+<h2>1. Propósito deste documento</h2>
+
+<p>Este onboarding formaliza o início do projeto de digitalização da <b>ZM Atacadista</b> conduzido pela <b>Informus</b>. Para garantir uma entrega rápida, sem retrabalho e alinhada com a operação real da loja, precisamos que os sócios e responsáveis pela empresa preencham as informações solicitadas a seguir e nos enviem os anexos indicados.</p>
+
+<p>Cada seção abaixo corresponde a uma decisão ou material que <b>precisamos da empresa</b> antes de subir o site, conectar o pagamento e abrir o canal de venda online. Em paralelo, a Informus já segue executando o que não depende destas informações.</p>
+
+<div class="callout">
+  <b>Como preencher:</b> abra este documento no Microsoft Word, preencha os campos em cinza, salve como <i>.docx</i> e devolva para <b>kleciofdes@gmail.com</b>. Anexos (logos, fotos, contratos) podem vir em e-mails separados ou por link de Drive/WeTransfer.
+</div>
+
+<h2>2. Dados cadastrais da empresa</h2>
+
+<p>Confirme abaixo os dados que vão aparecer no rodapé do site, em notas fiscais, contratos e comunicações oficiais.</p>
+
+<table class="field">
+  <tr><td class="label">Razão social</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Nome fantasia</td><td>&nbsp;</td></tr>
+  <tr><td class="label">CNPJ</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Inscrição Estadual</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Inscrição Municipal</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Regime tributário</td><td>(Simples / Lucro Presumido / Lucro Real)</td></tr>
+  <tr><td class="label">Endereço da matriz</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Telefone fixo</td><td>&nbsp;</td></tr>
+  <tr><td class="label">WhatsApp Business</td><td>&nbsp;</td></tr>
+  <tr><td class="label">E-mail institucional</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Site atual (se houver)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Filiais (cidades / endereços)</td><td>&nbsp;</td></tr>
+</table>
+
+<h2>3. Responsáveis e decisores</h2>
+
+<p>Definir quem aprova o quê evita travamento durante o projeto. Indique uma pessoa por papel (pode ser a mesma pessoa em mais de um campo).</p>
+
+<table class="field">
+  <tr><td class="label">Sócio responsável / decisão final</td><td>Nome, telefone, e-mail</td></tr>
+  <tr><td class="label">Aprovação de visual e marketing</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Aprovação de preços e promoções</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Financeiro (Pix, cobrança, NF-e)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Estoque / logística</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Atendimento (quem responde clientes)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">TI / informática (se houver)</td><td>&nbsp;</td></tr>
+</table>
+
+<div class="note">
+  <b>Compromisso de prazo:</b> tempo médio de resposta esperado dos responsáveis acima durante a fase de implementação: até <b>24 horas úteis</b> em mensagens da Informus. Atrasos nesta etapa empurram o lançamento na mesma proporção.
+</div>
+
+<h2>4. Acessos e credenciais</h2>
+
+<p>Para subir o site, configurar pagamentos e integrar comunicação, precisamos de acesso aos serviços abaixo. Onde não houver conta, a Informus cria — apenas confirme se já existe.</p>
+
+<h3>4.1 Domínio e hospedagem</h3>
+<table class="field">
+  <tr><td class="label">Domínio atual (ex: zmatacadista.com.br)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Onde está registrado (Registro.br, GoDaddy, etc.)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Login do painel do registrador</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Hospedagem atual (se houver)</td><td>&nbsp;</td></tr>
+</table>
+
+<h3>4.2 Google / e-mail</h3>
+<table class="field">
+  <tr><td class="label">Conta Google da empresa (ou indicar criar)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Google Workspace contratado?</td><td>(Sim/Não)</td></tr>
+  <tr><td class="label">Google Meu Negócio reivindicado?</td><td>(Sim/Não)</td></tr>
+  <tr><td class="label">Google Analytics atual</td><td>&nbsp;</td></tr>
+</table>
+
+<h3>4.3 Redes sociais</h3>
+<table class="field">
+  <tr><td class="label">Instagram (@usuario)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Facebook (URL da página)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">TikTok</td><td>&nbsp;</td></tr>
+  <tr><td class="label">YouTube</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Gerenciador de Negócios Meta vinculado?</td><td>&nbsp;</td></tr>
+</table>
+
+<h3>4.4 WhatsApp e atendimento</h3>
+<table class="field">
+  <tr><td class="label">Número WhatsApp Business</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Tem WhatsApp API oficial?</td><td>(Sim/Não — para automações)</td></tr>
+  <tr><td class="label">Mensagem padrão de saudação</td><td>&nbsp;</td></tr>
+</table>
+
+<h3>4.5 Pagamento</h3>
+<table class="field">
+  <tr><td class="label">Chave Pix preferencial (CNPJ recomendado)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Banco principal da empresa</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Maquininha de cartão atual</td><td>(Stone, Cielo, PagSeguro, etc.)</td></tr>
+  <tr><td class="label">Gateway desejado para o site</td><td>(Mercado Pago / Pagar.me / Stripe / outro)</td></tr>
+  <tr><td class="label">Parcelamento aceito (até X vezes)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Boleto bancário disponível?</td><td>(Sim/Não)</td></tr>
+</table>
+
+<h2>5. Identidade visual e branding</h2>
+
+<p>Anexe os arquivos a seguir em alta qualidade. O ideal é receber em formatos vetoriais (.AI, .SVG, .PDF) — se só houver .PNG/.JPG, mande igual e a Informus avalia.</p>
+
+<div class="checklist">
+  <p>☐ Logo principal (vetor preferencialmente)</p>
+  <p>☐ Logo em fundo claro e fundo escuro</p>
+  <p>☐ Logo monocromático (preto e branco)</p>
+  <p>☐ Manual de marca / brand book (se existir)</p>
+  <p>☐ Paleta de cores oficial (códigos HEX)</p>
+  <p>☐ Tipografia oficial (nome das fontes)</p>
+  <p>☐ Mínimo 20 fotos profissionais da loja física (fachada, interior, prateleiras, atendimento)</p>
+  <p>☐ Mínimo 30 fotos de produtos em destaque (com fundo branco se possível)</p>
+  <p>☐ Foto da equipe (opcional, mas valoriza credibilidade)</p>
+  <p>☐ Vídeo institucional curto (até 1min — opcional)</p>
+</div>
+
+<div class="note">
+  <b>Sobre fotos de produto:</b> evite imagens com marca d'água de fornecedor ou screenshots de catálogo. Fotos próprias da loja vendem muito mais.
+</div>
+
+<h2>6. Catálogo de produtos</h2>
+
+<p>O coração da operação. Quanto mais completo o catálogo na entrega, mais rápido o site começa a faturar.</p>
+
+<h3>6.1 Produtos iniciais</h3>
+<p>Enviar planilha (Excel ou Google Sheets) com as colunas:</p>
+<ul>
+  <li>Código interno do produto</li>
+  <li>Nome do produto</li>
+  <li>Categoria (cimento, tijolo, telha, ferragens, hidráulica, elétrica, etc.)</li>
+  <li>Descrição comercial (1 parágrafo)</li>
+  <li>Especificações técnicas (peso, dimensões, marca, NCM se possível)</li>
+  <li>Preço de venda no varejo</li>
+  <li>Preço atacado (PJ)</li>
+  <li>Estoque atual</li>
+  <li>Estoque mínimo (gatilho de reposição)</li>
+  <li>Fornecedor principal</li>
+  <li>Foto(s) — referência por código</li>
+</ul>
+
+<h3>6.2 Mínimos de catálogo para lançar</h3>
+<table class="field">
+  <tr><td class="label">Quantidade mínima para abrir o site</td><td>50 produtos cadastrados com foto e preço</td></tr>
+  <tr><td class="label">Quantidade ideal para lançar campanha</td><td>200 produtos cobrindo todas as categorias</td></tr>
+  <tr><td class="label">Categoria de "carro-chefe" do mês de lançamento</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Produtos para destaque na home</td><td>(escolher 6 produtos para banner principal)</td></tr>
+</table>
+
+<h2>7. Política comercial</h2>
+
+<h3>7.1 Diferença atacado vs varejo</h3>
+<table class="field">
+  <tr><td class="label">PJ ganha desconto automático?</td><td>(Sim/Não — qual %)</td></tr>
+  <tr><td class="label">Quantidade mínima para preço atacado</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Categorias com preço diferenciado para construtoras</td><td>&nbsp;</td></tr>
+</table>
+
+<h3>7.2 Frete</h3>
+<table class="field">
+  <tr><td class="label">Cidade-sede de entrega</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Raio de entrega própria (km)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Valor do frete na cidade</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Frete grátis acima de quanto?</td><td>(R$)</td></tr>
+  <tr><td class="label">Transportadoras parceiras (fora da cidade)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Retirada na loja é opção?</td><td>(Sim/Não)</td></tr>
+</table>
+
+<h3>7.3 Cashback</h3>
+<table class="field">
+  <tr><td class="label">Ativar programa de cashback no lançamento?</td><td>(Sim/Não — pode ligar/desligar depois pelo admin)</td></tr>
+  <tr><td class="label">% de cashback por compra</td><td>(sugerido: 3%)</td></tr>
+  <tr><td class="label">Compra mínima para gerar cashback</td><td>(sugerido: R$ 50)</td></tr>
+  <tr><td class="label">Validade do saldo</td><td>(sugerido: 90 dias)</td></tr>
+</table>
+
+<h3>7.4 Cupons de desconto</h3>
+<p>Indicar quais cupons devem nascer ativos no lançamento:</p>
+<ul>
+  <li>Cupom de primeira compra (ex: <b>BEMVINDO10</b> — 10% off na 1ª compra)</li>
+  <li>Cupom de indicação (cliente indica amigo e ganham os dois)</li>
+  <li>Cupom de categoria específica</li>
+  <li>Cupom de aniversário</li>
+</ul>
+
+<h2>8. Política de trocas e devoluções</h2>
+
+<table class="field">
+  <tr><td class="label">Prazo para arrependimento (CDC: mínimo 7 dias)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Prazo de troca por defeito</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Quem paga o frete de devolução?</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Produtos não trocáveis (sob encomenda, corte, etc.)</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Reembolso: dinheiro, crédito ou cashback?</td><td>&nbsp;</td></tr>
+</table>
+
+<h2>9. Atendimento ao cliente</h2>
+
+<table class="field">
+  <tr><td class="label">Horário de atendimento</td><td>(Seg-Sex / Sáb / Dom)</td></tr>
+  <tr><td class="label">Canais oficiais (em ordem de preferência)</td><td>WhatsApp / Telefone / E-mail</td></tr>
+  <tr><td class="label">SLA de resposta no WhatsApp</td><td>(sugerido: até 2h em horário comercial)</td></tr>
+  <tr><td class="label">Vai usar atendimento automatizado (bot)?</td><td>(Sim/Não)</td></tr>
+  <tr><td class="label">Quantidade de atendentes humanos</td><td>&nbsp;</td></tr>
+</table>
+
+<p>Anexar lista das <b>10 perguntas mais frequentes</b> que os clientes já fazem hoje na loja física e respectivas respostas (vira FAQ no site).</p>
+
+<h2>10. Fluxo operacional do pedido</h2>
+
+<p>Confirme com a Informus como cada etapa abaixo será conduzida, indicando o responsável.</p>
+
+<table class="field">
+  <tr><td class="label">1. Recebimento do pedido online</td><td>Quem confere e aprova?</td></tr>
+  <tr><td class="label">2. Confirmação de pagamento</td><td>Quem valida (financeiro)?</td></tr>
+  <tr><td class="label">3. Separação no estoque</td><td>Responsável + tempo médio</td></tr>
+  <tr><td class="label">4. Emissão de NF-e</td><td>Sistema usado (Bling, Tiny, próprio?)</td></tr>
+  <tr><td class="label">5. Entrega / coleta da transportadora</td><td>&nbsp;</td></tr>
+  <tr><td class="label">6. Notificação ao cliente</td><td>Por qual canal?</td></tr>
+  <tr><td class="label">7. Pós-venda</td><td>Tem follow-up? Quem faz?</td></tr>
+</table>
+
+<h2>11. Documentos fiscais e legais</h2>
+
+<div class="checklist">
+  <p>☐ Cartão CNPJ atualizado</p>
+  <p>☐ Contrato social</p>
+  <p>☐ Alvará de funcionamento</p>
+  <p>☐ Inscrição estadual ativa</p>
+  <p>☐ Termo de uso e política de privacidade (Informus prepara modelo — empresa valida)</p>
+  <p>☐ Política de cookies / LGPD (idem)</p>
+  <p>☐ Selo de site seguro (SSL — Informus instala)</p>
+</div>
+
+<h2>12. Marketing de lançamento</h2>
+
+<table class="field">
+  <tr><td class="label">Data alvo de lançamento</td><td>&nbsp;</td></tr>
+  <tr><td class="label">Verba inicial de mídia (Google Ads + Meta)</td><td>R$ ____ /mês</td></tr>
+  <tr><td class="label">Quem cuida do tráfego pago?</td><td>(Informus / agência terceira / interno)</td></tr>
+  <tr><td class="label">Lista de e-mails de clientes atuais (CSV)</td><td>(quantos contatos?)</td></tr>
+  <tr><td class="label">Quer campanha de pré-lançamento (lista de espera)?</td><td>(Sim/Não)</td></tr>
+  <tr><td class="label">Parcerias com construtoras / arquitetos para indicação</td><td>&nbsp;</td></tr>
+</table>
+
+<h2>13. Cronograma de implementação</h2>
+
+<div class="phase">
+  <b>Fase 1 — Setup (Semana 1):</b> aprovação deste onboarding, coleta de acessos, configuração de domínio, hospedagem, e-mails corporativos, branding aplicado no template.
+</div>
+
+<div class="phase">
+  <b>Fase 2 — Catálogo (Semanas 2-3):</b> importação dos produtos, tratamento de fotos, configuração de categorias, cadastro de frete e cashback.
+</div>
+
+<div class="phase">
+  <b>Fase 3 — Pagamento e integrações (Semana 3):</b> configuração do gateway, Pix, NF-e, WhatsApp, Google Analytics, Meta Pixel.
+</div>
+
+<div class="phase">
+  <b>Fase 4 — Testes e treinamento (Semana 4):</b> testes de compra ponta a ponta, treinamento da equipe no painel administrativo, ajustes finais.
+</div>
+
+<div class="phase">
+  <b>Fase 5 — Lançamento (Semana 5):</b> abertura ao público, disparo da campanha inicial, monitoramento intensivo nos primeiros 7 dias.
+</div>
+
+<div class="note">
+  <b>Atenção:</b> o cronograma de 5 semanas assume retorno em <b>até 24h úteis</b> nas solicitações da Informus e entrega dos materiais (logo, fotos, catálogo) em até <b>5 dias úteis</b> após esta assinatura. Atrasos nesta entrega empurram o lançamento na mesma proporção.
+</div>
+
+<h2>14. Investimento e condições</h2>
+
+<p>As condições financeiras (valor de setup, mensalidade, escopo coberto e adicionais) estão detalhadas em documento separado: <b>Contrato de Desenvolvimento Informus — ZM Atacadista</b>. Este onboarding pressupõe que o contrato já foi lido e assinado.</p>
+
+<table class="field">
+  <tr><td class="label">Contrato assinado?</td><td>(Sim/Não — data da assinatura)</td></tr>
+  <tr><td class="label">Forma de pagamento do setup</td><td>(à vista / parcelado em ___x)</td></tr>
+  <tr><td class="label">Data de início da mensalidade</td><td>(geralmente após lançamento)</td></tr>
+</table>
+
+<h2>15. Checklist final de entrega</h2>
+
+<p>Marque o que já está pronto para enviar:</p>
+
+<div class="checklist">
+  <p>☐ Dados cadastrais preenchidos (Seção 2)</p>
+  <p>☐ Responsáveis indicados (Seção 3)</p>
+  <p>☐ Acessos compartilhados via gerenciador de senhas ou e-mail criptografado (Seção 4)</p>
+  <p>☐ Logo e materiais visuais enviados (Seção 5)</p>
+  <p>☐ Planilha de produtos enviada (Seção 6)</p>
+  <p>☐ Política comercial preenchida (Seção 7)</p>
+  <p>☐ Política de trocas definida (Seção 8)</p>
+  <p>☐ Atendimento configurado (Seção 9)</p>
+  <p>☐ Fluxo operacional acordado (Seção 10)</p>
+  <p>☐ Documentos legais enviados (Seção 11)</p>
+  <p>☐ Marketing inicial alinhado (Seção 12)</p>
+  <p>☐ Contrato de desenvolvimento assinado (Seção 14)</p>
+</div>
+
+<h2>16. Termo de aprovação</h2>
+
+<p>Ao assinar abaixo, os responsáveis pela ZM Atacadista declaram que:</p>
+
+<ol>
+  <li>As informações prestadas neste documento são verdadeiras e estão completas até a data da assinatura;</li>
+  <li>Os anexos solicitados serão enviados à Informus em até <b>5 dias úteis</b> a partir desta data;</li>
+  <li>Comprometem-se a responder solicitações da equipe Informus em até <b>24 horas úteis</b> durante todo o período de implementação;</li>
+  <li>Designaram pessoa específica para cada papel de aprovação descrito na Seção 3;</li>
+  <li>Reconhecem que atrasos no fornecimento de materiais e respostas empurram a data de lançamento na mesma proporção;</li>
+  <li>Leram e estão de acordo com o contrato de desenvolvimento previamente assinado.</li>
+</ol>
+
+<table class="sig">
+  <tr>
+    <td>
+      <div style="font-weight:700">________________________________________</div>
+      <div style="margin-top:6pt">Pela <b>ZM Atacadista</b></div>
+      <div>Nome:</div>
+      <div>CPF:</div>
+      <div>Cargo:</div>
+      <div>Data: ___/___/______</div>
+    </td>
+    <td>
+      <div style="font-weight:700">________________________________________</div>
+      <div style="margin-top:6pt">Pela <b>Informus</b></div>
+      <div>Nome: Klécio Fernandes</div>
+      <div>Cargo: Desenvolvedor responsável</div>
+      <div>E-mail: kleciofdes@gmail.com</div>
+      <div>Data: ___/___/______</div>
+    </td>
+  </tr>
+</table>
+
+<div class="footer-info">
+  INFORMUS · Desenvolvimento de Sistemas e Plataformas Digitais<br>
+  Este documento contém informações confidenciais. Distribuição restrita aos responsáveis indicados.
+</div>
+
+</body>
+</html>
