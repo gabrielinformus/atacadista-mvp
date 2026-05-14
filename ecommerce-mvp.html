@@ -1725,6 +1725,8 @@ function abrirEditorDestaque(slot){
   if (sel) {
     h += '<div class="form-section-title">🎛 Ajuste da foto '+(selIdx+1)+' <small style="color:var(--blue);font-weight:600">(individual)</small></div>';
     h += '<div style="background:var(--gray-50);border:1px dashed var(--gray-300);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:var(--gray-600)">💡 Os ajustes abaixo se aplicam APENAS à foto selecionada (com borda azul). Clique em outra miniatura pra editá-la.</div>';
+    // PREVIEW AO VIVO — replica como a foto fica no flyer
+    h += renderEditorPreview(slot, sel, selIdx);
     h += '<div class="form-group"><label class="form-label">Preenchimento</label>';
     h += '<div style="display:flex;gap:8px">'
       + '<button class="btn btn-sm '+(sel.fit==='cover'?'btn-primary':'btn-outline')+'" onclick="setMediaProp(\''+slot+'\','+selIdx+',\'fit\',\'cover\')">Preencher (corta excessos)</button>'
@@ -1797,6 +1799,69 @@ function abrirEditorDestaque(slot){
   content.innerHTML = h;
   overlay.classList.add('open');
 }
+// Preview ao vivo da foto sendo editada — mesma aparência do flyer real
+function renderEditorPreview(slot, m, idx){
+  var gradients = {
+    cimento: 'linear-gradient(135deg,#2D3748 0%,#1A202C 60%,#171923 100%)',
+    tijolo:  'linear-gradient(135deg,#7B2D26 0%,#8E342B 50%,#5C201A 100%)',
+    telha:   'linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%)'
+  };
+  var sf = '';
+  if (m.shadow === 'soft') sf = 'drop-shadow(0 18px 30px rgba(0,0,0,0.5))';
+  else if (m.shadow === 'dramatic') sf = 'drop-shadow(0 24px 40px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(0,0,0,0.5))';
+  else if (m.shadow === 'spotlight') sf = 'drop-shadow(0 30px 50px rgba(0,0,0,0.85)) drop-shadow(0 10px 18px rgba(0,0,0,0.4))';
+  var posStr = m.posX+'% '+m.posY+'%';
+  var imgCss = 'position:absolute;inset:0;width:100%;height:100%;object-fit:'+m.fit+';object-position:'+posStr+';transform:scale('+m.zoom+');transform-origin:'+posStr+';transition:all 0.2s'+(sf?';filter:'+sf:'');
+  var ovBg = m.vignette
+    ? 'radial-gradient(ellipse at 30% 50%,rgba(0,0,0,'+(m.overlay*0.3)+') 0%,rgba(0,0,0,'+(m.overlay*0.7)+') 60%,rgba(0,0,0,'+m.overlay+') 100%)'
+    : 'rgba(0,0,0,'+m.overlay+')';
+  var h = '';
+  h += '<div id="preview-wrap" style="position:relative;border-radius:10px;overflow:hidden;background:'+gradients[slot]+';aspect-ratio:16/9;margin-bottom:14px;box-shadow:0 4px 14px rgba(0,0,0,0.12)">';
+  h += '<div style="position:absolute;top:8px;left:8px;z-index:3;background:rgba(255,255,255,0.95);color:#111;padding:3px 8px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:0.06em">PREVIEW · FOTO '+(idx+1)+'</div>';
+  if (m.type === 'video') h += '<video id="preview-media" autoplay loop muted playsinline src="'+m.url+'" style="'+imgCss+'"></video>';
+  else h += '<img id="preview-media" src="'+m.url+'" style="'+imgCss+'">';
+  h += '<div id="preview-overlay" style="position:absolute;inset:0;background:'+ovBg+';pointer-events:none"></div>';
+  if (m.shadow === 'spotlight') h += '<div id="preview-spot" style="position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.55) 100%);pointer-events:none"></div>';
+  h += '</div>';
+  return h;
+}
+function updateEditorPreview(slot){
+  var m = (loadDestaqueMedia()[slot]||{}).media;
+  var idx = window._editIdx[slot] || 0;
+  if (!m || !m[idx]) return;
+  var d = getDestaque(slot);
+  var item = d.media[idx];
+  var media = document.getElementById('preview-media');
+  var ov = document.getElementById('preview-overlay');
+  if (!media) return;
+  var sf = '';
+  if (item.shadow === 'soft') sf = 'drop-shadow(0 18px 30px rgba(0,0,0,0.5))';
+  else if (item.shadow === 'dramatic') sf = 'drop-shadow(0 24px 40px rgba(0,0,0,0.75)) drop-shadow(0 8px 14px rgba(0,0,0,0.5))';
+  else if (item.shadow === 'spotlight') sf = 'drop-shadow(0 30px 50px rgba(0,0,0,0.85)) drop-shadow(0 10px 18px rgba(0,0,0,0.4))';
+  var posStr = item.posX+'% '+item.posY+'%';
+  media.style.objectFit = item.fit;
+  media.style.objectPosition = posStr;
+  media.style.transform = 'scale('+item.zoom+')';
+  media.style.transformOrigin = posStr;
+  media.style.filter = sf;
+  if (ov) ov.style.background = item.vignette
+    ? 'radial-gradient(ellipse at 30% 50%,rgba(0,0,0,'+(item.overlay*0.3)+') 0%,rgba(0,0,0,'+(item.overlay*0.7)+') 60%,rgba(0,0,0,'+item.overlay+') 100%)'
+    : 'rgba(0,0,0,'+item.overlay+')';
+  // gerencia o gradient inferior do spotlight
+  var spot = document.getElementById('preview-spot');
+  if (item.shadow === 'spotlight' && !spot) {
+    var wrap = document.getElementById('preview-wrap');
+    if (wrap) {
+      var d2 = document.createElement('div');
+      d2.id = 'preview-spot';
+      d2.style.cssText = 'position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.55) 100%);pointer-events:none';
+      wrap.appendChild(d2);
+    }
+  } else if (item.shadow !== 'spotlight' && spot) {
+    spot.remove();
+  }
+}
+
 // Ajuste de UMA mídia específica da galeria (zoom/posição/sombra individuais)
 function setMediaProp(slot, idx, key, value, silentRender){
   var dq = _ensureSlotMedia(slot);
@@ -1820,6 +1885,8 @@ function setMediaProp(slot, idx, key, value, silentRender){
       item.style.transformOrigin = posStr;
       item.style.filter = sf;
     }
+    // Atualiza o preview dentro do modal
+    updateEditorPreview(slot);
   }
 }
 function copiarAjustesParaTodas(slot, srcIdx){
