@@ -1530,13 +1530,98 @@ function renderNav() {
   return h;
 }
 
+// ─── Destaque media (foto/vídeo de cada flyer) ─────────────
+function loadDestaqueMedia(){
+  try { return JSON.parse(localStorage.getItem('zm_destaque_media')||'{}'); }
+  catch(e) { return {}; }
+}
+function saveDestaqueMedia(obj){
+  try { localStorage.setItem('zm_destaque_media', JSON.stringify(obj)); } catch(e){
+    toast('Mídia muito grande — escolha um arquivo menor (max ~3MB).','warn');
+  }
+}
+function uploadDestaqueMedia(slot){
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*,video/*';
+  input.onchange = function(e){
+    var f = e.target.files[0]; if (!f) return;
+    if (f.size > 5*1024*1024) { toast('Arquivo muito grande (máx 5MB)','warn'); return; }
+    var fr = new FileReader();
+    fr.onload = function(){
+      var dq = loadDestaqueMedia();
+      dq[slot] = { url: fr.result, type: f.type.indexOf('video')===0 ? 'video' : 'image', name: f.name };
+      saveDestaqueMedia(dq);
+      toast('Mídia atualizada no destaque ' + slot,'success');
+      render();
+    };
+    fr.readAsDataURL(f);
+  };
+  input.click();
+}
+function removerDestaqueMedia(slot){
+  if (!confirm('Remover a mídia deste destaque?')) return;
+  var dq = loadDestaqueMedia();
+  delete dq[slot];
+  saveDestaqueMedia(dq);
+  render();
+}
+
 function renderHome() {
   var h = '';
-  // Hero — banner único "Material de Construção" (destaque da semana)
+  var dq = loadDestaqueMedia();
+  function flyerBg(slot, fallbackGradient) {
+    var m = dq[slot];
+    if (m && m.url && m.type === 'video') {
+      return '<video autoplay loop muted playsinline src="'+m.url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"></video><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.35) 60%,rgba(0,0,0,0.6) 100%);z-index:1"></div>';
+    }
+    if (m && m.url && m.type === 'image') {
+      return '<img src="'+m.url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.35) 60%,rgba(0,0,0,0.65) 100%);z-index:1"></div>';
+    }
+    return '';
+  }
+  function uploadBtn(slot) {
+    var has = dq[slot] && dq[slot].url;
+    return '<div style="position:absolute;bottom:10px;right:10px;z-index:3;display:flex;gap:6px">'
+      + (has ? '<button onclick="event.stopPropagation();removerDestaqueMedia(\''+slot+'\')" title="Remover mídia" style="background:rgba(0,0,0,0.55);color:#fff;border:0;border-radius:99px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px)">🗑</button>' : '')
+      + '<button onclick="event.stopPropagation();uploadDestaqueMedia(\''+slot+'\')" title="Adicionar foto ou vídeo" style="background:rgba(255,255,255,0.92);color:#111;border:0;border-radius:99px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px)">'+(has?'🔄 Trocar':'📷 Mídia')+'</button>'
+      + '</div>';
+  }
+
+  // Hero — flyers de cimento / tijolo / telha (SEM VALOR — só destaque do produto)
   h += '<div class="hero">';
-  h += '<div class="flyer-banner" style="position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;box-shadow:0 8px 28px rgba(0,0,0,0.12);aspect-ratio:1920/720;background:linear-gradient(135deg,#1F1A14 0%,#3B2D1C 50%,#7C4A1E 100%)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
-  h += '<img src="banner-material-construcao.jpg" alt="Material de Construção — Atacado e Varejo" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">';
-  h += '<div style="position:absolute;top:14px;left:14px;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.15em;background:#E20031;color:#fff;padding:5px 12px;border-radius:99px;box-shadow:0 2px 8px rgba(0,0,0,0.3)">DESTAQUE DA SEMANA</span></div>';
+  h += '<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;min-height:280px" class="flyer-grid">';
+  // CIMENTO — flyer principal
+  h += '<div class="flyer flyer-cimento" style="position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#2D3748 0%,#1A202C 60%,#171923 100%);color:#fff;padding:30px 32px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
+  h += flyerBg('cimento');
+  h += '<div style="position:relative;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.15em;background:#E20031;color:#fff;padding:4px 10px;border-radius:99px">DESTAQUE DA SEMANA</span></div>';
+  h += '<div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:140px;opacity:'+(dq.cimento&&dq.cimento.url?'0':'0.15')+';line-height:1;z-index:1">🪣</div>';
+  h += '<div style="position:relative;z-index:2"><div style="font-size:13px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px">Cimento CP-II 50kg</div>';
+  h += '<h2 style="font-size:42px;font-weight:900;letter-spacing:-0.04em;line-height:1.05;margin-bottom:10px">A base da sua obra<br>chega sem atraso.</h2>';
+  h += '<p style="font-size:14px;opacity:0.85;line-height:1.45;max-width:340px;margin-bottom:18px">Estoque garantido das melhores marcas. Entrega no canteiro, palete inteiro ou saco avulso.</p>';
+  h += '<a class="hero-cta" style="display:inline-flex;align-items:center;gap:8px;background:#99CC00;color:#fff;padding:12px 22px;border-radius:99px;font-weight:700;font-size:13px">Falar com um vendedor →</a></div>';
+  h += uploadBtn('cimento');
+  h += '</div>';
+  // TIJOLO
+  h += '<div class="flyer flyer-tijolo" style="position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#7B2D26 0%,#8E342B 50%,#5C201A 100%);color:#fff;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
+  h += flyerBg('tijolo');
+  h += '<div style="position:relative;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;background:rgba(255,255,255,0.18);backdrop-filter:blur(4px);padding:3px 10px;border-radius:99px">EM ESTOQUE</span></div>';
+  h += '<div style="position:absolute;right:-30px;bottom:-30px;font-size:180px;opacity:'+(dq.tijolo&&dq.tijolo.url?'0':'0.12')+';line-height:1;transform:rotate(-12deg);z-index:1">🧱</div>';
+  h += '<div style="position:relative;z-index:2"><div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Tijolos & Blocos</div>';
+  h += '<h3 style="font-size:26px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:6px">Tijolo baiano 8 furos</h3>';
+  h += '<p style="font-size:12px;opacity:0.88;line-height:1.5;max-width:200px">Entrega por milheiro com prazo de até 48h em Goiânia e região.</p></div>';
+  h += uploadBtn('tijolo');
+  h += '</div>';
+  // TELHA
+  h += '<div class="flyer flyer-telha" style="position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%);color:#fff;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.15)" onclick="filterCat(\'construcao\');navigate(\'catalog\')">';
+  h += flyerBg('telha');
+  h += '<div style="position:relative;z-index:2"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;background:rgba(255,255,255,0.18);backdrop-filter:blur(4px);padding:3px 10px;border-radius:99px">PRONTA ENTREGA</span></div>';
+  h += '<div style="position:absolute;right:-20px;bottom:-20px;font-size:170px;opacity:'+(dq.telha&&dq.telha.url?'0':'0.15')+';line-height:1;transform:rotate(8deg);z-index:1">🏠</div>';
+  h += '<div style="position:relative;z-index:2"><div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Telhas & Coberturas</div>';
+  h += '<h3 style="font-size:26px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:6px">Cobertura completa pra sua obra</h3>';
+  h += '<p style="font-size:12px;opacity:0.88;line-height:1.5;max-width:200px">Telha cerâmica, fibrocimento e barro. Frete combinado.</p></div>';
+  h += uploadBtn('telha');
+  h += '</div>';
   h += '</div></div>';
 
   // Categories
