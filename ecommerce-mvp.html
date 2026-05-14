@@ -1443,11 +1443,9 @@ function render() {
   h += '</main>';
   h += renderFooter();
   h += renderBottomNav();
-  h += renderModoSimplesToggle();
   app.innerHTML = h;
   renderCartDrawer();
   updateCartOverlay();
-  setupHelpTimer();
   // Tour 1ª visita: dispara após render inicial
   if (!state.tourSeen && !state._tourQueued) {
     state._tourQueued = true;
