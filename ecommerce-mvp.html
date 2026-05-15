@@ -3596,29 +3596,37 @@ function abrirRevisaoNFe() {
   h += '</div>';
 
   // Tabela de produtos
-  h += '<div class="form-section-title">📦 Produtos da nota — revise quantidade, custo e margem</div>';
-  h += '<div style="overflow-x:auto;border:1px solid var(--gray-200);border-radius:8px"><table class="data-table" style="margin:0"><thead><tr>';
-  h += '<th style="width:34px">#</th><th>Produto</th><th style="width:90px">NCM</th><th style="width:80px">Qtd</th><th style="width:110px">Custo unit.</th><th style="width:100px">Margem %</th><th style="width:110px">Preço venda</th><th style="width:90px">Status</th>';
+  h += '<div class="form-section-title">📦 Produtos da nota — precificação com desconto de imposto</div>';
+  h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px">';
+  h += '<input type="checkbox" id="nf-soma-imp" checked onchange="recalcTodosItensNF()">';
+  h += '<label for="nf-soma-imp" style="font-size:12px;color:#065f46;font-weight:600;cursor:pointer">Somar imposto unitário ao custo (ICMS+IPI rateados por item) — preço de venda calcula em cima do custo <strong>total</strong> (custo + impostos)</label>';
+  h += '</div>';
+  h += '<div style="overflow-x:auto;border:1px solid var(--gray-200);border-radius:8px"><table class="data-table" style="margin:0;font-size:11px"><thead><tr>';
+  h += '<th style="width:30px">#</th><th>Produto</th><th style="width:75px">NCM</th><th style="width:65px">Qtd</th><th style="width:90px">Custo bruto</th><th style="width:90px">Imposto unit.</th><th style="width:90px">Custo total</th><th style="width:80px">Margem %</th><th style="width:100px">Preço venda</th><th style="width:75px">Status</th>';
   h += '</tr></thead><tbody>';
   nf.itens.forEach(function(it, i){
     var existe = it.existingId !== null;
     var statusBadge = existe
-      ? '<span style="background:#dbeafe;color:#1e40af;font-size:10px;padding:2px 7px;border-radius:99px;font-weight:700">SOMAR</span>'
-      : '<span style="background:#dcfce7;color:#15803d;font-size:10px;padding:2px 7px;border-radius:99px;font-weight:700">NOVO</span>';
+      ? '<span style="background:#dbeafe;color:#1e40af;font-size:9px;padding:2px 6px;border-radius:99px;font-weight:700">SOMAR</span>'
+      : '<span style="background:#dcfce7;color:#15803d;font-size:9px;padding:2px 6px;border-radius:99px;font-weight:700">NOVO</span>';
+    var impostoUnit = it.qtd > 0 ? (it.icms + it.ipi) / it.qtd : 0;
+    var custoTotal = it.custoUnit + impostoUnit;
+    var precoVenda = custoTotal * (1 + (it.margemSug/100));
     h += '<tr>';
     h += '<td style="text-align:center;font-weight:700;color:var(--gray-400)">' + (i+1) + '</td>';
-    h += '<td><div style="font-weight:700;font-size:12px">' + escHtml(it.xProd) + '</div><div style="font-size:10px;color:var(--gray-400)">Cód. ' + escHtml(it.cProd) + ' · ' + escHtml(it.uCom) + ' · CFOP ' + escHtml(it.cfop) + '</div></td>';
-    h += '<td style="font-family:monospace;font-size:11px">' + escHtml(it.ncm) + '</td>';
-    h += '<td><input class="form-input" type="number" step="0.01" value="' + it.qtd + '" style="padding:6px;font-size:12px" onchange="atualizarItemNF(' + i + ',\'qtd\',this.value)"></td>';
-    h += '<td><input class="form-input" type="number" step="0.01" value="' + it.custoUnit.toFixed(2) + '" style="padding:6px;font-size:12px" onchange="atualizarItemNF(' + i + ',\'custoUnit\',this.value)"></td>';
-    h += '<td><input class="form-input" type="number" step="1" value="' + it.margemSug + '" style="padding:6px;font-size:12px" onchange="atualizarItemNF(' + i + ',\'margemSug\',this.value)"></td>';
-    var precoVenda = it.custoUnit * (1 + (it.margemSug/100));
-    h += '<td style="font-weight:800;color:var(--green);font-size:13px" id="pv-item-' + i + '">R$ ' + formatMoney(precoVenda) + '</td>';
+    h += '<td><div style="font-weight:700;font-size:11px">' + escHtml(it.xProd) + '</div><div style="font-size:9px;color:var(--gray-400)">Cód. ' + escHtml(it.cProd) + ' · ' + escHtml(it.uCom) + ' · CFOP ' + escHtml(it.cfop) + '</div></td>';
+    h += '<td style="font-family:monospace;font-size:10px">' + escHtml(it.ncm) + '</td>';
+    h += '<td><input class="form-input" type="number" step="0.01" value="' + it.qtd + '" style="padding:5px;font-size:11px" onchange="atualizarItemNF(' + i + ',\'qtd\',this.value)"></td>';
+    h += '<td><input class="form-input" type="number" step="0.01" value="' + it.custoUnit.toFixed(2) + '" style="padding:5px;font-size:11px" onchange="atualizarItemNF(' + i + ',\'custoUnit\',this.value)"></td>';
+    h += '<td><div id="imp-unit-' + i + '" style="padding:5px 6px;background:#ecfdf5;color:#047857;border-radius:4px;font-weight:700;text-align:right;font-size:11px">+ R$ ' + formatMoney(impostoUnit) + '</div></td>';
+    h += '<td><div id="custo-liq-' + i + '" style="padding:5px 6px;background:var(--gray-50);border-radius:4px;font-weight:700;text-align:right;font-size:11px">R$ ' + formatMoney(custoTotal) + '</div></td>';
+    h += '<td><input class="form-input" type="number" step="1" value="' + it.margemSug + '" style="padding:5px;font-size:11px" onchange="atualizarItemNF(' + i + ',\'margemSug\',this.value)"></td>';
+    h += '<td><div id="pv-item-' + i + '" style="font-weight:800;color:var(--green);font-size:13px;text-align:right">R$ ' + formatMoney(precoVenda) + '</div></td>';
     h += '<td>' + statusBadge + '</td>';
     h += '</tr>';
   });
   h += '</tbody></table></div>';
-  h += '<div style="font-size:11px;color:var(--gray-500);margin-top:10px;background:var(--gray-50);padding:10px 14px;border-radius:6px"><strong>SOMAR</strong> = produto já existe, quantidade vai ser somada ao estoque atual. <strong>NOVO</strong> = produto será cadastrado automaticamente com custo da NF e a margem informada (você poderá editar foto e detalhes depois).</div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-top:10px;background:var(--gray-50);padding:10px 14px;border-radius:6px;line-height:1.6"><strong>💡 Como funciona:</strong> ICMS e IPI por item vêm do XML e são rateados pela quantidade. O <strong>custo total</strong> é o que entra de fato pra precificar (custo bruto + impostos pagos na compra). A margem é aplicada em cima dele. Desmarque a checkbox acima se preferir precificar só sobre o custo bruto.<br><br><strong>SOMAR</strong> = produto existe, soma ao estoque. <strong>NOVO</strong> = cadastrado automaticamente.</div>';
 
   h += '</div>';
   h += '<div class="modal-footer">';
@@ -3633,10 +3641,30 @@ function atualizarItemNF(idx, key, val) {
   var nf = state.nfePendente;
   if (!nf) return;
   nf.itens[idx][key] = parseFloat(val) || 0;
+  recalcItemNF(idx);
+}
+
+function recalcItemNF(idx) {
+  var nf = state.nfePendente;
+  if (!nf) return;
   var it = nf.itens[idx];
-  var pv = it.custoUnit * (1 + (it.margemSug/100));
-  var cell = document.getElementById('pv-item-' + idx);
-  if (cell) cell.textContent = 'R$ ' + formatMoney(pv);
+  var soma = document.getElementById('nf-soma-imp');
+  var aplicaSoma = soma ? soma.checked : true;
+  var impostoUnit = it.qtd > 0 ? (it.icms + it.ipi) / it.qtd : 0;
+  var base = aplicaSoma ? (it.custoUnit + impostoUnit) : it.custoUnit;
+  var pv = base * (1 + (it.margemSug/100));
+  var impEl = document.getElementById('imp-unit-' + idx);
+  if (impEl) impEl.textContent = '+ R$ ' + formatMoney(impostoUnit);
+  var liqEl = document.getElementById('custo-liq-' + idx);
+  if (liqEl) liqEl.textContent = 'R$ ' + formatMoney(base);
+  var pvEl = document.getElementById('pv-item-' + idx);
+  if (pvEl) pvEl.textContent = 'R$ ' + formatMoney(pv);
+}
+
+function recalcTodosItensNF() {
+  var nf = state.nfePendente;
+  if (!nf) return;
+  nf.itens.forEach(function(_, i){ recalcItemNF(i); });
 }
 
 function cancelarRevisaoNFe() {
@@ -3649,14 +3677,20 @@ function cancelarRevisaoNFe() {
 function confirmarEntradaNFe() {
   var nf = state.nfePendente;
   if (!nf) return;
+  var soma = document.getElementById('nf-soma-imp');
+  var aplicaSoma = soma ? soma.checked : true;
   var criados = 0, somados = 0;
   nf.itens.forEach(function(it){
-    var precoVenda = it.custoUnit * (1 + (it.margemSug/100));
+    var impostoUnit = it.qtd > 0 ? (it.icms + it.ipi) / it.qtd : 0;
+    var custoBase = aplicaSoma ? (it.custoUnit + impostoUnit) : it.custoUnit;
+    it.impostoUnit = impostoUnit;
+    it.custoLiquido = custoBase;
+    var precoVenda = custoBase * (1 + (it.margemSug/100));
     if (it.existingId !== null) {
       var p = ALL_PRODUCTS.find(function(x){return x.id===it.existingId;});
       if (p) {
         p.stock += it.qtd;
-        p.custo = it.custoUnit;
+        p.custo = custoBase;
         somados++;
       }
     } else {
@@ -3684,7 +3718,9 @@ function confirmarEntradaNFe() {
         icms: 0, ipi: 0, pis: 0, cofins: 0,
         icmsST: false,
         cargaIbpt: 6,
-        custo: it.custoUnit,
+        custo: it.custoLiquido,
+        custoBruto: it.custoUnit,
+        impostoUnit: it.impostoUnit,
         margem: it.margemSug,
         custom: true,
         rascunho: true
