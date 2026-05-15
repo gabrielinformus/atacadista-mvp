@@ -114,18 +114,19 @@ img{max-width:100%;display:block;}
 .h-icon.has-name .lbl{font-size:13px;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* NAV */
-.nav-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:0;position:relative;overflow:visible;}
-.nav-bar .container{display:flex;gap:0;overflow-x:auto;}
-.nav-bar .nav-item{position:relative;}
+.nav-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:0;position:relative;overflow:visible;z-index:400;}
+.nav-bar .container{display:flex;gap:0;overflow:visible;flex-wrap:wrap;}
+.nav-bar .nav-item{position:static;}
 /* MEGA-MENU dropdown */
 .megamenu{
   position:absolute;top:100%;left:0;right:0;
   background:#fff;border-top:2px solid var(--blue);
   box-shadow:0 12px 28px rgba(28,25,23,0.12);
-  z-index:90;
-  opacity:0;visibility:hidden;transform:translateY(-6px);
+  z-index:500;
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px);
   transition:opacity 0.2s, transform 0.2s, visibility 0.2s;
 }
+.megamenu.show{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);}
 .nav-bar:hover .megamenu.show,
 .megamenu:hover{opacity:1;visibility:visible;transform:translateY(0);}
 .mm-wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:32px;padding:24px 20px;}
@@ -148,7 +149,8 @@ img{max-width:100%;display:block;}
 .mm-cta{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer;}
 .mm-cta:hover{text-decoration:underline;}
 @media(max-width:900px){.megamenu{display:none;}}
-.nav-item{padding:12px 18px;font-size:13px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition);}
+.nav-item{padding:12px 14px;font-size:13px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition);flex:0 0 auto;}
+@media(max-width:1100px){.nav-item{padding:10px 10px;font-size:12px;}}
 .nav-item:hover{color:#C81E2A;background:rgba(226,0,49,0.04);}
 .nav-item.active{color:#C81E2A;border-bottom-color:#C81E2A;font-weight:600;}
 
@@ -258,7 +260,7 @@ img{max-width:100%;display:block;}
 .pagination button.active{background:var(--blue);color:#fff;border-color:var(--blue);}
 
 /* FOOTER */
-.footer{background:#1a0005;color:rgba(255,255,255,0.5);padding:24px 0 16px;margin-top:32px;}
+.footer{background:#1a0005;color:rgba(255,255,255,0.5);padding:18px 0 10px;margin-top:24px;}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:32px;margin-bottom:18px;}
 .footer h3{color:#fff;font-size:14px;font-weight:700;margin-bottom:16px;}
 .footer p,.footer a{font-size:13px;line-height:1.8;color:var(--gray-400);}
@@ -902,6 +904,7 @@ img{max-width:100%;display:block;}
   .modal-overlay{padding:0 !important;}
 
   /* Footer no mobile mais compacto ainda */
+  .unidades-grid{grid-template-columns:1fr !important;}
   .footer{padding:18px 0 12px;margin-top:20px;}
   .footer-grid{grid-template-columns:1fr;gap:14px;}
   .footer h3{font-size:13px;margin-bottom:6px;}
@@ -1328,6 +1331,17 @@ var state = {
   filters: { priceMin:'', priceMax:'', sort:'relevance', soDesconto:false, soAtacado:false, soEstoque:false, ratingMin:0, freteGratis:false, novidade:false },
   adminProdFilter: { search:'', cat:'' },
   reposicoes: [],
+  entradasNF: [],
+  nfePendente: null,
+  unidades: (function(){
+    try { var s = localStorage.getItem('zm_unidades'); if (s) return JSON.parse(s); } catch(e){}
+    return [
+      {nome:'ZM Atacadista — Águas Lindas',endereco:'Av. JK, 500 — Águas Lindas/GO · CEP 72910-000',horario:'Seg a Sáb: 08h às 18h\nDomingo: fechado',mediaUrl:'',mediaType:''},
+      {nome:'ZM Atacadista — Brasília Sul',endereco:'SIA Trecho 2, Lotes 645/720 — Brasília/DF · CEP 71200-027',horario:'Seg a Sáb: 07h às 19h\nDomingo: fechado',mediaUrl:'',mediaType:''},
+      {nome:'ZM Atacadista — Ceilândia',endereco:'EQNM 3/5 Bloco E, Lojas 1-5 — Ceilândia Sul/DF · CEP 72215-535',horario:'Seg a Sáb: 07h às 19h\nDomingo: 08h às 13h',mediaUrl:'',mediaType:''}
+    ];
+  })(),
+  unidadeEdit: null,
   useCashback: false,
   cashbackHistory: [],
   cupomAplicado: null,
@@ -1512,6 +1526,7 @@ function render() {
   else if (state.view === 'client') h += renderClientArea();
   else if (state.view === 'product') h += renderProductDetail();
   h += '</main>';
+  if (state.view === 'home') h += renderUnidades();
   h += renderFooter();
   h += renderBottomNav();
   app.innerHTML = h;
@@ -2828,6 +2843,7 @@ function renderAdmin() {
       {id:'fornecedores',icon:'<svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/><path d="M21 8V3h-5"/><circle cx="12" cy="12" r="3"/></svg>',label:'Fornecedores'}
     ]},
     { label: 'Fiscal', items: [
+      {id:'entradanf',icon:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',label:'Entrada por NF-e'},
       {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'},
       {id:'pix',icon:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>',label:'Pix & NF-e'},
       {id:'tributacao',icon:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>',label:'Tributação'}
@@ -2849,6 +2865,7 @@ function renderAdmin() {
   else if (state.adminView === 'estoque') h += renderAdminEstoque();
   else if (state.adminView === 'pagamentos') h += renderAdminPagamentos();
   else if (state.adminView === 'nfs') h += renderAdminNFs();
+  else if (state.adminView === 'entradanf') h += renderAdminEntradaNF();
   else if (state.adminView === 'vendedores') h += renderAdminVendedores();
   else if (state.adminView === 'cashback') h += renderAdminCashback();
   else if (state.adminView === 'cupons') h += renderAdminCupons();
@@ -3066,10 +3083,21 @@ function abrirCadastroProduto(pid) {
   h += '<div class="form-group"><label class="form-label">Descrição</label>';
   h += '<textarea class="form-input" id="np-desc" rows="2" placeholder="Detalhes, especificações, marca...">'+escHtml(p&&p.desc?p.desc:'')+'</textarea></div>';
 
+  // Custo + Margem
+  h += '<div class="form-section-title">💰 Custo e margem de lucro</div>';
+  h += '<div class="form-row" style="grid-template-columns:1fr 1fr 1fr"><div class="form-group"><label class="form-label">Custo unitário (R$)</label>';
+  h += '<input class="form-input" type="number" step="0.01" id="np-custo" value="'+(p&&p.custo?p.custo:'')+'" placeholder="0,00" oninput="recalcPrecoMargem()"></div>';
+  h += '<div class="form-group"><label class="form-label">Margem de lucro (%)</label>';
+  h += '<input class="form-input" type="number" step="1" id="np-margem" value="'+(p&&p.margem?p.margem:30)+'" placeholder="30" oninput="recalcPrecoMargem()"></div>';
+  h += '<div class="form-group"><label class="form-label">Preço sugerido</label>';
+  h += '<div id="np-preco-sug" style="padding:12px 14px;background:var(--gray-50);border-radius:6px;font-weight:800;color:var(--green);font-size:15px;border:1px solid var(--gray-200)">—</div></div>';
+  h += '</div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin:-8px 0 14px;background:var(--gray-50);padding:8px 12px;border-radius:6px"><strong>💡</strong> Custo vem automaticamente quando o produto é importado por NF-e. Defina a margem e clique em <em>"Usar preço sugerido"</em> abaixo para preencher o preço de venda.</div>';
+
   // Preço e estoque
   h += '<div class="form-section-title">Preço e estoque</div>';
   h += '<div class="form-row" style="grid-template-columns:1fr 1fr 1fr 1fr">';
-  h += '<div class="form-group"><label class="form-label">Preço de venda (R$) *</label>';
+  h += '<div class="form-group"><label class="form-label">Preço de venda (R$) * <button type="button" onclick="aplicarPrecoSugerido()" style="background:none;border:none;color:var(--blue);font-size:10px;font-weight:700;cursor:pointer;margin-left:6px">↺ usar sugerido</button></label>';
   h += '<input class="form-input" type="number" step="0.01" id="np-price" value="'+(p?p.price:'')+'" placeholder="0,00"></div>';
   h += '<div class="form-group"><label class="form-label">Preço "de" (riscado)</label>';
   h += '<input class="form-input" type="number" step="0.01" id="np-old" value="'+(p&&p.oldPrice?p.oldPrice:'')+'" placeholder="0,00"></div>';
@@ -3116,6 +3144,23 @@ function abrirCadastroProduto(pid) {
 
   content.innerHTML = h;
   overlay.classList.add('open');
+  setTimeout(recalcPrecoMargem, 30);
+}
+
+function recalcPrecoMargem() {
+  var custo = parseFloat(document.getElementById('np-custo').value) || 0;
+  var margem = parseFloat(document.getElementById('np-margem').value) || 0;
+  var sug = custo * (1 + margem/100);
+  var el = document.getElementById('np-preco-sug');
+  if (el) el.textContent = custo > 0 ? 'R$ ' + formatMoney(sug) : '—';
+}
+function aplicarPrecoSugerido() {
+  var custo = parseFloat(document.getElementById('np-custo').value) || 0;
+  var margem = parseFloat(document.getElementById('np-margem').value) || 0;
+  if (custo <= 0) { toast('Informe o custo unitário primeiro.', 'warn'); return; }
+  var sug = custo * (1 + margem/100);
+  document.getElementById('np-price').value = sug.toFixed(2);
+  toast('✓ Preço de venda atualizado (R$ ' + formatMoney(sug) + ')', 'success');
 }
 
 function atualizarSubcategorias() {
@@ -3193,7 +3238,10 @@ function salvarProduto(pid) {
     pis: 0, cofins: 0,
     icmsST: document.getElementById('np-st').checked,
     cargaIbpt: parseFloat(document.getElementById('np-ibpt').value) || 6,
-    custom: true
+    custo: parseFloat(document.getElementById('np-custo').value) || 0,
+    margem: parseFloat(document.getElementById('np-margem').value) || 0,
+    custom: true,
+    rascunho: false
   };
 
   // Atualiza ou insere no ALL_PRODUCTS
@@ -3340,6 +3388,363 @@ function renderAdminNFs() {
   });
   h += '</tbody></table></div>';
   return h;
+}
+
+// ═════════════════════════════════════════════════════════
+// ENTRADA POR NF-e (XML + PDF anexo)
+// ═════════════════════════════════════════════════════════
+function renderAdminEntradaNF() {
+  var h = '<div class="admin-header"><h2>Entrada por NF-e</h2><span style="font-size:12px;color:var(--gray-500);font-weight:600">XML da NF-e + PDF (DANFE) opcional</span></div>';
+
+  // Upload zone
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px">';
+  h += '<h3 style="font-size:15px;font-weight:800;margin-bottom:14px">📥 Importar nova NF-e</h3>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">';
+  // XML
+  h += '<div style="border:2px dashed var(--blue);border-radius:var(--radius-sm);padding:22px;background:rgba(200,30,42,0.03);text-align:center">';
+  h += '<div style="font-size:32px;margin-bottom:6px">📋</div>';
+  h += '<div style="font-size:13px;font-weight:700;margin-bottom:4px">XML da NF-e <span style="color:var(--red)">*</span></div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-bottom:10px">Arquivo .xml que vem com toda nota fiscal eletrônica</div>';
+  h += '<input type="file" id="nfe-xml" accept=".xml,text/xml,application/xml" style="display:none" onchange="lerNFeXML(event)">';
+  h += '<button class="btn btn-primary btn-sm" onclick="document.getElementById(\'nfe-xml\').click()">📁 Selecionar XML</button>';
+  h += '</div>';
+  // PDF
+  h += '<div style="border:2px dashed var(--gray-300);border-radius:var(--radius-sm);padding:22px;background:var(--gray-50);text-align:center">';
+  h += '<div style="font-size:32px;margin-bottom:6px">📕</div>';
+  h += '<div style="font-size:13px;font-weight:700;margin-bottom:4px">PDF / DANFE <span style="color:var(--gray-400);font-weight:500">(opcional)</span></div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-bottom:10px">Comprovante visual anexo à entrada</div>';
+  h += '<input type="file" id="nfe-pdf" accept="application/pdf" style="display:none" onchange="lerNFePDF(event)">';
+  h += '<button class="btn btn-outline btn-sm" onclick="document.getElementById(\'nfe-pdf\').click()">📁 Selecionar PDF</button>';
+  h += '<div id="nfe-pdf-status" style="font-size:11px;color:var(--green);margin-top:8px;font-weight:600"></div>';
+  h += '</div>';
+  h += '</div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-top:10px;background:var(--gray-50);padding:10px 14px;border-radius:6px"><strong>💡</strong> Ao importar o XML, o sistema lê automaticamente fornecedor, produtos, quantidades e impostos. Você revisa antes de confirmar a entrada no estoque.</div>';
+  h += '</div>';
+
+  // Histórico
+  h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:700">📚 Histórico de entradas · ' + state.entradasNF.length + '</div>';
+  if (state.entradasNF.length === 0) {
+    h += '<div style="padding:40px 20px;text-align:center;color:var(--gray-400);font-size:13px">Nenhuma entrada por NF-e ainda. Importe o XML da primeira nota acima.</div>';
+  } else {
+    h += '<table class="data-table"><thead><tr><th>NF</th><th>Fornecedor</th><th>Emissão</th><th>Itens</th><th>Total</th><th>Impostos</th><th>Ações</th></tr></thead><tbody>';
+    state.entradasNF.slice().reverse().forEach(function(e, ri){
+      var idx = state.entradasNF.length - 1 - ri;
+      h += '<tr><td><strong>NF ' + escHtml(e.nNF) + '</strong><div style="font-size:10px;color:var(--gray-400)">Série ' + escHtml(e.serie||'1') + '</div></td>';
+      h += '<td><div style="font-weight:700;font-size:12px">' + escHtml(e.fornecedor.nome) + '</div><div style="font-size:10px;color:var(--gray-400)">CNPJ ' + escHtml(e.fornecedor.cnpj) + '</div></td>';
+      h += '<td style="font-size:12px">' + escHtml(e.dhEmi) + '</td>';
+      h += '<td style="font-size:12px">' + e.itens.length + ' produto' + (e.itens.length!==1?'s':'') + '</td>';
+      h += '<td style="font-weight:700">R$ ' + formatMoney(e.totalNF) + '</td>';
+      h += '<td style="font-size:11px;color:var(--gray-600)">ICMS R$ ' + formatMoney(e.impostos.icms) + '<br>IPI R$ ' + formatMoney(e.impostos.ipi) + '</td>';
+      h += '<td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="verEntradaNF(' + idx + ')" title="Ver detalhes">👁</button>';
+      if (e.pdfData) h += ' <button class="btn btn-outline btn-sm" onclick="verPdfEntrada(' + idx + ')" title="Ver PDF">📕</button>';
+      h += '</td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function lerNFePDF(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  if (file.size > 5*1024*1024) { toast('PDF muito grande (máx 5MB).','warn'); ev.target.value=''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    window._nfePdfData = e.target.result;
+    window._nfePdfName = file.name;
+    document.getElementById('nfe-pdf-status').innerHTML = '✓ ' + escHtml(file.name) + ' anexado';
+  };
+  reader.readAsDataURL(file);
+}
+
+function lerNFeXML(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var parsed = parseNFeXML(e.target.result);
+      parsed.pdfData = window._nfePdfData || '';
+      parsed.pdfName = window._nfePdfName || '';
+      state.nfePendente = parsed;
+      abrirRevisaoNFe();
+    } catch (err) {
+      toast('Não consegui ler esse XML. Confira se é mesmo um arquivo de NF-e.', 'warn');
+      console.error(err);
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseNFeXML(xmlText) {
+  var doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+  var perr = doc.getElementsByTagName('parsererror');
+  if (perr.length) throw new Error('XML inválido');
+  function txt(parent, tag) {
+    if (!parent) return '';
+    var el = parent.getElementsByTagName(tag)[0];
+    return el ? (el.textContent || '').trim() : '';
+  }
+  function num(parent, tag) {
+    var v = txt(parent, tag);
+    return v ? parseFloat(v) : 0;
+  }
+  var emit = doc.getElementsByTagName('emit')[0];
+  var ide = doc.getElementsByTagName('ide')[0];
+  var total = doc.getElementsByTagName('ICMSTot')[0];
+  if (!emit || !ide) throw new Error('Estrutura NF-e não reconhecida');
+
+  var dets = doc.getElementsByTagName('det');
+  var itens = [];
+  for (var i = 0; i < dets.length; i++) {
+    var d = dets[i];
+    var prod = d.getElementsByTagName('prod')[0];
+    var imp = d.getElementsByTagName('imposto')[0];
+    if (!prod) continue;
+    var icmsItem = 0, ipiItem = 0;
+    if (imp) {
+      var icmsTags = imp.getElementsByTagName('ICMS')[0];
+      if (icmsTags) {
+        var vICMS = icmsTags.getElementsByTagName('vICMS')[0];
+        if (vICMS) icmsItem = parseFloat(vICMS.textContent) || 0;
+      }
+      var ipiTags = imp.getElementsByTagName('IPI')[0];
+      if (ipiTags) {
+        var vIPI = ipiTags.getElementsByTagName('vIPI')[0];
+        if (vIPI) ipiItem = parseFloat(vIPI.textContent) || 0;
+      }
+    }
+    var qCom = num(prod, 'qCom');
+    var vUn = num(prod, 'vUnCom');
+    var vProd = num(prod, 'vProd');
+    var ncm = txt(prod, 'NCM');
+    var cprod = txt(prod, 'cProd');
+    var xProd = txt(prod, 'xProd');
+    var uCom = txt(prod, 'uCom');
+    var cfop = txt(prod, 'CFOP');
+    // tenta achar produto existente: por NCM + nome similar, ou por nome
+    var existing = null;
+    var nomeUp = xProd.toUpperCase();
+    for (var j = 0; j < ALL_PRODUCTS.length; j++) {
+      var p = ALL_PRODUCTS[j];
+      if (ncm && p.ncm === ncm && p.name.toUpperCase().indexOf(nomeUp.slice(0,12)) >= 0) { existing = p; break; }
+    }
+    if (!existing) {
+      for (var k = 0; k < ALL_PRODUCTS.length; k++) {
+        if (ALL_PRODUCTS[k].name.toUpperCase() === nomeUp) { existing = ALL_PRODUCTS[k]; break; }
+      }
+    }
+    itens.push({
+      cProd: cprod, xProd: xProd, ncm: ncm, cfop: cfop, uCom: uCom,
+      qtd: qCom, custoUnit: vUn, vProd: vProd,
+      icms: icmsItem, ipi: ipiItem,
+      existingId: existing ? existing.id : null,
+      margemSug: 30
+    });
+  }
+
+  return {
+    nNF: txt(ide, 'nNF'),
+    serie: txt(ide, 'serie'),
+    dhEmi: (txt(ide, 'dhEmi') || txt(ide, 'dEmi') || '').slice(0,10),
+    fornecedor: {
+      nome: txt(emit, 'xNome'),
+      cnpj: txt(emit, 'CNPJ'),
+      ie: txt(emit, 'IE'),
+      uf: emit.getElementsByTagName('UF')[0] ? emit.getElementsByTagName('UF')[0].textContent : ''
+    },
+    totalNF: total ? num(total, 'vNF') : itens.reduce(function(s,it){return s+it.vProd;},0),
+    impostos: {
+      icms: total ? num(total, 'vICMS') : 0,
+      ipi: total ? num(total, 'vIPI') : 0,
+      pis: total ? num(total, 'vPIS') : 0,
+      cofins: total ? num(total, 'vCOFINS') : 0,
+      st: total ? num(total, 'vST') : 0,
+      frete: total ? num(total, 'vFrete') : 0,
+      desconto: total ? num(total, 'vDesc') : 0
+    },
+    itens: itens
+  };
+}
+
+function abrirRevisaoNFe() {
+  var nf = state.nfePendente;
+  if (!nf) return;
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-xl';
+  var h = '<div class="modal-header"><h3>📋 Revisar NF-e ' + escHtml(nf.nNF) + '</h3>';
+  h += '<button class="modal-close" onclick="cancelarRevisaoNFe()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+
+  // Cabeçalho da nota
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px">';
+  h += '<div style="background:var(--gray-50);padding:12px 14px;border-radius:8px"><div style="font-size:10px;text-transform:uppercase;color:var(--gray-500);font-weight:700">Fornecedor</div><div style="font-size:13px;font-weight:800;margin-top:2px">' + escHtml(nf.fornecedor.nome) + '</div><div style="font-size:11px;color:var(--gray-500)">CNPJ ' + escHtml(nf.fornecedor.cnpj) + ' · ' + escHtml(nf.fornecedor.uf||'') + '</div></div>';
+  h += '<div style="background:var(--gray-50);padding:12px 14px;border-radius:8px"><div style="font-size:10px;text-transform:uppercase;color:var(--gray-500);font-weight:700">NF / Emissão</div><div style="font-size:13px;font-weight:800;margin-top:2px">Nº ' + escHtml(nf.nNF) + ' · Série ' + escHtml(nf.serie||'1') + '</div><div style="font-size:11px;color:var(--gray-500)">' + escHtml(nf.dhEmi) + '</div></div>';
+  h += '<div style="background:var(--gray-50);padding:12px 14px;border-radius:8px"><div style="font-size:10px;text-transform:uppercase;color:var(--gray-500);font-weight:700">Valor total</div><div style="font-size:18px;font-weight:900;margin-top:2px;color:var(--blue)">R$ ' + formatMoney(nf.totalNF) + '</div><div style="font-size:11px;color:var(--gray-500)">' + nf.itens.length + ' item(ns)</div></div>';
+  h += '</div>';
+
+  // Bloco impostos
+  h += '<div class="form-section-title" style="margin-top:0">📊 Impostos consolidados (do XML)</div>';
+  h += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:18px">';
+  ['icms','ipi','pis','cofins','st','frete'].forEach(function(k){
+    var label = k.toUpperCase();
+    h += '<div style="background:#fff;border:1px solid var(--gray-200);padding:10px;border-radius:6px;text-align:center"><div style="font-size:10px;color:var(--gray-500);font-weight:700">' + label + '</div><div style="font-size:13px;font-weight:800;color:var(--gray-800);margin-top:2px">R$ ' + formatMoney(nf.impostos[k]) + '</div></div>';
+  });
+  h += '</div>';
+
+  // Tabela de produtos
+  h += '<div class="form-section-title">📦 Produtos da nota — revise quantidade, custo e margem</div>';
+  h += '<div style="overflow-x:auto;border:1px solid var(--gray-200);border-radius:8px"><table class="data-table" style="margin:0"><thead><tr>';
+  h += '<th style="width:34px">#</th><th>Produto</th><th style="width:90px">NCM</th><th style="width:80px">Qtd</th><th style="width:110px">Custo unit.</th><th style="width:100px">Margem %</th><th style="width:110px">Preço venda</th><th style="width:90px">Status</th>';
+  h += '</tr></thead><tbody>';
+  nf.itens.forEach(function(it, i){
+    var existe = it.existingId !== null;
+    var statusBadge = existe
+      ? '<span style="background:#dbeafe;color:#1e40af;font-size:10px;padding:2px 7px;border-radius:99px;font-weight:700">SOMAR</span>'
+      : '<span style="background:#dcfce7;color:#15803d;font-size:10px;padding:2px 7px;border-radius:99px;font-weight:700">NOVO</span>';
+    h += '<tr>';
+    h += '<td style="text-align:center;font-weight:700;color:var(--gray-400)">' + (i+1) + '</td>';
+    h += '<td><div style="font-weight:700;font-size:12px">' + escHtml(it.xProd) + '</div><div style="font-size:10px;color:var(--gray-400)">Cód. ' + escHtml(it.cProd) + ' · ' + escHtml(it.uCom) + ' · CFOP ' + escHtml(it.cfop) + '</div></td>';
+    h += '<td style="font-family:monospace;font-size:11px">' + escHtml(it.ncm) + '</td>';
+    h += '<td><input class="form-input" type="number" step="0.01" value="' + it.qtd + '" style="padding:6px;font-size:12px" onchange="atualizarItemNF(' + i + ',\'qtd\',this.value)"></td>';
+    h += '<td><input class="form-input" type="number" step="0.01" value="' + it.custoUnit.toFixed(2) + '" style="padding:6px;font-size:12px" onchange="atualizarItemNF(' + i + ',\'custoUnit\',this.value)"></td>';
+    h += '<td><input class="form-input" type="number" step="1" value="' + it.margemSug + '" style="padding:6px;font-size:12px" onchange="atualizarItemNF(' + i + ',\'margemSug\',this.value)"></td>';
+    var precoVenda = it.custoUnit * (1 + (it.margemSug/100));
+    h += '<td style="font-weight:800;color:var(--green);font-size:13px" id="pv-item-' + i + '">R$ ' + formatMoney(precoVenda) + '</td>';
+    h += '<td>' + statusBadge + '</td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  h += '<div style="font-size:11px;color:var(--gray-500);margin-top:10px;background:var(--gray-50);padding:10px 14px;border-radius:6px"><strong>SOMAR</strong> = produto já existe, quantidade vai ser somada ao estoque atual. <strong>NOVO</strong> = produto será cadastrado automaticamente com custo da NF e a margem informada (você poderá editar foto e detalhes depois).</div>';
+
+  h += '</div>';
+  h += '<div class="modal-footer">';
+  h += '<button class="btn btn-outline" onclick="cancelarRevisaoNFe()">Cancelar</button>';
+  h += '<button class="btn btn-primary" onclick="confirmarEntradaNFe()">✓ Confirmar entrada no estoque</button>';
+  h += '</div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+
+function atualizarItemNF(idx, key, val) {
+  var nf = state.nfePendente;
+  if (!nf) return;
+  nf.itens[idx][key] = parseFloat(val) || 0;
+  var it = nf.itens[idx];
+  var pv = it.custoUnit * (1 + (it.margemSug/100));
+  var cell = document.getElementById('pv-item-' + idx);
+  if (cell) cell.textContent = 'R$ ' + formatMoney(pv);
+}
+
+function cancelarRevisaoNFe() {
+  state.nfePendente = null;
+  window._nfePdfData = null;
+  window._nfePdfName = null;
+  closeModal();
+}
+
+function confirmarEntradaNFe() {
+  var nf = state.nfePendente;
+  if (!nf) return;
+  var criados = 0, somados = 0;
+  nf.itens.forEach(function(it){
+    var precoVenda = it.custoUnit * (1 + (it.margemSug/100));
+    if (it.existingId !== null) {
+      var p = ALL_PRODUCTS.find(function(x){return x.id===it.existingId;});
+      if (p) {
+        p.stock += it.qtd;
+        p.custo = it.custoUnit;
+        somados++;
+      }
+    } else {
+      var novo = {
+        id: 100000 + Date.now() + criados,
+        name: it.xProd,
+        cat: 'construcao',
+        catLabel: 'Construção',
+        sub: '',
+        desc: 'Cadastrado automaticamente via NF-e ' + nf.nNF + '. Edite para ajustar categoria, foto e detalhes.',
+        emoji: '📦',
+        imgs: ['📦'],
+        price: parseFloat(precoVenda.toFixed(2)),
+        oldPrice: 0,
+        discount: 0,
+        stock: it.qtd,
+        sold: 0,
+        rating: '5.0',
+        atacado: true,
+        installment: precoVenda > 100 ? Math.ceil(precoVenda/12) : 0,
+        ncm: it.ncm,
+        cst: '102',
+        cfop: it.cfop || '5102',
+        origem: 0,
+        icms: 0, ipi: 0, pis: 0, cofins: 0,
+        icmsST: false,
+        cargaIbpt: 6,
+        custo: it.custoUnit,
+        margem: it.margemSug,
+        custom: true,
+        rascunho: true
+      };
+      ALL_PRODUCTS.unshift(novo);
+      saveCustomProduct(novo);
+      criados++;
+    }
+  });
+
+  state.entradasNF.push({
+    nNF: nf.nNF,
+    serie: nf.serie,
+    dhEmi: nf.dhEmi,
+    fornecedor: nf.fornecedor,
+    totalNF: nf.totalNF,
+    impostos: nf.impostos,
+    itens: nf.itens,
+    pdfData: nf.pdfData,
+    pdfName: nf.pdfName,
+    importadoEm: new Date().toISOString()
+  });
+
+  state.nfePendente = null;
+  window._nfePdfData = null;
+  window._nfePdfName = null;
+  closeModal();
+  alert('✅ Entrada confirmada!\n\n📥 NF ' + nf.nNF + ' — ' + nf.fornecedor.nome + '\n➕ ' + criados + ' produto(s) novo(s) cadastrado(s)\n🔄 ' + somados + ' produto(s) com estoque somado\n\nVá em Produtos para editar foto, categoria e ajustar margem dos novos itens.');
+  render();
+}
+
+function verEntradaNF(idx) {
+  var e = state.entradasNF[idx];
+  if (!e) return;
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-lg';
+  var h = '<div class="modal-header"><h3>📥 NF ' + escHtml(e.nNF) + ' — ' + escHtml(e.fornecedor.nome) + '</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">';
+  h += '<div><strong>Fornecedor:</strong> ' + escHtml(e.fornecedor.nome) + '<br>CNPJ: ' + escHtml(e.fornecedor.cnpj) + '</div>';
+  h += '<div><strong>NF:</strong> ' + escHtml(e.nNF) + ' / Série ' + escHtml(e.serie||'1') + '<br>Emissão: ' + escHtml(e.dhEmi) + '</div>';
+  h += '</div>';
+  h += '<table class="data-table"><thead><tr><th>Produto</th><th>NCM</th><th>Qtd</th><th>Custo</th><th>Total</th></tr></thead><tbody>';
+  e.itens.forEach(function(it){
+    h += '<tr><td>' + escHtml(it.xProd) + '</td><td style="font-family:monospace;font-size:11px">' + escHtml(it.ncm) + '</td><td>' + it.qtd + '</td><td>R$ ' + formatMoney(it.custoUnit) + '</td><td><strong>R$ ' + formatMoney(it.qtd * it.custoUnit) + '</strong></td></tr>';
+  });
+  h += '</tbody></table>';
+  h += '<div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:6px;font-size:12px"><strong>Total da nota:</strong> R$ ' + formatMoney(e.totalNF) + ' · <strong>ICMS:</strong> R$ ' + formatMoney(e.impostos.icms) + ' · <strong>IPI:</strong> R$ ' + formatMoney(e.impostos.ipi) + '</div>';
+  h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Fechar</button></div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+
+function verPdfEntrada(idx) {
+  var e = state.entradasNF[idx];
+  if (!e || !e.pdfData) return;
+  var w = window.open();
+  if (!w) { toast('Bloqueio de pop-up. Libere pra visualizar.','warn'); return; }
+  w.document.write('<title>' + (e.pdfName||'DANFE') + '</title><iframe src="' + e.pdfData + '" style="border:0;width:100%;height:100vh"></iframe>');
 }
 
 function renderAdminVendedores() {
@@ -5361,32 +5766,190 @@ function renderFreteCalc(contexto) {
   return h;
 }
 
+// ═════════════════════════════════════════════════════════
+// SEÇÃO "NOSSAS LOJAS" — 3 blocos editáveis (foto/vídeo + endereço)
+// ═════════════════════════════════════════════════════════
+function renderUnidades() {
+  var h = '<section style="background:var(--gray-50);padding:48px 0 40px;border-top:1px solid var(--gray-200)">';
+  h += '<div class="container">';
+  h += '<div style="text-align:center;margin-bottom:32px">';
+  h += '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue);font-weight:800;margin-bottom:6px">Onde nos encontrar</div>';
+  h += '<h2 style="font-size:28px;font-weight:900;color:var(--gray-900);margin:0">Nossas lojas</h2>';
+  h += '<p style="font-size:13px;color:var(--gray-500);margin-top:6px">Visite uma de nossas unidades — atendimento humano e estoque completo.</p>';
+  h += '</div>';
+  h += '<div class="unidades-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px" id="unidades-grid">';
+  state.unidades.forEach(function(u, i){
+    h += renderUnidadeCard(u, i);
+  });
+  h += '</div>';
+  h += '</div></section>';
+  return h;
+}
+
+function renderUnidadeCard(u, i) {
+  var h = '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--gray-200);position:relative;display:flex;flex-direction:column">';
+  // Media area
+  h += '<div style="position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,var(--gray-100),var(--gray-200));overflow:hidden">';
+  if (u.mediaUrl && u.mediaType === 'video') {
+    h += '<video src="' + u.mediaUrl + '" style="width:100%;height:100%;object-fit:cover" autoplay muted loop playsinline></video>';
+  } else if (u.mediaUrl) {
+    h += '<img src="' + u.mediaUrl + '" alt="' + escHtml(u.nome) + '" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    h += '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gray-400);gap:6px"><i class="ph ph-storefront" style="font-size:48px"></i><span style="font-size:11px;font-weight:600">Adicione uma foto ou vídeo</span></div>';
+  }
+  // Botão editar (canto sup. direito)
+  h += '<button onclick="abrirEditorUnidade(' + i + ')" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.65);color:#fff;border:none;border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;backdrop-filter:blur(4px)"><i class="ph ph-pencil-simple"></i> Editar</button>';
+  h += '</div>';
+  // Info
+  h += '<div style="padding:18px 18px 20px;flex:1;display:flex;flex-direction:column;gap:8px">';
+  h += '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue);font-weight:800">Unidade</div>';
+  h += '<h3 style="font-size:16px;font-weight:800;color:var(--gray-900);margin:0;line-height:1.3">' + escHtml(u.nome) + '</h3>';
+  h += '<div style="font-size:12px;color:var(--gray-600);line-height:1.5;display:flex;align-items:flex-start;gap:6px"><i class="ph ph-map-pin" style="color:var(--blue);font-size:14px;flex-shrink:0;margin-top:1px"></i><span>' + escHtml(u.endereco) + '</span></div>';
+  h += '<div style="font-size:12px;color:var(--gray-600);line-height:1.5;display:flex;align-items:flex-start;gap:6px"><i class="ph ph-clock" style="color:var(--blue);font-size:14px;flex-shrink:0;margin-top:1px"></i><span style="white-space:pre-line">' + escHtml(u.horario) + '</span></div>';
+  h += '</div>';
+  h += '</div>';
+  return h;
+}
+
+function abrirEditorUnidade(i) {
+  var u = state.unidades[i];
+  if (!u) return;
+  state.unidadeEdit = i;
+  window._unidadeBkp = JSON.parse(JSON.stringify(u));
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-md';
+  var h = '<div class="modal-header"><h3>✏️ Editar Unidade ' + (i+1) + '</h3>';
+  h += '<button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+
+  // Mídia
+  h += '<div class="form-section-title" style="margin-top:0">📷 Foto ou vídeo da unidade</div>';
+  h += '<div style="border:2px dashed var(--gray-200);border-radius:8px;padding:14px;background:var(--gray-50);text-align:center">';
+  h += '<div id="un-preview" style="aspect-ratio:4/3;background:#fff;border-radius:6px;overflow:hidden;margin-bottom:10px;display:flex;align-items:center;justify-content:center">';
+  if (u.mediaUrl && u.mediaType === 'video') {
+    h += '<video src="' + u.mediaUrl + '" style="width:100%;height:100%;object-fit:cover" autoplay muted loop playsinline></video>';
+  } else if (u.mediaUrl) {
+    h += '<img src="' + u.mediaUrl + '" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    h += '<span style="color:var(--gray-400);font-size:12px">Nenhuma mídia</span>';
+  }
+  h += '</div>';
+  h += '<input type="file" id="un-file" accept="image/*,video/mp4,video/webm" style="display:none" onchange="lerMidiaUnidade(event)">';
+  h += '<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">';
+  h += '<button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById(\'un-file\').click()">📁 Escolher foto/vídeo</button>';
+  if (u.mediaUrl) h += '<button type="button" class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="limparMidiaUnidade()">✕ Remover</button>';
+  h += '</div>';
+  h += '<div style="font-size:10px;color:var(--gray-400);margin-top:8px">JPG, PNG, MP4 ou WEBM · até 8MB</div>';
+  h += '</div>';
+
+  // Campos
+  h += '<div class="form-section-title">Informações da loja</div>';
+  h += '<div class="form-group"><label class="form-label">Nome / Identificação *</label>';
+  h += '<input class="form-input" id="un-nome" value="' + escHtml(u.nome) + '" placeholder="Ex: ZM Atacadista — Águas Lindas"></div>';
+  h += '<div class="form-group"><label class="form-label">Endereço completo *</label>';
+  h += '<input class="form-input" id="un-end" value="' + escHtml(u.endereco) + '" placeholder="Av. JK, 500 — Cidade/UF · CEP"></div>';
+  h += '<div class="form-group"><label class="form-label">Horário de funcionamento</label>';
+  h += '<textarea class="form-input" id="un-hr" rows="3" placeholder="Seg a Sáb: 08h às 18h&#10;Domingo: fechado">' + escHtml(u.horario) + '</textarea></div>';
+
+  h += '</div>';
+  h += '<div class="modal-footer">';
+  h += '<button class="btn btn-outline" onclick="cancelarEditorUnidade()">Cancelar</button>';
+  h += '<button class="btn btn-primary" onclick="salvarUnidade(' + i + ')">💾 Salvar</button>';
+  h += '</div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+
+function lerMidiaUnidade(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  if (file.size > 8*1024*1024) { toast('Arquivo muito grande (máx 8MB).','warn'); ev.target.value=''; return; }
+  var isVideo = file.type.indexOf('video/') === 0;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var url = e.target.result;
+    var i = state.unidadeEdit;
+    state.unidades[i].mediaUrl = url;
+    state.unidades[i].mediaType = isVideo ? 'video' : 'image';
+    var prev = document.getElementById('un-preview');
+    if (prev) {
+      prev.innerHTML = isVideo
+        ? '<video src="'+url+'" style="width:100%;height:100%;object-fit:cover" autoplay muted loop playsinline></video>'
+        : '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover">';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function limparMidiaUnidade() {
+  var i = state.unidadeEdit;
+  state.unidades[i].mediaUrl = '';
+  state.unidades[i].mediaType = '';
+  abrirEditorUnidade(i);
+}
+
+function cancelarEditorUnidade() {
+  if (state.unidadeEdit !== null && window._unidadeBkp) {
+    state.unidades[state.unidadeEdit] = window._unidadeBkp;
+  }
+  state.unidadeEdit = null;
+  window._unidadeBkp = null;
+  closeModal();
+  render();
+}
+
+function salvarUnidade(i) {
+  var nome = document.getElementById('un-nome').value.trim();
+  var end = document.getElementById('un-end').value.trim();
+  var hr = document.getElementById('un-hr').value.trim();
+  if (!nome) { toast('Faltou o nome da unidade.','warn'); return; }
+  if (!end) { toast('Faltou o endereço.','warn'); return; }
+  state.unidades[i].nome = nome;
+  state.unidades[i].endereco = end;
+  state.unidades[i].horario = hr;
+  try { localStorage.setItem('zm_unidades', JSON.stringify(state.unidades)); } catch(e){}
+  state.unidadeEdit = null;
+  window._unidadeBkp = null;
+  closeModal();
+  toast('✅ Unidade atualizada!','success');
+  render();
+}
+
 function renderFooter() {
   return '<footer class="footer"><div class="container">' +
-    '<div class="footer-grid">' +
+    '<div class="footer-grid" style="gap:24px;margin-bottom:12px">' +
     // Coluna 1: Marca
     '<div>' +
-      '<img src="logo-zm.png" alt="ZM Atacadista" style="height:36px;margin-bottom:10px;filter:brightness(0) invert(1)">' +
-      '<p style="margin-bottom:10px;font-size:12px;line-height:1.5">Atacado e material de construção · 2.000+ produtos para PF e PJ.</p>' +
-      '<a href="https://zmfinanceira.com.br" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,214,10,0.1);border:1px solid rgba(255,214,10,0.3);border-radius:6px;text-decoration:none;color:#FFD60A;font-size:11px;font-weight:700">💳 ZM Financeira →</a>' +
+      '<img src="logo-zm.png" alt="ZM Atacadista" style="height:28px;margin-bottom:6px;filter:brightness(0) invert(1)">' +
+      '<p style="font-size:11px;line-height:1.5;margin:0">Atacado e material de construção · 2.000+ produtos para PF e PJ.</p>' +
     '</div>' +
     // Coluna 2: Links essenciais
-    '<div><h3>Institucional</h3>' +
-      '<a href="#">Sobre nós</a><br>' +
-      '<a href="#">Privacidade</a><br>' +
-      '<a href="#">Termos de uso</a><br>' +
-      '<a href="#">Trocas e devoluções</a>' +
+    '<div><h3 style="font-size:12px;margin-bottom:8px">Institucional</h3>' +
+      '<a href="#" style="font-size:12px;line-height:1.7">Sobre nós</a><br>' +
+      '<a href="#" style="font-size:12px;line-height:1.7">Privacidade</a><br>' +
+      '<a href="#" style="font-size:12px;line-height:1.7">Termos de uso</a><br>' +
+      '<a href="#" style="font-size:12px;line-height:1.7">Trocas e devoluções</a>' +
     '</div>' +
     // Coluna 3: Contato compacto
-    '<div><h3>Contato</h3>' +
-      '<a href="https://wa.me/5534984282779" target="_blank">📱 (34) 98428-2779</a><br>' +
-      '<span style="font-size:12px;color:#a8a8b3;line-height:1.7">Av. JK, 500 — Águas Lindas/GO<br>Seg a Sáb · 08h às 18h</span>' +
+    '<div><h3 style="font-size:12px;margin-bottom:8px">Contato</h3>' +
+      '<a href="https://wa.me/5534984282779" target="_blank" style="font-size:12px;line-height:1.6">📱 (34) 98428-2779</a><br>' +
+      '<span style="font-size:11px;color:#a8a8b3;line-height:1.5">Quadra 01, Lote 12 — Recanto da Barragem<br>Águas Lindas de Goiás/GO · CEP 72927-839<br>Seg a Sáb · 08h às 18h</span>' +
     '</div>' +
     '</div>' +
-    // Rodapé final: copyright + pagamentos numa linha só
-    '<div class="footer-bottom" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">' +
-      '<span style="font-size:11px;color:#7a7a85">© 2026 ZM Atacadista · CNPJ 25.456.789/0001-90 · Desenvolvido por Informus</span>' +
-      '<div style="display:flex;gap:5px;flex-wrap:wrap"><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">PIX</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">VISA</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">MASTER</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">ELO</span><span style="background:rgba(255,255,255,0.08);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px">BOLETO</span><span style="color:#10b981;font-size:11px;font-weight:600;margin-left:6px">🔒 SSL</span></div>' +
+    // Linha de pagamentos centralizada
+    '<div style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:12px 0 10px;border-top:1px solid rgba(255,255,255,0.08)">' +
+      '<span style="font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:#7a7a85;font-weight:700;margin-right:6px">Formas de pagamento</span>' +
+      '<span style="background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;color:#d4d4d8">PIX</span>' +
+      '<span style="background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;color:#d4d4d8">VISA</span>' +
+      '<span style="background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;color:#d4d4d8">MASTER</span>' +
+      '<span style="background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;color:#d4d4d8">ELO</span>' +
+      '<span style="background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;color:#d4d4d8">BOLETO</span>' +
+      '<span style="color:#10b981;font-size:10px;font-weight:600;margin-left:6px">🔒 SSL</span>' +
+    '</div>' +
+    // Copyright (linha final)
+    '<div style="text-align:center;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">' +
+      '<span style="font-size:10px;color:#7a7a85">© 2026 ZM Atacadista · CNPJ 25.456.789/0001-90 · Desenvolvido por Informus</span>' +
     '</div>' +
     '</div></footer>';
 }
