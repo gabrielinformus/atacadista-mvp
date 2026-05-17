@@ -155,6 +155,7 @@ img{max-width:100%;display:block;}
 @media(max-width:1100px){.nav-item{padding:10px 10px;font-size:12px;}}
 .nav-item:hover{color:#C81E2A;background:rgba(226,0,49,0.04);}
 .nav-item.active{color:#C81E2A;border-bottom-color:#C81E2A;font-weight:600;}
+.nav-more-btn{display:none;}
 
 /* CONTAINER */
 .container{max-width:1280px;margin:0 auto;padding:0 24px;}
@@ -896,12 +897,50 @@ img{max-width:100%;display:block;}
     font-size:11px !important;align-items:center;justify-content:center;
     box-shadow:0 2px 6px rgba(0,0,0,0.25);
   }
-  .logo-zoom-panel{
-    position:fixed !important;top:60px !important;left:50% !important;right:auto !important;
-    transform:translateX(-50%);
-    width:92vw !important;max-width:340px !important;
-    z-index:9500 !important;
+  /* No mobile, esconde o painel de zoom — o lápis dispara upload direto */
+  .logo-zoom-panel{display:none !important;}
+
+  /* Nav categorias mobile: uma linha só, scroll horizontal, com botão "+" no fim */
+  .nav-bar .container{
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-x;
+    scrollbar-width:none;
+    padding:0 8px;
   }
+  .nav-bar .container::-webkit-scrollbar{display:none;height:0}
+  .nav-bar .nav-item{
+    flex:0 0 auto !important;
+    padding:10px 12px !important;
+    font-size:12.5px !important;
+  }
+  .nav-bar .megamenu{display:none !important;}
+  .nav-more-btn{
+    flex:0 0 auto;padding:10px 14px;border:none;background:transparent;
+    color:#C81E2A;font-weight:800;cursor:pointer;font-size:13px;
+    border-left:1px solid var(--gray-200);margin-left:4px;
+    white-space:nowrap;
+  }
+  /* Sheet de categorias completo */
+  .cat-sheet{
+    position:fixed;inset:0;z-index:9200;display:none;
+  }
+  .cat-sheet.open{display:block;}
+  .cat-sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.55);}
+  .cat-sheet-panel{
+    position:absolute;left:0;right:0;bottom:0;
+    background:#fff;border-radius:18px 18px 0 0;
+    padding:18px 16px 24px;max-height:75vh;overflow-y:auto;
+    animation:slideUp .25s ease-out;
+  }
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .cat-sheet-title{font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-500);margin-bottom:14px;text-align:center;}
+  .cat-sheet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .cat-sheet-item{display:flex;align-items:center;gap:10px;padding:14px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:12px;font-weight:700;font-size:13px;color:var(--gray-800);cursor:pointer;border:none;text-align:left;}
+  .cat-sheet-item.active{background:rgba(200,30,42,0.08);color:#C81E2A;border:1px solid #C81E2A;}
+  .cat-sheet-item i{font-size:20px;color:#C81E2A;}
   .h-btn-home{display:none !important;}
   .search-wrap{display:none !important;}
   .header-actions{order:3;gap:2px;margin-left:0;}
@@ -1676,7 +1715,7 @@ function renderHeader() {
     '<div class="' + logoContainerClass + '" onclick="navigate(\'home\')" title="Voltar ao início" style="cursor:pointer">' +
       '<img src="' + state.logoSrc + '" style="' + zoomStyle + '" alt="ZM Atacadista">' +
     '</div>' +
-    '<button class="logo-edit-btn" onclick="event.stopPropagation();state.logoEditorOpen=!state.logoEditorOpen;render()" title="Editar logo">✏</button>' +
+    '<button class="logo-edit-btn" onclick="event.stopPropagation();handleLogoEditClick()" title="Editar logo">✏</button>' +
     logoPanel + '</div>' +
     '<input type="file" id="logo-file-input" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">' +
     '<div class="search-wrap">' +
@@ -1770,6 +1809,7 @@ function renderNav() {
     h += '</div></div>'; // /mm-wrap /megamenu
     h += '</div>'; // /nav-item
   });
+  h += '<button class="nav-more-btn" onclick="abrirCatSheet()" aria-label="Todas as categorias">⋯</button>';
   h += '</div></nav>';
   return h;
 }
@@ -6260,9 +6300,32 @@ function renderMobileOverlays() {
     + '<button class="btn btn-outline btn-sm" onclick="fecharBuscaMobile()">Cancelar</button>'
     + '<button class="btn btn-primary btn-sm" onclick="doSearch(document.getElementById(\'mobile-search-input\').value);fecharBuscaMobile()">Buscar</button>'
     + '</div></div></div>';
-  return drawer + search;
+  // Sheet de categorias (bottom sheet — só mobile via CSS)
+  var catSheet = '<div class="cat-sheet" id="cat-sheet">'
+    + '<div class="cat-sheet-backdrop" onclick="fecharCatSheet()"></div>'
+    + '<div class="cat-sheet-panel">'
+    + '<div class="cat-sheet-title">Todas as categorias</div>'
+    + '<div class="cat-sheet-grid">'
+    + '<button class="cat-sheet-item' + (state.catFilter===''?' active':'') + '" onclick="fecharCatSheet();filterCat(\'\')"><i class="ph ph-squares-four"></i> Todos</button>';
+  CATEGORIES.forEach(function(c){
+    catSheet += '<button class="cat-sheet-item' + (state.catFilter===c.id?' active':'') + '" onclick="fecharCatSheet();filterCat(\''+c.id+'\')"><i class="'+c.phIcon+'"></i> '+escHtml(c.label)+'</button>';
+  });
+  catSheet += '</div></div></div>';
+
+  return drawer + search + catSheet;
 }
 
+function handleLogoEditClick(){
+  // No mobile (≤768px) abre direto o file picker. No desktop abre o painel de zoom.
+  if (window.innerWidth <= 768) {
+    document.getElementById('logo-file-input').click();
+  } else {
+    state.logoEditorOpen = !state.logoEditorOpen;
+    render();
+  }
+}
+function abrirCatSheet(){ var el = document.getElementById('cat-sheet'); if (el) el.classList.add('open'); document.body.style.overflow='hidden'; }
+function fecharCatSheet(){ var el = document.getElementById('cat-sheet'); if (el) el.classList.remove('open'); document.body.style.overflow=''; }
 function abrirDrawerMobile(){ var el = document.getElementById('mobile-drawer'); if (el) el.classList.add('open'); document.body.style.overflow='hidden'; }
 function fecharDrawerMobile(){ var el = document.getElementById('mobile-drawer'); if (el) el.classList.remove('open'); document.body.style.overflow=''; }
 function abrirBuscaMobile(){ var el = document.getElementById('mobile-search-overlay'); if (el) { el.classList.add('open'); setTimeout(function(){var i=document.getElementById('mobile-search-input'); if(i){i.value=state.search||'';i.focus();}}, 50); } }
