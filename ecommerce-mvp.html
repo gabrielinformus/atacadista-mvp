@@ -2662,7 +2662,12 @@ function renderProductDetail() {
   if (!p) return '<p>Produto não encontrado</p>';
   var h = '<div class="section" style="padding-top:24px">';
   h += '<div class="product-detail-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:32px">';
-  h += '<div class="product-detail-img" style="background:var(--gray-100);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:120px;min-height:400px">' + p.emoji + '</div>';
+  var detImg = (p.imgs && p.imgs.length) ? p.imgs[0] : p.emoji;
+  var detIsImg = typeof detImg === 'string' && (detImg.indexOf('data:image')===0 || detImg.indexOf('http')===0 || /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(detImg));
+  h += '<div class="product-detail-img" style="background:var(--gray-100);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:120px;min-height:400px;overflow:hidden;padding:14px">';
+  if (detIsImg) h += '<img src="' + detImg + '" alt="' + escHtml(p.name) + '" style="max-width:100%;max-height:380px;object-fit:contain">';
+  else h += escHtml(detImg);
+  h += '</div>';
   h += '<div class="product-detail-info">';
   h += '<div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">' + escHtml(p.catLabel) + ' / ' + escHtml(p.sub) + '</div>';
   h += '<h1 style="font-size:28px;font-weight:800;margin-bottom:16px;letter-spacing:-0.02em">' + escHtml(p.name) + '</h1>';
