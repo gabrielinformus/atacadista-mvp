@@ -168,10 +168,8 @@ img{max-width:100%;display:block;}
 
 /* HERO BANNER */
 .hero{padding:24px 0;}
-.hero-fullbleed #heroCarousel .flyer{position:absolute !important;inset:0 !important;min-height:0 !important;height:100% !important;width:100% !important;border-radius:0 !important;box-shadow:none !important;}
-.hero-fullbleed .hero-slide{display:block;}
-.hero-fullbleed #heroCarousel{min-height:380px;}
-@media (max-width: 720px){ .hero-fullbleed #heroCarousel{min-height:260px;} }
+.hero-fullbleed #heroCarousel .flyer{min-height:380px !important;border-radius:0 !important;box-shadow:none !important;width:100%;}
+@media (max-width: 720px){ .hero-fullbleed #heroCarousel .flyer{min-height:260px !important;padding:20px !important;} }
 .hero-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
 .hero-main{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#C81E2A,#F75263);min-height:320px;display:flex;align-items:center;padding:48px;color:#fff;}
 .hero-main h2{font-size:36px;font-weight:900;letter-spacing:-0.03em;line-height:1.15;margin-bottom:12px;}
@@ -1049,12 +1047,7 @@ img{max-width:100%;display:block;}
   /* Hero / banners do site não estouram a tela */
   .hero-card,.referral-banner{box-sizing:border-box;max-width:100%;}
   .flyer-grid{grid-template-columns:1fr !important;}
-  .flyer:not(.hero-fullbleed .flyer){min-height:200px !important;padding:20px !important;}
-  .hero-fullbleed #heroCarousel{min-height:240px !important;height:240px !important;}
-  .hero-fullbleed .hero-slide{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;}
-  .hero-fullbleed #heroCarousel .flyer{position:absolute !important;inset:0 !important;min-height:0 !important;height:100% !important;width:100% !important;padding:18px !important;border-radius:0 !important;box-shadow:none !important;}
-  .hero-fullbleed #heroCarousel .flyer img,
-  .hero-fullbleed #heroCarousel .flyer video{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;display:block !important;}
+  .flyer{min-height:200px !important;padding:20px !important;}
   .flyer h2{font-size:28px !important;}
   .flyer h3{font-size:22px !important;}
 
@@ -1925,8 +1918,7 @@ function startHeroCarousel(){
   var idx = 0;
   function showSlide(i){
     slides.forEach(function(s, k){
-      s.style.opacity = k === i ? '1' : '0';
-      s.style.pointerEvents = k === i ? 'auto' : 'none';
+      s.style.display = k === i ? 'block' : 'none';
     });
     dots.forEach(function(d, k){
       d.style.width = k === i ? '28px' : '10px';
@@ -2477,9 +2469,9 @@ function renderHome() {
     { slot: 'telha',   grad: 'linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%)' }
   ];
   h += '<div class="hero hero-fullbleed">';
-  h += '<div id="heroCarousel" style="position:relative;width:100%;min-height:340px;border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,0.18)">';
+  h += '<div id="heroCarousel" style="position:relative;width:100%;border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,0.18)">';
   slides.forEach(function(s, i){
-    h += '<div class="hero-slide" data-hero-idx="'+i+'" style="position:absolute;inset:0;opacity:'+(i===0?'1':'0')+';transition:opacity 0.9s ease;pointer-events:'+(i===0?'auto':'none')+'">';
+    h += '<div class="hero-slide" data-hero-idx="'+i+'" style="display:'+(i===0?'block':'none')+';width:100%">';
     h += renderFlyer(s.slot, s.grad, true);
     h += '</div>';
   });
