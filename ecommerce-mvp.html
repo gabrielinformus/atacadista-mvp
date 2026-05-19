@@ -2662,12 +2662,7 @@ function renderProductDetail() {
   if (!p) return '<p>Produto não encontrado</p>';
   var h = '<div class="section" style="padding-top:24px">';
   h += '<div class="product-detail-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:32px">';
-  var detImg = (p.imgs && p.imgs.length) ? p.imgs[0] : p.emoji;
-  var detIsImg = typeof detImg === 'string' && (detImg.indexOf('data:image')===0 || detImg.indexOf('http')===0 || /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(detImg));
-  h += '<div class="product-detail-img" style="background:var(--gray-100);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:120px;min-height:400px;overflow:hidden;padding:14px">';
-  if (detIsImg) h += '<img src="' + detImg + '" alt="' + escHtml(p.name) + '" style="max-width:100%;max-height:380px;object-fit:contain">';
-  else h += escHtml(detImg);
-  h += '</div>';
+  h += '<div class="product-detail-img" style="background:var(--gray-100);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:120px;min-height:400px;overflow:hidden;padding:14px">' + renderProdMedia(p, 380) + '</div>';
   h += '<div class="product-detail-info">';
   h += '<div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">' + escHtml(p.catLabel) + ' / ' + escHtml(p.sub) + '</div>';
   h += '<h1 style="font-size:28px;font-weight:800;margin-bottom:16px;letter-spacing:-0.02em">' + escHtml(p.name) + '</h1>';
@@ -2809,7 +2804,7 @@ function renderCheckout() {
     var unitPrice = getTierPrice(p, item.qty);
     var hasDiscount = unitPrice < p.price;
     h += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100)">';
-    h += '<div style="width:40px;height:40px;background:var(--gray-100);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px">' + p.emoji + '</div>';
+    h += '<div style="width:40px;height:40px;background:var(--gray-100);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden">' + renderProdMedia(p, 38) + '</div>';
     h += '<div style="flex:1"><div style="font-size:12px;font-weight:600">' + escHtml(p.name) + '</div>';
     h += '<div style="font-size:11px;color:var(--gray-400)">Qtd: ' + item.qty + (hasDiscount ? ' · <span style="color:#15803d;font-weight:700">atacado R$ ' + formatMoney(unitPrice) + '/un</span>' : '') + '</div></div>';
     h += '<div style="font-size:13px;font-weight:700">R$ ' + formatMoney(unitPrice * item.qty) + '</div></div>';
@@ -4899,7 +4894,7 @@ function renderCartDrawer() {
       if (!p) return;
       var unitPrice = getTierPrice(p, item.qty);
       var hasDiscount = unitPrice < p.price;
-      h += '<div class="cart-item"><div class="cart-item-img">' + p.emoji + '</div>';
+      h += '<div class="cart-item"><div class="cart-item-img">' + renderProdMedia(p, 64) + '</div>';
       h += '<div class="cart-item-info"><div class="cart-item-name">' + escHtml(p.name) + '</div>';
       if (hasDiscount) {
         h += '<div style="font-size:10px;color:#15803d;font-weight:700;background:#dcfce7;padding:2px 6px;border-radius:99px;display:inline-block;margin:2px 0">🏷️ Atacado: R$ ' + formatMoney(unitPrice) + '/un</div>';
@@ -5062,7 +5057,7 @@ function abrirReposicao(pid) {
   h += '<div class="modal-body">';
   // Card produto
   h += '<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--gray-50);border-radius:var(--radius-sm);margin-bottom:18px;border:1px solid var(--gray-200)">';
-  h += '<div style="font-size:36px">' + p.emoji + '</div>';
+  h += '<div style="width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;flex-shrink:0">' + renderProdMedia(p, 50) + '</div>';
   h += '<div style="flex:1"><div style="font-size:14px;font-weight:800">' + escHtml(p.name) + '</div>';
   h += '<div style="font-size:11px;color:var(--gray-500);margin-top:2px">' + escHtml(p.catLabel) + ' / ' + escHtml(p.sub) + ' · NCM ' + (p.ncm||'—') + '</div></div>';
   h += '<div style="text-align:right"><div style="font-size:10px;text-transform:uppercase;color:var(--gray-400);font-weight:700">Estoque atual</div>';
@@ -6013,6 +6008,17 @@ function saveLogo() {
 
 function formatMoney(v) { return Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+// Renderiza emoji do produto OU imagem real (data URL / URL HTTP / arquivo)
+function renderProdMedia(p, maxPx){
+  if (!p) return '';
+  var src = (p.imgs && p.imgs[0]) ? p.imgs[0] : (p.emoji || '📦');
+  var isImg = typeof src === 'string' && (src.indexOf('data:image') === 0 || src.indexOf('http') === 0 || /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(src));
+  if (isImg) {
+    var sizeAttr = maxPx ? 'max-width:100%;max-height:'+maxPx+'px;' : 'width:100%;height:100%;';
+    return '<img src="' + src + '" alt="" style="'+sizeAttr+'object-fit:contain">';
+  }
+  return escHtml(src);
+}
 
 // =============================================
 // FRETE — SIMULAÇÃO CORREIOS
