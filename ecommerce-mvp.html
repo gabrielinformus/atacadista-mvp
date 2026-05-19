@@ -162,6 +162,9 @@ img{max-width:100%;display:block;}
 
 /* HERO BANNER */
 .hero{padding:24px 0;}
+.hero-fullbleed #heroCarousel .flyer{position:absolute;inset:0;min-height:0 !important;height:100%;width:100%;border-radius:0 !important;box-shadow:none !important;}
+.hero-fullbleed #heroCarousel{min-height:380px;}
+@media (max-width: 720px){ .hero-fullbleed #heroCarousel{min-height:260px;} }
 .hero-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
 .hero-main{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#C81E2A,#F75263);min-height:320px;display:flex;align-items:center;padding:48px;color:#fff;}
 .hero-main h2{font-size:36px;font-weight:900;letter-spacing:-0.03em;line-height:1.15;margin-bottom:12px;}
@@ -1900,18 +1903,49 @@ function startDestaqueCarousels(){
     }, intervalMs);
   });
 }
+// Hero carousel — 3 flyers em rotação automática a cada 4s
+window._heroCarouselTimer = null;
+function startHeroCarousel(){
+  if (window._heroCarouselTimer) { clearInterval(window._heroCarouselTimer); window._heroCarouselTimer = null; }
+  var slides = document.querySelectorAll('.hero-slide');
+  var dots = document.querySelectorAll('[data-hero-dot]');
+  if (slides.length < 2) return;
+  var idx = 0;
+  function showSlide(i){
+    slides.forEach(function(s, k){
+      s.style.opacity = k === i ? '1' : '0';
+      s.style.pointerEvents = k === i ? 'auto' : 'none';
+    });
+    dots.forEach(function(d, k){
+      d.style.width = k === i ? '28px' : '10px';
+      d.style.background = k === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)';
+    });
+  }
+  dots.forEach(function(d, k){
+    d.addEventListener('click', function(){
+      idx = k; showSlide(idx);
+      if (window._heroCarouselTimer) { clearInterval(window._heroCarouselTimer); }
+      window._heroCarouselTimer = setInterval(function(){ idx = (idx+1) % slides.length; showSlide(idx); }, 4000);
+    });
+  });
+  window._heroCarouselTimer = setInterval(function(){
+    idx = (idx + 1) % slides.length;
+    showSlide(idx);
+  }, 4000);
+}
 // Hook: após cada render, religa os carrosséis
 (function(){
   var origRender = window.render;
   if (typeof origRender === 'function') {
-    window.render = function(){ origRender.apply(this, arguments); setTimeout(startDestaqueCarousels, 50); };
+    window.render = function(){ origRender.apply(this, arguments); setTimeout(function(){ startDestaqueCarousels(); startHeroCarousel(); }, 50); };
   } else {
     // Se render ainda não existe, agenda hook quando carregar
     document.addEventListener('DOMContentLoaded', function(){
       if (typeof window.render === 'function') {
         var orig = window.render;
-        window.render = function(){ orig.apply(this, arguments); setTimeout(startDestaqueCarousels, 50); };
+        window.render = function(){ orig.apply(this, arguments); setTimeout(function(){ startDestaqueCarousels(); startHeroCarousel(); }, 50); };
         startDestaqueCarousels();
+        startHeroCarousel();
       }
     });
   }
@@ -2424,12 +2458,25 @@ function renderHome() {
     return html;
   }
 
-  // Hero — 3 destaques editáveis (cimento principal + tijolo + telha)
-  h += '<div class="hero">';
-  h += '<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;min-height:280px" class="flyer-grid">';
-  h += renderFlyer('cimento', 'linear-gradient(135deg,#2D3748 0%,#1A202C 60%,#171923 100%)', true);
-  h += renderFlyer('tijolo', 'linear-gradient(135deg,#7B2D26 0%,#8E342B 50%,#5C201A 100%)', false);
-  h += renderFlyer('telha', 'linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%)', false);
+  // Hero — banner full-bleed com 3 destaques que passam sozinhos a cada 4s
+  var slides = [
+    { slot: 'cimento', grad: 'linear-gradient(135deg,#2D3748 0%,#1A202C 60%,#171923 100%)' },
+    { slot: 'tijolo',  grad: 'linear-gradient(135deg,#7B2D26 0%,#8E342B 50%,#5C201A 100%)' },
+    { slot: 'telha',   grad: 'linear-gradient(135deg,#92400E 0%,#B45309 50%,#78350F 100%)' }
+  ];
+  h += '<div class="hero hero-fullbleed">';
+  h += '<div id="heroCarousel" style="position:relative;width:100%;min-height:340px;border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,0.18)">';
+  slides.forEach(function(s, i){
+    h += '<div class="hero-slide" data-hero-idx="'+i+'" style="position:absolute;inset:0;opacity:'+(i===0?'1':'0')+';transition:opacity 0.9s ease;pointer-events:'+(i===0?'auto':'none')+'">';
+    h += renderFlyer(s.slot, s.grad, true);
+    h += '</div>';
+  });
+  // Dots
+  h += '<div id="heroDots" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px">';
+  slides.forEach(function(_, i){
+    h += '<button data-hero-dot="'+i+'" style="width:'+(i===0?'28':'10')+'px;height:10px;border-radius:99px;border:0;background:rgba(255,255,255,'+(i===0?'0.95':'0.5')+');cursor:pointer;transition:width 0.4s,background 0.4s;padding:0"></button>';
+  });
+  h += '</div>';
   h += '</div></div>';
 
   // Categories
