@@ -1198,14 +1198,21 @@ var CATEGORIES = [
   {id:'automotivo', label:'Automotivo',       phIcon:'ph ph-car-profile',   subs:['Óleos','Pneus','Acessórios','Lâmpadas','Ferramentas','Limpeza','Som','Câmeras']}
 ];
 
-var VENDEDORES = [
-  {id:1,nome:'Carlos Silva',inicial:'CS',cor:'#C81E2A',meta:35000,vendas:42850,pedidos:78,role:'Sênior'},
-  {id:2,nome:'Mariana Costa',inicial:'MC',cor:'#7C3AED',meta:30000,vendas:38420,pedidos:65,role:'Sênior'},
-  {id:3,nome:'Rafael Oliveira',inicial:'RO',cor:'#0891B2',meta:30000,vendas:31180,pedidos:54,role:'Pleno'},
-  {id:4,nome:'Juliana Almeida',inicial:'JA',cor:'#059669',meta:25000,vendas:24960,pedidos:48,role:'Pleno'},
-  {id:5,nome:'Bruno Santos',inicial:'BS',cor:'#D97706',meta:25000,vendas:19340,pedidos:41,role:'Pleno'},
-  {id:6,nome:'Larissa Pereira',inicial:'LP',cor:'#DB2777',meta:20000,vendas:14820,pedidos:32,role:'Júnior'},
-  {id:7,nome:'Diego Martins',inicial:'DM',cor:'#475569',meta:20000,vendas:11500,pedidos:24,role:'Júnior'}
+var VENDEDORES = (function(){
+  try { var s = localStorage.getItem('zm_vendedores'); if (s) return JSON.parse(s); } catch(e){}
+  return [];
+})();
+function saveVendedores(){ try{ localStorage.setItem('zm_vendedores', JSON.stringify(VENDEDORES)); }catch(e){} }
+// Abas que o vendedor pode acessar (permissões)
+var ABAS_VENDEDOR = [
+  {id:'dashboard', label:'Dashboard'},
+  {id:'pedidos', label:'Pedidos'},
+  {id:'produtos', label:'Produtos'},
+  {id:'estoque', label:'Estoque'},
+  {id:'cashback', label:'Cashback'},
+  {id:'cupons', label:'Cupons'},
+  {id:'fornecedores', label:'Fornecedores'},
+  {id:'pix', label:'Pix & NF-e'}
 ];
 var COMISSAO_PCT = 0.02;
 var CASHBACK_CONFIG = {
@@ -1236,13 +1243,11 @@ var STATS_LOJA = {
   anosOperacao: 8
 };
 
-var CUPONS = [
-  { codigo:'PRIMEIRA10', tipo:'percent', valor:10, validade:'31/12/2026', minimo:50, usos:47, ativo:true, desc:'Primeira compra' },
-  { codigo:'FRETEGRATIS', tipo:'frete', valor:0, validade:'15/06/2026', minimo:150, usos:134, ativo:true, desc:'Frete grátis' },
-  { codigo:'ATACADO15', tipo:'percent', valor:15, validade:'30/06/2026', minimo:500, usos:23, ativo:true, desc:'Compras acima de R$ 500' },
-  { codigo:'ZM50OFF', tipo:'fixed', valor:50, validade:'31/07/2026', minimo:300, usos:8, ativo:true, desc:'Desconto fixo R$ 50' },
-  { codigo:'BLACKZM', tipo:'percent', valor:25, validade:'30/11/2026', minimo:200, usos:0, ativo:false, desc:'Black Friday (programado)' }
-];
+var CUPONS = (function(){
+  try { var s = localStorage.getItem('zm_cupons'); if (s) return JSON.parse(s); } catch(e){}
+  return [];
+})();
+function saveCupons(){ try{ localStorage.setItem('zm_cupons', JSON.stringify(CUPONS)); }catch(e){} }
 
 var INDICACOES_MOCK = [
   { nome:'Pedro Almeida', inicial:'PA', data:'04/05/2026', status:'comprou', bonus:50.00 },
@@ -1422,7 +1427,9 @@ function generateProducts() {
   return products;
 }
 
-var ALL_PRODUCTS = generateProducts();
+// Catálogo inicia VAZIO — só os produtos cadastrados pelo admin aparecem.
+// Quando precisar de seed pra demo, descomente: var ALL_PRODUCTS = generateProducts();
+var ALL_PRODUCTS = [];
 
 // ── Persistência de produtos customizados (cadastro/edição/exclusão pelo admin) ──
 function loadCustomProducts() {
@@ -3074,16 +3081,20 @@ function renderAdmin() {
 
 function renderAdminDash() {
   var totalVendas = state.orders.reduce(function(s,o){return s+o.total;},0);
-  var hoje = totalVendas || 12450;
-  var mes = totalVendas + 89340;
-  var ticketMedio = totalVendas > 0 ? totalVendas/state.orders.length : 264.89;
+  var hoje = totalVendas;
+  var mes = totalVendas;
+  var ticketMedio = totalVendas > 0 ? totalVendas/state.orders.length : 0;
   var h = '<div class="admin-header"><h2>Dashboard</h2><span style="font-size:13px;color:var(--gray-400)">' + new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + '</span></div>';
   h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Vendas Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(hoje) + '</div><div class="stat-change up">↑ 12% vs ontem</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Vendas Mês</div><div class="stat-value">R$ ' + formatMoney(mes) + '</div><div class="stat-change up">↑ 18% vs mês passado</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">' + (state.orders.length + 142) + '</div><div class="stat-change up">↑ ' + (state.orders.length || 8) + ' hoje</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value">R$ ' + formatMoney(ticketMedio) + '</div><div class="stat-change up">↑ 5% vs semana passada</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Vendas Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(hoje) + '</div><div class="stat-change">' + (state.orders.length>0?'em tempo real':'aguardando primeira venda') + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Vendas Mês</div><div class="stat-value">R$ ' + formatMoney(mes) + '</div><div class="stat-change">' + (state.orders.length>0?'em tempo real':'aguardando primeira venda') + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">' + state.orders.length + '</div><div class="stat-change">' + (state.orders.length>0?'totais':'nenhum ainda') + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value">R$ ' + formatMoney(ticketMedio) + '</div><div class="stat-change">' + (state.orders.length>0?'calculado':'sem vendas') + '</div></div>';
   h += '</div>';
+  if (state.orders.length === 0) {
+    h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;text-align:center;margin-bottom:24px"><div style="font-size:48px;margin-bottom:10px">📊</div><h3 style="font-size:18px;font-weight:800;color:var(--gray-900);margin-bottom:6px">Painel zerado — pronto pra começar</h3><p style="font-size:13px;color:var(--gray-500);max-width:480px;margin:0 auto">Quando a primeira venda for confirmada, o painel passa a mostrar números em tempo real: vendas, pedidos, top vendedores, estoque baixo e categorias mais vendidas.</p></div>';
+    return h;
+  }
 
   // GRÁFICO DE VENDAS
   h += '<div class="chart-card" style="margin-bottom:24px">';
@@ -3410,7 +3421,7 @@ function getTierPrice(p, qty) {
 function recalcPrecoMargem() {
   var custo = parseFloat(document.getElementById('np-custo').value) || 0;
   var margem = parseFloat(document.getElementById('np-margem').value) || 0;
-  var sug = custo * (1 + margem/100);
+  var sug = priceTo9Cents(custo * (1 + margem/100));
   var el = document.getElementById('np-preco-sug');
   if (el) el.textContent = custo > 0 ? 'R$ ' + formatMoney(sug) : '—';
 }
@@ -3418,7 +3429,7 @@ function aplicarPrecoSugerido() {
   var custo = parseFloat(document.getElementById('np-custo').value) || 0;
   var margem = parseFloat(document.getElementById('np-margem').value) || 0;
   if (custo <= 0) { toast('Informe o custo unitário primeiro.', 'warn'); return; }
-  var sug = custo * (1 + margem/100);
+  var sug = priceTo9Cents(custo * (1 + margem/100));
   document.getElementById('np-price').value = sug.toFixed(2);
   toast('✓ Preço de venda atualizado (R$ ' + formatMoney(sug) + ')', 'success');
 }
@@ -3460,6 +3471,8 @@ function salvarProduto(pid) {
   var ncm = document.getElementById('np-ncm').value.trim();
   if (!name) { toast('Faltou o nome do produto.','warn'); return; }
   if (!price || price <= 0) { toast('Preço inválido.','warn'); return; }
+  // Força preço final terminando em 9 centavos (estratégia psicológica)
+  price = priceTo9Cents(price);
   if (isNaN(stock) || stock < 0) { toast('Estoque inválido.','warn'); return; }
   if (!ncm) { toast('NCM é obrigatório.','warn'); return; }
 
@@ -3573,25 +3586,23 @@ function confirmarExcluirProduto(pid) {
 }
 
 function renderAdminPedidos() {
-  var h = '<div class="admin-header"><h2>Pedidos</h2></div>';
+  var h = '<div class="admin-header"><h2>Pedidos</h2><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + state.orders.length + ' pedido' + (state.orders.length!==1?'s':'') + ' total</span></div>';
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<table class="data-table"><thead><tr><th>Pedido</th><th>Data</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Status</th></tr></thead><tbody>';
-  var allOrders = state.orders.length > 0 ? state.orders : [
-    {id:1047,date:'05/05/2026',items:[{name:'Kit Ferramentas',qty:1}],total:289.90,pay:'Pix',status:'Entregue',statusClass:'status-green'},
-    {id:1046,date:'04/05/2026',items:[{name:'Smart TV 55"',qty:1}],total:2499.00,pay:'Cartão 12x',status:'Em trânsito',statusClass:'status-yellow'},
-    {id:1045,date:'04/05/2026',items:[{name:'Rexona x24',qty:1},{name:'Dove x12',qty:1}],total:335.52,pay:'Boleto',status:'Processando',statusClass:'status-blue'},
-    {id:1044,date:'03/05/2026',items:[{name:'Torneira Inox',qty:3}],total:447.00,pay:'Pix',status:'Entregue',statusClass:'status-green'},
-    {id:1043,date:'03/05/2026',items:[{name:'Notebook Dell i5',qty:1}],total:3899.00,pay:'Cartão 10x',status:'Entregue',statusClass:'status-green'}
-  ];
-  allOrders.forEach(function(o){
-    h += '<tr><td><strong>#' + o.id + '</strong></td><td>' + o.date + '</td>';
-    h += '<td>' + (o.cliente||'Cliente') + '</td>';
-    h += '<td style="font-size:12px">' + o.items.map(function(it){return it.name;}).join(', ') + '</td>';
-    h += '<td style="font-weight:700">R$ ' + formatMoney(o.total) + '</td>';
-    h += '<td style="font-size:12px">' + (o.pay||'Pix') + '</td>';
-    h += '<td><span class="order-status ' + o.statusClass + '">' + o.status + '</span></td></tr>';
-  });
-  h += '</tbody></table></div>';
+  if (!state.orders.length) {
+    h += '<div style="padding:60px 20px;text-align:center;color:var(--gray-400)"><div style="font-size:56px;margin-bottom:14px">📦</div><h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Nenhum pedido ainda</h3><p style="font-size:13px;max-width:380px;margin:0 auto">Os pedidos vão aparecer aqui assim que os primeiros clientes finalizarem uma compra.</p></div>';
+  } else {
+    h += '<table class="data-table"><thead><tr><th>Pedido</th><th>Data</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Status</th></tr></thead><tbody>';
+    state.orders.forEach(function(o){
+      h += '<tr><td><strong>#' + o.id + '</strong></td><td>' + o.date + '</td>';
+      h += '<td>' + (o.cliente||'Cliente') + '</td>';
+      h += '<td style="font-size:12px">' + o.items.map(function(it){return it.name;}).join(', ') + '</td>';
+      h += '<td style="font-weight:700">R$ ' + formatMoney(o.total) + '</td>';
+      h += '<td style="font-size:12px">' + (o.pay||'Pix') + '</td>';
+      h += '<td><span class="order-status ' + o.statusClass + '">' + o.status + '</span></td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+  h += '</div>';
   return h;
 }
 
@@ -3651,30 +3662,27 @@ function verNfReposicao(idx) {
 }
 
 function renderAdminPagamentos() {
-  var h = '<div class="admin-header"><h2>Pagamentos</h2></div>';
+  var total = state.orders.reduce(function(s,o){return s+(o.total||0);},0);
+  var h = '<div class="admin-header"><h2>Pagamentos</h2><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + state.orders.length + ' transação' + (state.orders.length!==1?'ões':'') + '</span></div>';
   h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Recebido Hoje</div><div class="stat-value" style="color:var(--green)">R$ 12.450</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Pendente</div><div class="stat-value" style="color:var(--yellow)">R$ 3.200</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Recebido Mês</div><div class="stat-value">R$ 89.340</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Taxa Gateway</div><div class="stat-value" style="color:var(--red)">R$ 2.680</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Recebido Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(total) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pendente</div><div class="stat-value">R$ 0,00</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Recebido Mês</div><div class="stat-value">R$ ' + formatMoney(total) + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Taxa Gateway</div><div class="stat-value">R$ 0,00</div></div>';
   h += '</div>';
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<table class="data-table"><thead><tr><th>Data</th><th>Pedido</th><th>Método</th><th>Valor</th><th>Taxa</th><th>Líquido</th><th>Status</th></tr></thead><tbody>';
-  var pays = [
-    {date:'05/05',pedido:1047,metodo:'Pix',valor:289.90,taxa:2.90,status:'Confirmado',cls:'status-green'},
-    {date:'04/05',pedido:1046,metodo:'Cartão 12x',valor:2499.00,taxa:87.47,status:'Confirmado',cls:'status-green'},
-    {date:'04/05',pedido:1045,metodo:'Boleto',valor:335.52,taxa:3.49,status:'Pendente',cls:'status-yellow'},
-    {date:'03/05',pedido:1044,metodo:'Pix',valor:447.00,taxa:4.47,status:'Confirmado',cls:'status-green'},
-    {date:'03/05',pedido:1043,metodo:'Cartão 10x',valor:3899.00,taxa:136.47,status:'Confirmado',cls:'status-green'}
-  ];
-  pays.forEach(function(p){
-    h += '<tr><td>' + p.date + '</td><td><strong>#' + p.pedido + '</strong></td><td>' + p.metodo + '</td>';
-    h += '<td style="font-weight:700">R$ ' + formatMoney(p.valor) + '</td>';
-    h += '<td style="color:var(--red)">-R$ ' + formatMoney(p.taxa) + '</td>';
-    h += '<td style="font-weight:700;color:var(--green)">R$ ' + formatMoney(p.valor-p.taxa) + '</td>';
-    h += '<td><span class="order-status ' + p.cls + '">' + p.status + '</span></td></tr>';
-  });
-  h += '</tbody></table></div>';
+  if (!state.orders.length) {
+    h += '<div style="padding:60px 20px;text-align:center;color:var(--gray-400)"><div style="font-size:56px;margin-bottom:14px">💳</div><h3 style="font-size:16px;color:var(--gray-700);margin-bottom:6px">Sem pagamentos ainda</h3><p style="font-size:13px;max-width:380px;margin:0 auto">As transações vão aparecer aqui quando a primeira venda for confirmada (Pix, Cartão, Boleto).</p></div>';
+  } else {
+    h += '<table class="data-table"><thead><tr><th>Data</th><th>Pedido</th><th>Método</th><th>Valor</th><th>Status</th></tr></thead><tbody>';
+    state.orders.forEach(function(o){
+      h += '<tr><td>' + (o.date||'-') + '</td><td><strong>#' + o.id + '</strong></td><td>' + (o.pay||'Pix') + '</td>';
+      h += '<td style="font-weight:700">R$ ' + formatMoney(o.total) + '</td>';
+      h += '<td><span class="order-status ' + (o.statusClass||'status-green') + '">' + (o.status||'Confirmado') + '</span></td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+  h += '</div>';
   return h;
 }
 
@@ -3935,7 +3943,7 @@ function abrirRevisaoNFe() {
     var custoTotal = it.custoUnit + impostoUnit;
     var upc = it.undPorCaixa || 1;
     var custoPorUnid = custoTotal / upc;
-    var precoVendaUnid = custoPorUnid * (1 + (it.margemSug/100));
+    var precoVendaUnid = priceTo9Cents(custoPorUnid * (1 + (it.margemSug/100)));
     h += '<tr>';
     h += '<td style="text-align:center;font-weight:700;color:var(--gray-400)">' + (i+1) + '</td>';
     h += '<td><div style="font-weight:700;font-size:11px;line-height:1.3">' + escHtml(it.xProd) + '</div><div style="font-size:9px;color:var(--gray-400);margin-top:2px">Cód. ' + escHtml(it.cProd) + ' · ' + escHtml(it.uCom) + ' · CFOP ' + escHtml(it.cfop) + '</div></td>';
@@ -3980,7 +3988,7 @@ function recalcItemNF(idx) {
   var custoTotalCaixa = aplicaSoma ? (it.custoUnit + impostoUnit) : it.custoUnit;
   var upc = it.undPorCaixa || 1;
   var custoUnid = custoTotalCaixa / upc;
-  var pv = custoUnid * (1 + (it.margemSug/100));
+  var pv = priceTo9Cents(custoUnid * (1 + (it.margemSug/100)));
   var impEl = document.getElementById('imp-unit-' + idx);
   if (impEl) impEl.textContent = '+ R$ ' + formatMoney(impostoUnit);
   var liqEl = document.getElementById('custo-liq-' + idx);
@@ -4018,7 +4026,7 @@ function confirmarEntradaNFe() {
     it.impostoUnit = impostoUnit;
     it.custoLiquido = custoUnid;
     it.estoqueAdicionado = it.qtd * upc;
-    var precoVenda = custoUnid * (1 + (it.margemSug/100));
+    var precoVenda = priceTo9Cents(custoUnid * (1 + (it.margemSug/100)));
     if (it.existingId !== null) {
       var p = ALL_PRODUCTS.find(function(x){return x.id===it.existingId;});
       if (p) {
@@ -4117,50 +4125,102 @@ function verPdfEntrada(idx) {
 }
 
 function renderAdminVendedores() {
-  var sorted = VENDEDORES.slice().sort(function(a,b){return b.vendas - a.vendas;});
-  var totalVendas = VENDEDORES.reduce(function(s,v){return s+v.vendas;},0);
-  var totalComissao = totalVendas * COMISSAO_PCT;
-  var totalPedidos = VENDEDORES.reduce(function(s,v){return s+v.pedidos;},0);
-  var bateramMeta = VENDEDORES.filter(function(v){return v.vendas >= v.meta;}).length;
-  var medals = ['🥇','🥈','🥉'];
+  var h = '<div class="admin-header"><h2>Vendedores</h2><button class="btn btn-primary btn-sm" onclick="abrirCadastroVendedor()">+ Novo Vendedor</button></div>';
 
-  var h = '<div class="admin-header"><h2>Vendedores</h2><span style="font-size:12px;color:var(--gray-400)">' + new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) + '</span></div>';
+  if (!VENDEDORES.length) {
+    h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:60px 24px;text-align:center"><div style="font-size:56px;margin-bottom:14px">👥</div><h3 style="font-size:18px;font-weight:800;color:var(--gray-900);margin-bottom:6px">Nenhum vendedor cadastrado</h3><p style="font-size:13px;color:var(--gray-500);max-width:420px;margin:0 auto 18px">Cadastre seus vendedores e defina quais abas do admin cada um pode acessar (Dashboard, Pedidos, Cashback, Pix, etc).</p><button class="btn btn-primary" onclick="abrirCadastroVendedor()">+ Cadastrar primeiro vendedor</button></div>';
+    return h;
+  }
 
-  // KPIs compactos (sem mudança de cores agressivas)
-  h += '<div class="stat-grid" style="margin-bottom:18px">';
-  h += '<div class="stat-card"><div class="stat-label">Vendas</div><div class="stat-value">R$ ' + formatMoney(totalVendas) + '</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Pedidos</div><div class="stat-value">' + totalPedidos + '</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Ticket Médio</div><div class="stat-value">R$ ' + formatMoney(totalVendas/totalPedidos) + '</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Bateram Meta</div><div class="stat-value">' + bateramMeta + '/' + VENDEDORES.length + '</div></div>';
-  h += '</div>';
-
-  // Lista minimalista — uma única tabela limpa
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:700;color:var(--gray-700)">Ranking · ' + VENDEDORES.length + ' vendedores</div>';
-  sorted.forEach(function(s, i) {
-    var pct = Math.min(100, (s.vendas / s.meta) * 100);
-    var bateu = s.vendas >= s.meta;
-    var rankLabel = i < 3 ? medals[i] : (i+1) + 'º';
-    h += '<div style="display:grid;grid-template-columns:40px 1fr 200px 140px 80px;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--gray-100);transition:background .15s" onmouseover="this.style.background=\'var(--gray-50)\'" onmouseout="this.style.background=\'\'">';
-    h += '<div style="font-size:18px;font-weight:700;text-align:center;color:var(--gray-400)">' + rankLabel + '</div>';
-    h += '<div style="display:flex;align-items:center;gap:12px">';
-    h += '<div style="width:36px;height:36px;border-radius:50%;background:' + s.cor + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + s.inicial + '</div>';
-    h += '<div><div style="font-size:14px;font-weight:700;color:var(--gray-900)">' + s.nome + (bateu?' <span style="font-size:9px;color:var(--green);background:var(--green-light);padding:1px 6px;border-radius:99px;margin-left:4px;font-weight:700">META</span>':'') + '</div>';
-    h += '<div style="font-size:11px;color:var(--gray-400);margin-top:2px">' + s.role + ' · ' + s.pedidos + ' pedidos</div></div>';
-    h += '</div>';
-    h += '<div><div style="height:6px;background:var(--gray-100);border-radius:99px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:' + pct + '%;background:' + s.cor + ';border-radius:99px"></div></div>';
-    h += '<div style="font-size:10px;color:var(--gray-500);font-weight:600">' + Math.round(pct) + '% da meta R$ ' + (s.meta/1000) + 'k</div></div>';
-    h += '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:var(--gray-900)">R$ ' + formatMoney(s.vendas) + '</div>';
-    h += '<div style="font-size:11px;color:var(--green);font-weight:600">+R$ ' + formatMoney(s.vendas * COMISSAO_PCT) + '</div></div>';
-    h += '<div style="text-align:right"><button class="btn btn-outline btn-sm" onclick="abrirDetalhesVendedor(' + s.id + ')">Detalhes</button></div>';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:700;color:var(--gray-700)">' + VENDEDORES.length + ' vendedor' + (VENDEDORES.length!==1?'es':'') + ' cadastrado' + (VENDEDORES.length!==1?'s':'') + '</div>';
+  VENDEDORES.forEach(function(s){
+    h += '<div style="display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--gray-100)">';
+    h += '<div style="width:36px;height:36px;border-radius:50%;background:' + (s.cor||'#475569') + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + (s.inicial||'V') + '</div>';
+    h += '<div><div style="font-size:14px;font-weight:700;color:var(--gray-900)">' + escHtml(s.nome) + '</div>';
+    h += '<div style="font-size:11px;color:var(--gray-500);margin-top:2px">' + escHtml(s.role||'Vendedor') + ' · ' + (s.permissoes||[]).length + ' aba' + ((s.permissoes||[]).length!==1?'s':'') + ' liberada' + ((s.permissoes||[]).length!==1?'s':'') + '</div></div>';
+    h += '<div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="abrirCadastroVendedor(' + s.id + ')">✎ Editar</button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="excluirVendedor(' + s.id + ')">🗑</button></div>';
     h += '</div>';
   });
   h += '</div>';
-
-  // Totais discretos no rodapé
-  h += '<div style="margin-top:14px;padding:10px 18px;font-size:12px;color:var(--gray-500);text-align:right">Comissão total a pagar este mês: <strong style="color:var(--gray-900)">R$ ' + formatMoney(totalComissao) + '</strong> (' + (COMISSAO_PCT*100) + '% sobre vendas)</div>';
-
   return h;
+}
+
+function abrirCadastroVendedor(vid) {
+  var editing = vid !== undefined;
+  var v = editing ? VENDEDORES.find(function(x){return x.id===vid;}) : null;
+  var overlay = document.getElementById('modal-overlay');
+  var content = document.getElementById('modal-content');
+  content.className = 'modal modal-md';
+  var perms = v ? (v.permissoes || []) : [];
+  var h = '<div class="modal-header"><h3>' + (editing?'✎ Editar Vendedor':'+ Novo Vendedor') + '</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+  h += '<div class="modal-body">';
+  h += '<div class="form-group"><label class="form-label">Nome completo *</label><input class="form-input" id="vd-nome" value="' + escHtml(v?v.nome:'') + '" placeholder="Ex: Carlos Silva"></div>';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" id="vd-email" value="' + escHtml(v?v.email||'':'') + '" placeholder="vendedor@email.com"></div>';
+  h += '<div class="form-group"><label class="form-label">Cargo</label><select class="form-input" id="vd-role"><option' + (!v||v.role==='Júnior'?' selected':'') + '>Júnior</option><option' + (v&&v.role==='Pleno'?' selected':'') + '>Pleno</option><option' + (v&&v.role==='Sênior'?' selected':'') + '>Sênior</option><option' + (v&&v.role==='Gerente'?' selected':'') + '>Gerente</option></select></div></div>';
+  h += '<div class="form-row"><div class="form-group"><label class="form-label">Meta mensal (R$)</label><input class="form-input" type="number" id="vd-meta" value="' + (v&&v.meta?v.meta:'') + '" placeholder="20000"></div>';
+  h += '<div class="form-group"><label class="form-label">Comissão (%)</label><input class="form-input" type="number" step="0.1" id="vd-comissao" value="' + (v&&v.comissaoPct?v.comissaoPct:'2') + '"></div></div>';
+  h += '<div class="form-section-title">🔐 Permissões — abas que o vendedor pode acessar</div>';
+  h += '<p style="font-size:11px;color:var(--gray-500);margin:-8px 0 10px">Marque as abas do painel admin que ESTE vendedor terá acesso ao logar com a conta dele.</p>';
+  h += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">';
+  ABAS_VENDEDOR.forEach(function(aba){
+    var checked = perms.indexOf(aba.id) >= 0;
+    h += '<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--gray-50);border:1px solid ' + (checked?'var(--blue)':'var(--gray-200)') + ';border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">';
+    h += '<input type="checkbox" class="vd-perm" value="' + aba.id + '"' + (checked?' checked':'') + '> ' + escHtml(aba.label);
+    h += '</label>';
+  });
+  h += '</div>';
+  h += '</div>';
+  h += '<div class="modal-footer">';
+  if (editing) h += '<button class="btn btn-outline" style="margin-right:auto;color:var(--red);border-color:var(--red)" onclick="excluirVendedor(' + vid + ')">🗑 Excluir</button>';
+  h += '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';
+  h += '<button class="btn btn-primary" onclick="salvarVendedor(' + (editing?vid:'null') + ')">💾 ' + (editing?'Salvar':'Cadastrar') + '</button>';
+  h += '</div>';
+  content.innerHTML = h;
+  overlay.classList.add('open');
+}
+
+function salvarVendedor(vid) {
+  var nome = document.getElementById('vd-nome').value.trim();
+  if (!nome) { toast('Informe o nome do vendedor.','warn'); return; }
+  var iniciais = nome.split(' ').filter(Boolean).slice(0,2).map(function(p){return (p[0]||'').toUpperCase();}).join('');
+  var cores = ['#C81E2A','#7C3AED','#0891B2','#059669','#D97706','#DB2777','#475569','#1E40AF'];
+  var perms = [];
+  document.querySelectorAll('.vd-perm:checked').forEach(function(c){perms.push(c.value);});
+  var dados = {
+    nome: nome,
+    inicial: iniciais || 'V',
+    email: document.getElementById('vd-email').value.trim(),
+    role: document.getElementById('vd-role').value,
+    meta: parseFloat(document.getElementById('vd-meta').value) || 0,
+    comissaoPct: parseFloat(document.getElementById('vd-comissao').value) || 2,
+    permissoes: perms,
+    vendas: 0,
+    pedidos: 0,
+    cor: cores[VENDEDORES.length % cores.length]
+  };
+  if (vid && vid !== 'null') {
+    var idx = VENDEDORES.findIndex(function(x){return x.id===vid;});
+    if (idx >= 0) { dados.id = vid; dados.cor = VENDEDORES[idx].cor; dados.vendas = VENDEDORES[idx].vendas; dados.pedidos = VENDEDORES[idx].pedidos; VENDEDORES[idx] = dados; }
+  } else {
+    dados.id = Date.now();
+    VENDEDORES.push(dados);
+  }
+  saveVendedores();
+  closeModal();
+  toast('✅ Vendedor ' + (vid && vid !== 'null' ? 'atualizado' : 'cadastrado') + '!', 'success');
+  render();
+}
+
+function excluirVendedor(vid) {
+  var v = VENDEDORES.find(function(x){return x.id===vid;});
+  if (!v) return;
+  if (!confirm('Excluir o vendedor "' + v.nome + '"?')) return;
+  VENDEDORES = VENDEDORES.filter(function(x){return x.id!==vid;});
+  saveVendedores();
+  closeModal();
+  toast('🗑 Vendedor excluído','success');
+  render();
 }
 
 // Gera mock de clientes/produtos por vendedor (determinístico via seed) — substituir por dados reais quando tiver backend
@@ -4286,10 +4346,10 @@ function abrirDetalhesVendedor(sid) {
 }
 
 function renderAdminCashback() {
-  var totalDistribuido = 14580.40;
-  var totalResgatado = 6240.10;
-  var saldoAtivo = totalDistribuido - totalResgatado;
-  var clientesAtivos = 287;
+  var totalDistribuido = 0;
+  var totalResgatado = 0;
+  var saldoAtivo = 0;
+  var clientesAtivos = 0;
 
   var h = '<div class="admin-header"><h2>Cashback ' + (CASHBACK_CONFIG.enabled?'<span style=\'font-size:11px;font-weight:700;background:#10B981;color:#fff;padding:3px 10px;border-radius:99px;margin-left:8px;vertical-align:middle\'>ATIVO</span>':'<span style=\'font-size:11px;font-weight:700;background:#9CA3AF;color:#fff;padding:3px 10px;border-radius:99px;margin-left:8px;vertical-align:middle\'>DESATIVADO</span>') + '</h2><span style="font-size:12px;color:var(--gray-400)">' + (CASHBACK_CONFIG.pct*100).toFixed(1) + '% de retorno · limite R$ ' + CASHBACK_CONFIG.limiteMensalCpf + '/mês</span></div>';
 
@@ -4330,67 +4390,38 @@ function renderAdminCashback() {
   h += '</select></div></div>';
   h += '<button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="toast(\'Configurações salvas\',\'success\');render()">Salvar</button></div>';
 
-  // Top clientes — lista enxuta
+  // Top clientes — vazio até começar a distribuir cashback
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">';
   h += '<div style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--gray-700)">Top clientes (saldo)</div>';
-  var topCli = [
-    {n:'Construtora ABC',d:'12.345.678/0001-90',s:846.20,inicial:'CA'},
-    {n:'João da Silva',d:'123.456.789-00',s:534.80,inicial:'JS'},
-    {n:'Maria Souza',d:'987.654.321-00',s:421.50,inicial:'MS'},
-    {n:'Reformas RJ ME',d:'45.678.901/0001-23',s:389.10,inicial:'RR'},
-    {n:'Pedro Henrique',d:'456.789.012-34',s:287.90,inicial:'PH'}
-  ];
-  topCli.forEach(function(c, i){
-    h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0' + (i<4?';border-bottom:1px solid var(--gray-100)':'') + '">';
-    h += '<div style="width:30px;height:30px;border-radius:50%;background:var(--gray-100);color:var(--gray-700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">' + c.inicial + '</div>';
-    h += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700">' + c.n + '</div><div style="font-size:10px;color:var(--gray-400);font-family:monospace">' + c.d + '</div></div>';
-    h += '<div style="font-size:13px;font-weight:800">R$ ' + formatMoney(c.s) + '</div>';
-    h += '</div>';
-  });
+  h += '<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:12px">Nenhum cliente com saldo de cashback ainda.</div>';
   h += '</div></div>';
 
-  // HISTÓRICO DE MOVIMENTAÇÃO — minimalista
+  // HISTÓRICO DE MOVIMENTAÇÃO — vazio
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center">';
-  h += '<div style="font-size:13px;font-weight:700;color:var(--gray-700)">Movimentações recentes</div>';
-  h += '<button class="btn btn-outline btn-sm">Exportar</button></div>';
-  h += '<table class="data-table"><thead><tr><th>Data</th><th>Cliente</th><th>Pedido</th><th>Tipo</th><th>Valor</th><th>Saldo Após</th></tr></thead><tbody>';
-  var movs = [
-    {d:'07/05',c:'João da Silva',p:'#1048',t:'Crédito',v:8.69,s:534.80,cls:'in'},
-    {d:'06/05',c:'Construtora ABC',p:'#1047',t:'Resgate',v:-150.00,s:846.20,cls:'out'},
-    {d:'06/05',c:'Maria Souza',p:'#1046',t:'Crédito',v:74.97,s:421.50,cls:'in'},
-    {d:'05/05',c:'Reformas RJ ME',p:'#1045',t:'Crédito',v:10.07,s:389.10,cls:'in'},
-    {d:'05/05',c:'Pedro Henrique',p:'#1044',t:'Resgate',v:-50.00,s:287.90,cls:'out'},
-    {d:'04/05',c:'Construtora ABC',p:'#1043',t:'Crédito',v:116.97,s:996.20,cls:'in'}
-  ];
-  movs.forEach(function(m){
-    h += '<tr><td>' + m.d + '</td><td><strong>' + m.c + '</strong></td><td>' + m.p + '</td>';
-    h += '<td><span class="cb-tag ' + m.cls + '">' + m.t + '</span></td>';
-    h += '<td style="font-weight:700;color:' + (m.v > 0 ? 'var(--green)' : 'var(--red)') + '">' + (m.v > 0 ? '+' : '') + 'R$ ' + formatMoney(Math.abs(m.v)) + '</td>';
-    h += '<td>R$ ' + formatMoney(m.s) + '</td></tr>';
-  });
-  h += '</tbody></table></div>';
+  h += '<div style="padding:14px 18px;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:700;color:var(--gray-700)">Movimentações recentes</div>';
+  h += '<div style="padding:40px 20px;text-align:center;color:var(--gray-400);font-size:13px">Sem movimentações de cashback ainda.<br><span style="font-size:11px">Os créditos vão aparecer aqui após a primeira venda elegível.</span></div>';
+  h += '</div>';
   return h;
 }
 
 function renderAdminCupons() {
   var ativos = CUPONS.filter(function(c){return c.ativo;});
-  var totalUsos = CUPONS.reduce(function(s,c){return s+c.usos;},0);
-  var descontoConcedido = CUPONS.reduce(function(s,c){
-    if (c.tipo==='percent') return s + (c.usos * 35);
-    if (c.tipo==='fixed') return s + (c.usos * c.valor);
-    return s + (c.usos * 25);
-  },0);
+  var totalUsos = CUPONS.reduce(function(s,c){return s+(c.usos||0);},0);
+  var descontoConcedido = 0;
 
   var h = '<div class="admin-header"><h2>Cupons</h2><button class="btn btn-primary btn-sm" onclick="abrirCupomNovo()">+ Novo cupom</button></div>';
 
-  // KPIs neutros
+  // KPIs zerados
   h += '<div class="stat-grid" style="margin-bottom:18px">';
   h += '<div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-value">' + ativos.length + '/' + CUPONS.length + '</div></div>';
   h += '<div class="stat-card"><div class="stat-label">Usos no mês</div><div class="stat-value">' + totalUsos + '</div></div>';
   h += '<div class="stat-card"><div class="stat-label">Desconto concedido</div><div class="stat-value">R$ ' + formatMoney(descontoConcedido) + '</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">ROI</div><div class="stat-value">4,2x</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">ROI</div><div class="stat-value">' + (totalUsos>0?'em cálculo':'—') + '</div></div>';
   h += '</div>';
+  if (!CUPONS.length) {
+    h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:60px 24px;text-align:center"><div style="font-size:56px;margin-bottom:14px">🎟️</div><h3 style="font-size:18px;font-weight:800;color:var(--gray-900);margin-bottom:6px">Nenhum cupom criado ainda</h3><p style="font-size:13px;color:var(--gray-500);max-width:420px;margin:0 auto 18px">Crie cupons de desconto pra distribuir aos clientes. A contagem de usos e o valor descontado começam a contar a partir do primeiro uso.</p><button class="btn btn-primary" onclick="abrirCupomNovo()">+ Criar primeiro cupom</button></div>';
+    return h;
+  }
 
   // Lista limpa em formato de tabela enxuta
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
@@ -4421,71 +4452,39 @@ function renderAdminCupons() {
 }
 
 function renderAdminIndicacoes() {
-  var totalIndicacoes = 287;
-  var conversoes = 184;
-  var bonusPago = conversoes * BONUS_INDICACAO;
-  var receitaIndicados = 89420;
-  var topIndicadores = [
-    {n:'Construtora ABC',i:'CA',c:14,b:700},
-    {n:'João da Silva',i:'JS',c:9,b:450},
-    {n:'Maria Souza',i:'MS',c:7,b:350},
-    {n:'Reformas RJ',i:'RR',c:5,b:250},
-    {n:'Pedro Henrique',i:'PH',c:4,b:200}
-  ];
-
   var h = '<div class="admin-header"><h2>🤝 Programa de Indicação</h2><span style="font-size:13px;color:var(--gray-400)">R$ ' + BONUS_INDICACAO + ' por indicação convertida · ' + DESCONTO_INDICADO_PCT + '% off pra quem chega indicado</span></div>';
   h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Total Indicações</div><div class="stat-value">' + totalIndicacoes + '</div><div class="stat-change up">↑ 47 no mês</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Conversões</div><div class="stat-value" style="color:var(--green)">' + conversoes + '</div><div class="stat-change up">' + Math.round(conversoes/totalIndicacoes*100) + '% taxa</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Bônus Pago</div><div class="stat-value" style="color:var(--red)">R$ ' + formatMoney(bonusPago) + '</div><div class="stat-change">Em cashback</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Receita de Indicados</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(receitaIndicados) + '</div><div class="stat-change up">CAC R$ ' + Math.round(bonusPago/conversoes) + ',00</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Total Indicações</div><div class="stat-value">0</div><div class="stat-change">aguardando</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Conversões</div><div class="stat-value">0</div><div class="stat-change">0% taxa</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Bônus Pago</div><div class="stat-value">R$ 0,00</div><div class="stat-change">Em cashback</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Receita de Indicados</div><div class="stat-value">R$ 0,00</div><div class="stat-change">aguardando</div></div>';
   h += '</div>';
 
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">';
   h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">🏆 Top Indicadores</h3>';
-  topIndicadores.forEach(function(t, i) {
-    h += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)">';
-    h += '<div style="font-size:16px;font-weight:900;color:var(--gray-300);width:24px">' + (i+1) + '°</div>';
-    h += '<div style="width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + t.i + '</div>';
-    h += '<div style="flex:1"><div style="font-size:13px;font-weight:700">' + t.n + '</div><div style="font-size:11px;color:var(--gray-400)">' + t.c + ' indicações</div></div>';
-    h += '<div style="font-weight:800;color:var(--green)">+R$ ' + formatMoney(t.b) + '</div></div>';
-  });
+  h += '<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:12px">Nenhuma indicação registrada ainda.</div>';
   h += '</div>';
 
   h += '<div class="chart-card"><h3 style="font-size:15px;font-weight:700;margin-bottom:14px">⚙️ Configuração</h3>';
   h += '<div class="form-group"><label class="form-label">Bônus por indicação convertida (R$)</label><input class="form-input" value="' + BONUS_INDICACAO + ',00"></div>';
   h += '<div class="form-group"><label class="form-label">Desconto pro indicado (%)</label><input class="form-input" value="' + DESCONTO_INDICADO_PCT + '"></div>';
   h += '<div class="form-group"><label class="form-label">Mínimo de compra do indicado</label><input class="form-input" value="100,00"></div>';
-  h += '<div class="form-group"><label class="form-label">Limite de indicações por cliente</label><select class="form-input"><option>Sem limite</option><option selected>20 por mês</option><option>50 por mês</option></select></div>';
   h += '<button class="btn btn-primary btn-sm">Salvar Configurações</button></div>';
   h += '</div>';
 
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
-  h += '<div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
-  h += '<h3 style="font-size:15px;font-weight:700">Indicações Recentes</h3>';
-  h += '<button class="btn btn-outline btn-sm">Exportar CSV</button></div>';
-  h += '<table class="data-table"><thead><tr><th>Data</th><th>Indicador</th><th>Indicado</th><th>Status</th><th>Compra</th><th>Bônus</th></tr></thead><tbody>';
-  var movs = [
-    {d:'07/05',ind:'Construtora ABC',novo:'Reformas Total LTDA',st:'Comprou',cls:'status-green',c:'R$ 1.247,50',b:50},
-    {d:'07/05',ind:'João da Silva',novo:'Carlos Mendes',st:'Cadastrou',cls:'status-blue',c:'—',b:0},
-    {d:'06/05',ind:'Maria Souza',novo:'Patrícia Lima',st:'Comprou',cls:'status-green',c:'R$ 458,90',b:50},
-    {d:'06/05',ind:'Construtora ABC',novo:'Edifício Nova Era',st:'Pendente',cls:'status-yellow',c:'—',b:0},
-    {d:'05/05',ind:'Reformas RJ',novo:'José Santos',st:'Comprou',cls:'status-green',c:'R$ 892,00',b:50}
-  ];
-  movs.forEach(function(m){
-    h += '<tr><td>' + m.d + '</td><td><strong>' + m.ind + '</strong></td><td>' + m.novo + '</td>';
-    h += '<td><span class="order-status ' + m.cls + '">' + m.st + '</span></td>';
-    h += '<td style="font-weight:700">' + m.c + '</td>';
-    h += '<td style="font-weight:800;color:' + (m.b>0?'var(--green)':'var(--gray-400)') + '">' + (m.b>0?'+R$ '+formatMoney(m.b):'—') + '</td></tr>';
-  });
-  h += '</tbody></table></div>';
+  h += '<div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);font-size:15px;font-weight:700">Indicações Recentes</div>';
+  h += '<div style="padding:40px 20px;text-align:center;color:var(--gray-400);font-size:13px">Sem indicações ainda.<br><span style="font-size:11px">As indicações vão aparecer aqui quando os primeiros clientes começarem a indicar.</span></div>';
+  h += '</div>';
   return h;
 }
 
 function renderAdminPix() {
-  var recebidoHoje = 12450;
-  var recebidoMes = 89340;
-  var pendentes = 3200;
+  var pixOrders = state.orders.filter(function(o){return (o.pay||'').toLowerCase().indexOf('pix') >= 0;});
+  var hoje = new Date().toISOString().slice(0,10);
+  var recebidoHoje = pixOrders.reduce(function(s,o){return s+(o.total||0);},0);
+  var recebidoMes = recebidoHoje;
+  var pendentes = 0;
   var economiaGateway = recebidoMes * 0.0099;
 
   var h = '<div class="admin-header"><h2>⚡ Pix Direto + NF-e Automática</h2><span style="font-size:13px;color:var(--green);font-weight:700">Sem gateway · Taxa zero · Direto na conta PJ</span></div>';
@@ -4509,9 +4508,9 @@ function renderAdminPix() {
 
   // STATS
   h += '<div class="stat-grid">';
-  h += '<div class="stat-card"><div class="stat-label">Recebido Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(recebidoHoje) + '</div><div class="stat-change up">23 transações Pix</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Recebido Mês</div><div class="stat-value">R$ ' + formatMoney(recebidoMes) + '</div><div class="stat-change up">↑ 18% vs mês passado</div></div>';
-  h += '<div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value" style="color:var(--yellow)">R$ ' + formatMoney(pendentes) + '</div><div class="stat-change">8 QR ativos</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Recebido Hoje</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(recebidoHoje) + '</div><div class="stat-change">' + pixOrders.length + ' transaç' + (pixOrders.length===1?'ão':'ões') + ' Pix</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Recebido Mês</div><div class="stat-value">R$ ' + formatMoney(recebidoMes) + '</div><div class="stat-change">' + (pixOrders.length>0?'em tempo real':'aguardando 1ª venda') + '</div></div>';
+  h += '<div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value">R$ ' + formatMoney(pendentes) + '</div><div class="stat-change">0 QR ativos</div></div>';
   h += '<div class="stat-card" style="background:linear-gradient(135deg,rgba(5,150,105,0.08),rgba(16,185,129,0.04));border:2px solid var(--green)"><div class="stat-label" style="color:var(--green)">💰 Economia Gateway</div><div class="stat-value" style="color:var(--green)">R$ ' + formatMoney(economiaGateway) + '</div><div class="stat-change">Vs taxa 0,99% MP</div></div>';
   h += '</div>';
 
@@ -4546,30 +4545,21 @@ function renderAdminPix() {
   h += '<div style="font-size:12px;color:var(--gray-500);background:var(--gray-50);padding:10px 14px;border-radius:var(--radius-xs)">📨 XML + DANFE enviados automaticamente pra <strong>email do cliente + WhatsApp</strong></div>';
   h += '</div></div></div>';
 
-  // TRANSAÇÕES PIX RECENTES
+  // TRANSAÇÕES PIX RECENTES — só reais do state.orders
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px">';
-  h += '<div style="padding:18px 22px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center">';
-  h += '<h3 style="font-size:15px;font-weight:800">Transações Pix em Tempo Real</h3>';
-  h += '<button class="btn btn-outline btn-sm" onclick="alert(\'Atualizando feed Pix...\\n\\nÚltima transação: R$ 247,90 há 2min\')">🔄 Atualizar</button>';
-  h += '</div>';
-  var txs = [
-    {id:'E125265200707000000003892',valor:1247.50,status:'pago',meta:'Construtora ABC · #1052',tempo:'há 2 min'},
-    {id:'E125265200707000000003891',valor:347.80,status:'pago',meta:'João Silva · #1051',tempo:'há 8 min'},
-    {id:'E125265200707000000003890',valor:892.00,status:'pago',meta:'Reformas RJ · #1050',tempo:'há 14 min'},
-    {id:'E125265200707000000003889',valor:458.90,status:'aguardando',meta:'Maria Souza · #1049',tempo:'expira em 12 min'},
-    {id:'E125265200707000000003888',valor:2147.30,status:'pago',meta:'Edifício Nova Era · #1048',tempo:'há 32 min'},
-    {id:'E125265200707000000003887',valor:189.50,status:'expirado',meta:'Pedro Henrique · #1047',tempo:'há 1h'},
-    {id:'E125265200707000000003886',valor:567.40,status:'pago',meta:'Carlos Mendes · #1046',tempo:'há 1h 18min'}
-  ];
-  txs.forEach(function(tx) {
-    h += '<div class="pix-tx-row">';
-    h += '<div class="pix-status-dot ' + tx.status + '"></div>';
-    h += '<div class="pix-tx-info"><div class="tx-meta">' + tx.meta + '</div><div class="tx-id">' + tx.id + '</div></div>';
-    h += '<div class="pix-tx-valor">R$ ' + formatMoney(tx.valor) + '</div>';
-    h += '<div class="pix-tx-tempo">' + tx.tempo + '</div>';
-    h += '<div class="pix-tx-acao tx-acao-' + tx.status + '">' + (tx.status==='pago'?'✓ NF-e #'+(1100+Math.floor(Math.random()*99)):tx.status==='aguardando'?'⏳ Aguardando':'✗ Expirado') + '</div>';
-    h += '</div>';
-  });
+  h += '<div style="padding:18px 22px;border-bottom:1px solid var(--gray-200);font-size:15px;font-weight:800">Transações Pix em Tempo Real</div>';
+  if (!pixOrders.length) {
+    h += '<div style="padding:50px 20px;text-align:center;color:var(--gray-400)"><div style="font-size:48px;margin-bottom:10px">⚡</div><div style="font-weight:700;color:var(--gray-700);margin-bottom:4px">Nenhum Pix recebido ainda</div><div style="font-size:12px;max-width:380px;margin:0 auto">As transações Pix aparecem em tempo real aqui assim que clientes pagarem.</div></div>';
+  } else {
+    pixOrders.forEach(function(o){
+      h += '<div class="pix-tx-row">';
+      h += '<div class="pix-status-dot pago"></div>';
+      h += '<div class="pix-tx-info"><div class="tx-meta">' + (o.cliente||'Cliente') + ' · #' + o.id + '</div><div class="tx-id">' + (o.date||'') + '</div></div>';
+      h += '<div class="pix-tx-valor">R$ ' + formatMoney(o.total) + '</div>';
+      h += '<div class="pix-tx-acao tx-acao-pago">✓ Confirmado</div>';
+      h += '</div>';
+    });
+  }
   h += '</div>';
 
   // CONFIGURAÇÃO TÉCNICA
@@ -6007,6 +5997,19 @@ function saveLogo() {
 })();
 
 function formatMoney(v) { return Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+// Arredonda preço de venda pra sempre terminar em 9 centavos (psicológico: R$ 12,39 / R$ 25,99 / R$ 100,09)
+// Mantém a casa dos reais e força os centavos pra o dígito X9 mais próximo abaixo, evitando ultrapassar o valor original.
+function priceTo9Cents(v){
+  if (!v || v <= 0) return 0;
+  var c = Math.round(v * 100);          // centavos totais
+  var d = c % 10;                        // último dígito de centavos
+  // se já termina em 9, mantém
+  if (d === 9) return c / 100;
+  // caso contrário, ajusta pro X9 mais próximo abaixo (não estourar custo)
+  var ajuste = c - d - 1;                // pega o X9 do bloco anterior
+  if (ajuste < 9) ajuste = 9;            // mínimo R$ 0,09
+  return ajuste / 100;
+}
 function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 // Renderiza emoji do produto OU imagem real (data URL / URL HTTP / arquivo)
 function renderProdMedia(p, maxPx){
