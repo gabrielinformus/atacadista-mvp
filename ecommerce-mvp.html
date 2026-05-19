@@ -3199,7 +3199,7 @@ function renderAdminDash() {
   h += '<div class="chart-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:15px;font-weight:700">⚠️ Estoque Baixo</h3><a onclick="state.adminView=\'estoque\';render()" style="font-size:11px;color:var(--blue);font-weight:600;cursor:pointer">Ver tudo →</a></div>';
   ALL_PRODUCTS.filter(function(p){return p.stock < 10;}).slice(0,4).forEach(function(p){
     h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray-100)">';
-    h += '<span style="font-size:12px;font-weight:600">' + p.emoji + ' ' + escHtml(p.name.substring(0,22)) + '</span>';
+    h += '<span style="font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px">' + renderProdMedia(p, 22) + ' ' + escHtml(p.name.substring(0,22)) + '</span>';
     h += '<span class="stock-low" style="font-size:12px">' + p.stock + ' un</span></div>';
   });
   h += '</div></div>';
@@ -3263,10 +3263,7 @@ function renderAdminProdutos() {
   } else {
     h += '<table class="data-table"><thead><tr><th></th><th>Produto</th><th>Categoria</th><th>NCM</th><th>Preço</th><th>Estoque</th><th>Vendidos</th><th>Ações</th></tr></thead><tbody>';
     filtered.slice(0,50).forEach(function(p){
-      var thumb = (p.imgs && p.imgs[0] && typeof p.imgs[0]==='string' && p.imgs[0].indexOf('data:image')===0)
-        ? '<img src="'+p.imgs[0]+'" style="width:32px;height:32px;object-fit:contain;border-radius:4px">'
-        : p.emoji;
-      h += '<tr><td style="font-size:24px;text-align:center">' + thumb + '</td>';
+      h += '<tr><td style="font-size:24px;text-align:center;width:48px">' + renderProdMedia(p, 36) + '</td>';
       h += '<td><strong>' + escHtml(p.name) + '</strong>' + (p.custom?' <span style="background:#dbeafe;color:#1e40af;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700">CUSTOM</span>':'') + '<div style="font-size:11px;color:var(--gray-400)">' + escHtml(p.sub) + '</div></td>';
       h += '<td style="font-size:12px">' + escHtml(p.catLabel) + '</td>';
       h += '<td style="font-size:11px;font-family:monospace;color:var(--gray-500)">' + (p.ncm||'—') + '</td>';
@@ -3669,7 +3666,7 @@ function renderAdminEstoque() {
   h += '<div style="padding:16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--gray-200)">Produtos com Estoque Baixo (< 15 unidades)</div>';
   h += '<table class="data-table"><thead><tr><th></th><th>Produto</th><th>Categoria</th><th>Estoque</th><th>Vendidos</th><th>Ação</th></tr></thead><tbody>';
   low.slice(0,20).forEach(function(p){
-    h += '<tr><td style="font-size:20px;text-align:center">' + p.emoji + '</td>';
+    h += '<tr><td style="font-size:20px;text-align:center;width:48px">' + renderProdMedia(p, 36) + '</td>';
     h += '<td><strong>' + escHtml(p.name) + '</strong></td>';
     h += '<td style="font-size:12px">' + escHtml(p.catLabel) + '</td>';
     h += '<td><span class="stock-low">' + p.stock + ' un</span></td>';
@@ -4372,11 +4369,8 @@ function abrirDetalhesVendedor(sid) {
   h += '<div style="background:#fff;border:1px solid var(--gray-100);border-radius:8px;overflow:hidden">';
   topProdutos.forEach(function(tp, i){
     var p = tp.p;
-    var thumb = (p.imgs && p.imgs[0] && typeof p.imgs[0]==='string' && p.imgs[0].indexOf('data:image')===0)
-      ? '<img src="'+p.imgs[0]+'" style="width:28px;height:28px;object-fit:contain;border-radius:4px">'
-      : '<span style="font-size:22px">' + p.emoji + '</span>';
     h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px' + (i<4?';border-bottom:1px solid var(--gray-100)':'') + '">';
-    h += '<div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center">' + thumb + '</div>';
+    h += '<div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + renderProdMedia(p, 28) + '</div>';
     h += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(p.name) + '</div>';
     h += '<div style="font-size:10px;color:var(--gray-400)">' + escHtml(p.catLabel) + ' · ' + escHtml(p.sub) + '</div></div>';
     h += '<div style="text-align:right"><div style="font-size:12px;font-weight:800">' + tp.qtd + ' un</div>';
