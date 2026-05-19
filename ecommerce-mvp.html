@@ -3879,22 +3879,33 @@ function parseNFeXML(xmlText) {
     var prod = d.getElementsByTagName('prod')[0];
     var imp = d.getElementsByTagName('imposto')[0];
     if (!prod) continue;
-    var icmsItem = 0, ipiItem = 0;
+    var icmsItem = 0, ipiItem = 0, vBCItem = 0, pICMSItem = 0, pIPIItem = 0, cstItem = '', origItem = '';
     if (imp) {
       var icmsTags = imp.getElementsByTagName('ICMS')[0];
       if (icmsTags) {
         var vICMS = icmsTags.getElementsByTagName('vICMS')[0];
         if (vICMS) icmsItem = parseFloat(vICMS.textContent) || 0;
+        var vBC = icmsTags.getElementsByTagName('vBC')[0];
+        if (vBC) vBCItem = parseFloat(vBC.textContent) || 0;
+        var pICMSEl = icmsTags.getElementsByTagName('pICMS')[0];
+        if (pICMSEl) pICMSItem = parseFloat(pICMSEl.textContent) || 0;
+        var origEl = icmsTags.getElementsByTagName('orig')[0];
+        if (origEl) origItem = (origEl.textContent || '').trim();
+        var cstEl = icmsTags.getElementsByTagName('CST')[0] || icmsTags.getElementsByTagName('CSOSN')[0];
+        if (cstEl) cstItem = (cstEl.textContent || '').trim();
       }
       var ipiTags = imp.getElementsByTagName('IPI')[0];
       if (ipiTags) {
         var vIPI = ipiTags.getElementsByTagName('vIPI')[0];
         if (vIPI) ipiItem = parseFloat(vIPI.textContent) || 0;
+        var pIPIEl = ipiTags.getElementsByTagName('pIPI')[0];
+        if (pIPIEl) pIPIItem = parseFloat(pIPIEl.textContent) || 0;
       }
     }
     var qCom = num(prod, 'qCom');
     var vUn = num(prod, 'vUnCom');
     var vProd = num(prod, 'vProd');
+    var vDescItem = num(prod, 'vDesc');
     var ncm = txt(prod, 'NCM');
     var cprod = txt(prod, 'cProd');
     var xProd = txt(prod, 'xProd');
@@ -3915,7 +3926,10 @@ function parseNFeXML(xmlText) {
     itens.push({
       cProd: cprod, xProd: xProd, ncm: ncm, cfop: cfop, uCom: uCom,
       qtd: qCom, custoUnit: vUn, vProd: vProd,
+      vDesc: vDescItem,
       icms: icmsItem, ipi: ipiItem,
+      vBC: vBCItem, pICMS: pICMSItem, pIPI: pIPIItem,
+      cst: cstItem, orig: origItem,
       existingId: existing ? existing.id : null,
       margemSug: 30,
       undPorCaixa: detectarUndPorCaixa(xProd)
@@ -3987,14 +4001,23 @@ function abrirRevisaoNFe() {
     var statusBadge = existe
       ? '<span style="background:#dbeafe;color:#1e40af;font-size:9px;padding:2px 6px;border-radius:99px;font-weight:700">SOMAR</span>'
       : '<span style="background:#dcfce7;color:#15803d;font-size:9px;padding:2px 6px;border-radius:99px;font-weight:700">NOVO</span>';
+    var descUnit = it.qtd > 0 ? ((it.vDesc||0) / it.qtd) : 0;
+    var custoBrutoLiq = it.custoUnit - descUnit;
     var impostoUnit = it.qtd > 0 ? (it.icms + it.ipi) / it.qtd : 0;
-    var custoTotal = it.custoUnit + impostoUnit;
+    var custoTotal = custoBrutoLiq + impostoUnit;
     var upc = it.undPorCaixa || 1;
     var custoPorUnid = custoTotal / upc;
     var precoVendaUnid = priceTo9Cents(custoPorUnid * (1 + (it.margemSug/100)));
     h += '<tr>';
     h += '<td style="text-align:center;font-weight:700;color:var(--gray-400)">' + (i+1) + '</td>';
-    h += '<td><div style="font-weight:700;font-size:11px;line-height:1.3">' + escHtml(it.xProd) + '</div><div style="font-size:9px;color:var(--gray-400);margin-top:2px">Cód. ' + escHtml(it.cProd) + ' · ' + escHtml(it.uCom) + ' · CFOP ' + escHtml(it.cfop) + '</div></td>';
+    var tribInfo = '';
+    if (it.cst) tribInfo += ' · CST ' + escHtml(it.cst);
+    if (it.orig !== '' && it.orig != null) tribInfo += ' · Orig ' + escHtml(it.orig);
+    var aliqInfo = '';
+    if (it.pICMS) aliqInfo += 'ICMS ' + it.pICMS.toFixed(2) + '%';
+    if (it.pIPI)  aliqInfo += (aliqInfo?' · ':'') + 'IPI ' + it.pIPI.toFixed(2) + '%';
+    if (it.vDesc) aliqInfo += (aliqInfo?' · ':'') + 'Desc R$ ' + formatMoney(it.vDesc);
+    h += '<td><div style="font-weight:700;font-size:11px;line-height:1.3">' + escHtml(it.xProd) + '</div><div style="font-size:9px;color:var(--gray-400);margin-top:2px">Cód. ' + escHtml(it.cProd) + ' · ' + escHtml(it.uCom) + ' · CFOP ' + escHtml(it.cfop) + tribInfo + '</div>' + (aliqInfo?'<div style="font-size:9px;color:#9a3412;margin-top:1px;font-weight:600">' + aliqInfo + '</div>':'') + '</td>';
     h += '<td style="font-family:monospace;font-size:10px">' + escHtml(it.ncm) + '</td>';
     h += '<td style="white-space:nowrap"><div style="display:flex;align-items:center;gap:4px"><input class="form-input" type="number" step="0.01" value="' + it.qtd + '" style="padding:6px 4px;font-size:12px;width:62px;text-align:right" onchange="atualizarItemNF(' + i + ',\'qtd\',this.value)"><span style="font-size:10px;color:var(--gray-500);font-weight:600">' + escHtml(it.uCom||'UN') + '</span></div></td>';
     h += '<td style="white-space:nowrap"><input class="form-input" type="number" step="1" min="1" value="' + upc + '" style="padding:6px;font-size:12px;width:64px;text-align:right" title="Unidades dentro de cada caixa" onchange="atualizarItemNF(' + i + ',\'undPorCaixa\',this.value)"></td>';
@@ -4032,8 +4055,10 @@ function recalcItemNF(idx) {
   var it = nf.itens[idx];
   var soma = document.getElementById('nf-soma-imp');
   var aplicaSoma = soma ? soma.checked : true;
+  var descUnit = it.qtd > 0 ? ((it.vDesc||0) / it.qtd) : 0;
+  var custoBrutoLiq = it.custoUnit - descUnit;
   var impostoUnit = it.qtd > 0 ? (it.icms + it.ipi) / it.qtd : 0;
-  var custoTotalCaixa = aplicaSoma ? (it.custoUnit + impostoUnit) : it.custoUnit;
+  var custoTotalCaixa = aplicaSoma ? (custoBrutoLiq + impostoUnit) : custoBrutoLiq;
   var upc = it.undPorCaixa || 1;
   var custoUnid = custoTotalCaixa / upc;
   var pv = priceTo9Cents(custoUnid * (1 + (it.margemSug/100)));
@@ -4067,10 +4092,13 @@ function confirmarEntradaNFe() {
   var aplicaSoma = soma ? soma.checked : true;
   var criados = 0, somados = 0;
   nf.itens.forEach(function(it){
+    var descUnit = it.qtd > 0 ? ((it.vDesc||0) / it.qtd) : 0;
+    var custoBrutoLiq = it.custoUnit - descUnit;
     var impostoUnit = it.qtd > 0 ? (it.icms + it.ipi) / it.qtd : 0;
-    var custoTotalCaixa = aplicaSoma ? (it.custoUnit + impostoUnit) : it.custoUnit;
+    var custoTotalCaixa = aplicaSoma ? (custoBrutoLiq + impostoUnit) : custoBrutoLiq;
     var upc = it.undPorCaixa || 1;
     var custoUnid = custoTotalCaixa / upc;
+    it.descUnit = descUnit;
     it.impostoUnit = impostoUnit;
     it.custoLiquido = custoUnid;
     it.estoqueAdicionado = it.qtd * upc;
@@ -4101,10 +4129,13 @@ function confirmarEntradaNFe() {
         atacado: false,
         installment: precoVenda > 100 ? Math.ceil(precoVenda/12) : 0,
         ncm: it.ncm,
-        cst: '102',
+        cst: it.cst || '102',
         cfop: it.cfop || '5102',
-        origem: 0,
-        icms: 0, ipi: 0, pis: 0, cofins: 0,
+        origem: it.orig !== '' && it.orig != null ? parseInt(it.orig, 10) || 0 : 0,
+        icms: it.pICMS || 0, ipi: it.pIPI || 0, pis: 0, cofins: 0,
+        vBC: it.vBC || 0,
+        vDesc: it.vDesc || 0,
+        descUnit: it.descUnit || 0,
         icmsST: false,
         cargaIbpt: 6,
         custo: it.custoLiquido,
