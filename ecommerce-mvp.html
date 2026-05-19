@@ -3341,7 +3341,7 @@ function abrirCadastroProduto(pid) {
   h += '<div class="form-row" style="grid-template-columns:1fr 1fr 1fr"><div class="form-group"><label class="form-label">Custo unitário (R$)</label>';
   h += '<input class="form-input" type="number" step="0.01" id="np-custo" value="'+(p&&p.custo?p.custo:'')+'" placeholder="0,00" oninput="recalcPrecoMargem()"></div>';
   h += '<div class="form-group"><label class="form-label">Margem de lucro (%)</label>';
-  h += '<input class="form-input" type="number" step="1" id="np-margem" value="'+(p&&p.margem?p.margem:30)+'" placeholder="30" oninput="recalcPrecoMargem()"></div>';
+  h += '<input class="form-input" type="number" step="1" id="np-margem" value="'+(p&&p.margem?p.margem:50)+'" placeholder="50" oninput="recalcPrecoMargem()"></div>';
   h += '<div class="form-group"><label class="form-label">Preço sugerido</label>';
   h += '<div id="np-preco-sug" style="padding:12px 14px;background:var(--gray-50);border-radius:6px;font-weight:800;color:var(--green);font-size:15px;border:1px solid var(--gray-200)">—</div></div>';
   h += '</div>';
@@ -3931,7 +3931,7 @@ function parseNFeXML(xmlText) {
       vBC: vBCItem, pICMS: pICMSItem, pIPI: pIPIItem,
       cst: cstItem, orig: origItem,
       existingId: existing ? existing.id : null,
-      margemSug: 30,
+      margemSug: 50,
       undPorCaixa: detectarUndPorCaixa(xProd)
     });
   }
