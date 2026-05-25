@@ -1575,9 +1575,11 @@ loadCustomProducts();
     appId: "1:113131531983:web:0ba499fd7c739bc20351ba"
   };
   // KEYS_LIGHT: ficam no doc 'state' (pequenos)
-  // KEYS_HEAVY: cada item vira documento separado (fotos)
-  var KEYS_LIGHT = ['zm_deleted_products','zm_cupons','zm_fornecedores','zm_vendedores','zm_unidades','zm_buscas_perdidas','zm_destaque_media','zm_logo_src','zm_logo_zoom'];
+  // KEYS_HEAVY: cada um vira documento próprio (imagens grandes)
+  var KEYS_LIGHT = ['zm_deleted_products','zm_cupons','zm_fornecedores','zm_vendedores','zm_unidades','zm_buscas_perdidas','zm_logo_src','zm_logo_zoom'];
+  var KEYS_HEAVY = ['zm_destaque_media']; // cada um em /zm_atacadista_heavy/{key}
   var TENANT = 'zm_atacadista';
+  var HEAVY_COLLECTION = 'zm_atacadista_heavy';
   var PROD_COLLECTION = 'zm_atacadista_products';
   var syncing = false, pendingSync = false;
   var lastSync = null;
@@ -1627,6 +1629,20 @@ loadCustomProducts();
           }
         });
       }
+      // 1.5) Heavy keys (cada um em doc próprio)
+      for(var hk=0; hk<KEYS_HEAVY.length; hk++){
+        var hkey = KEYS_HEAVY[hk];
+        try {
+          var hSnap = await fs.getDoc(fs.doc(db, HEAVY_COLLECTION, hkey));
+          if(hSnap.exists()){
+            var hd = hSnap.data();
+            if(hd && hd.value !== undefined){
+              var asStr = typeof hd.value === 'string' ? hd.value : JSON.stringify(hd.value);
+              if(localStorage.getItem(hkey) !== asStr) localStorage.setItem(hkey, asStr);
+            }
+          }
+        } catch(e){ console.warn('Heavy pull failed for',hkey,e); }
+      }
       // 2) Produtos (collection)
       var prodSnap = await fs.getDocs(fs.collection(db, PROD_COLLECTION));
       var produtos = [];
@@ -1663,6 +1679,18 @@ loadCustomProducts();
         }
       });
       await fs.setDoc(fs.doc(db, TENANT, 'state'), payload, { merge:false });
+      // 1.5) Heavy keys cada um em doc separado
+      for(var hk=0; hk<KEYS_HEAVY.length; hk++){
+        var hkey = KEYS_HEAVY[hk];
+        var rawH = localStorage.getItem(hkey);
+        if(rawH){
+          try {
+            var parsedH;
+            try { parsedH = JSON.parse(rawH); } catch(e){ parsedH = rawH; }
+            await fs.setDoc(fs.doc(db, HEAVY_COLLECTION, hkey), { value: parsedH, updatedAt: Date.now() });
+          } catch(e){ console.warn('Heavy push failed for',hkey,e); }
+        }
+      }
       // 2) Produtos — cada um vira um doc com ID = product.id
       var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
       var batch = fs.writeBatch(db);
@@ -1708,7 +1736,7 @@ loadCustomProducts();
   }
 
   // Sobrescreve setItem pra disparar sync automático
-  var KEYS_WATCH = KEYS_LIGHT.concat(['zm_custom_products']);
+  var KEYS_WATCH = KEYS_LIGHT.concat(KEYS_HEAVY).concat(['zm_custom_products']);
   var _origSetItem = Storage.prototype.setItem;
   Storage.prototype.setItem = function(k, v){
     var r = _origSetItem.apply(this, arguments);
