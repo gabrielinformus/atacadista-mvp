@@ -1480,6 +1480,38 @@ function saveCustomProduct(p) {
     throw e;
   }
 }
+// Re-pinta a imagem com fundo branco e regrava (corrige fotos antigas que ficaram com fundo preto)
+function corrigirFundoPretoTodas(){
+  var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
+  if(!custom.length){ alert('Nenhum produto custom encontrado.'); return; }
+  if(!confirm('Vai re-aplicar fundo BRANCO em todas as fotos dos produtos. Continuar?')) return;
+  var todasImgs = [];
+  custom.forEach(function(p){
+    if(p.imgs && Array.isArray(p.imgs)){
+      p.imgs.forEach(function(img, i){
+        if(typeof img==='string' && img.indexOf('data:image')===0){
+          todasImgs.push({prod:p, idx:i, img:img});
+        }
+      });
+    }
+  });
+  if(todasImgs.length===0){ alert('Sem imagens pra processar.'); return; }
+  var done=0, total=todasImgs.length;
+  todasImgs.forEach(function(item){
+    comprimirImagem(item.img, function(comp){
+      item.prod.imgs[item.idx] = comp;
+      done++;
+      if(done===total){
+        try{
+          localStorage.setItem('zm_custom_products', JSON.stringify(custom));
+          alert('✓ Fundo branco aplicado em '+total+' imagens.');
+          location.reload();
+        }catch(e){ alert('Erro ao salvar: '+e.message); }
+      }
+    }, 800, 0.78);
+  });
+}
+
 // Recomprime imagens de todos os produtos custom (libera localStorage)
 function recomprimirTodasImagens(){
   var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
@@ -3301,7 +3333,7 @@ function renderAdminProdutos() {
     return true;
   });
 
-  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-outline btn-sm" onclick="recomprimirTodasImagens()" title="Recomprime imagens dos produtos pra liberar espaço">🔧 Recomprimir imagens</button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="abrirLimparEstoque()" title="Excluir TODO o estoque cadastrado">🗑 Limpar tudo</button><button class="btn btn-outline btn-sm" onclick="state.prodSubTab=\'nfe\';render()">📄 Importar NF-e</button><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
+  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-outline btn-sm" onclick="corrigirFundoPretoTodas()" title="Aplica fundo branco em todas as fotos antigas">⚪ Corrigir fundo</button><button class="btn btn-outline btn-sm" onclick="recomprimirTodasImagens()" title="Recomprime imagens dos produtos pra liberar espaço">🔧 Recomprimir imagens</button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="abrirLimparEstoque()" title="Excluir TODO o estoque cadastrado">🗑 Limpar tudo</button><button class="btn btn-outline btn-sm" onclick="state.prodSubTab=\'nfe\';render()">📄 Importar NF-e</button><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
   h += '<div style="padding:16px;border-bottom:1px solid var(--gray-200);display:flex;gap:12px;align-items:center">';
   h += '<input class="form-input" style="max-width:340px" placeholder="🔍 Buscar por nome, categoria ou NCM..." value="' + escHtml(f.search) + '" oninput="state.adminProdFilter.search=this.value;render();document.querySelector(\'.admin-content input.form-input[placeholder^=\\\'🔍\\\']\').focus()">';
@@ -3582,7 +3614,12 @@ async function carregarBgRemoval(){
   if(_bgRemovalLib) return _bgRemovalLib;
   if(_bgRemovalLoading) return _bgRemovalLoading;
   _bgRemovalLoading = (async ()=>{
-    var mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm');
+    var mod;
+    try{
+      mod = await import('https://esm.sh/@imgly/background-removal@1.4.5');
+    } catch(e){
+      mod = await import('https://cdn.skypack.dev/@imgly/background-removal@1.4.5');
+    }
     _bgRemovalLib = mod;
     return mod;
   })();
