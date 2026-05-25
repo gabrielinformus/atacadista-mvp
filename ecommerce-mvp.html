@@ -1463,7 +1463,57 @@ function saveCustomProduct(p) {
   var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
   var idx = custom.findIndex(function(c){ return c.id === p.id; });
   if (idx >= 0) custom[idx] = p; else custom.push(p);
-  localStorage.setItem('zm_custom_products', JSON.stringify(custom));
+  try {
+    localStorage.setItem('zm_custom_products', JSON.stringify(custom));
+    return true;
+  } catch(e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22) {
+      // Storage cheio — tenta recomprimir TODAS as imagens dos produtos custom
+      console.warn('localStorage cheio — recomprimindo imagens existentes…');
+      var pendentes = custom.length;
+      var resultado = false;
+      // tentativa final com qualidade menor (sem await — síncrono possível? não. Avisa user)
+      toast('⚠ Armazenamento cheio! As fotos antigas precisam ser recomprimidas. Veja Configurações → Limpar dados antigos.','warn');
+      // Salva sem essa atualização — não corrompe nada
+      return false;
+    }
+    throw e;
+  }
+}
+// Recomprime imagens de todos os produtos custom (libera localStorage)
+function recomprimirTodasImagens(){
+  var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
+  if(!custom.length){ alert('Nenhum produto custom pra recomprimir.'); return; }
+  if(!confirm('Vai recomprimir as imagens de '+custom.length+' produtos. Isso pode demorar alguns segundos. Continuar?')) return;
+  var sizeAntes = (JSON.stringify(custom).length/1024).toFixed(0);
+  var todasImgs = [];
+  custom.forEach(function(p){
+    if(p.imgs && Array.isArray(p.imgs)){
+      p.imgs.forEach(function(img, i){
+        if(typeof img==='string' && img.indexOf('data:image')===0){
+          todasImgs.push({prod:p, idx:i, img:img});
+        }
+      });
+    }
+  });
+  var done = 0, total = todasImgs.length;
+  if(total===0){ alert('Sem imagens base64 pra comprimir.'); return; }
+  todasImgs.forEach(function(item){
+    comprimirImagem(item.img, function(comp){
+      item.prod.imgs[item.idx] = comp;
+      done++;
+      if(done===total){
+        try{
+          localStorage.setItem('zm_custom_products', JSON.stringify(custom));
+          var sizeDepois = (JSON.stringify(custom).length/1024).toFixed(0);
+          alert('✓ Recomprimido!\n\nAntes: '+sizeAntes+'KB\nDepois: '+sizeDepois+'KB\n\nEconomia: '+(sizeAntes-sizeDepois)+'KB');
+          location.reload();
+        }catch(e){
+          alert('Ainda não coube. Será necessário excluir alguns produtos.');
+        }
+      }
+    }, 600, 0.65); // mais agressivo: 600px, 65% qualidade
+  });
 }
 function deleteCustomProduct(pid) {
   // Remove dos custom se for um novo
@@ -3251,7 +3301,7 @@ function renderAdminProdutos() {
     return true;
   });
 
-  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="abrirLimparEstoque()" title="Excluir TODO o estoque cadastrado">🗑 Limpar tudo</button><button class="btn btn-outline btn-sm" onclick="state.prodSubTab=\'nfe\';render()">📄 Importar NF-e</button><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
+  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-outline btn-sm" onclick="recomprimirTodasImagens()" title="Recomprime imagens dos produtos pra liberar espaço">🔧 Recomprimir imagens</button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="abrirLimparEstoque()" title="Excluir TODO o estoque cadastrado">🗑 Limpar tudo</button><button class="btn btn-outline btn-sm" onclick="state.prodSubTab=\'nfe\';render()">📄 Importar NF-e</button><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
   h += '<div style="padding:16px;border-bottom:1px solid var(--gray-200);display:flex;gap:12px;align-items:center">';
   h += '<input class="form-input" style="max-width:340px" placeholder="🔍 Buscar por nome, categoria ou NCM..." value="' + escHtml(f.search) + '" oninput="state.adminProdFilter.search=this.value;render();document.querySelector(\'.admin-content input.form-input[placeholder^=\\\'🔍\\\']\').focus()">';
@@ -3495,14 +3545,30 @@ function atualizarSubcategorias() {
 function lerImagemProduto(ev, idx) {
   var file = ev.target.files[0];
   if (!file) return;
-  if (file.size > 2*1024*1024) { toast('Imagem muito grande (máx 2MB). Tenta uma menor.','warn'); return; }
+  if (file.size > 10*1024*1024) { toast('Imagem muito grande (máx 10MB). Tenta uma menor.','warn'); return; }
   var reader = new FileReader();
   reader.onload = function(e) {
-    var dataUrl = e.target.result;
-    document.getElementById('img-data-'+idx).value = dataUrl;
-    document.getElementById('prev-img-'+idx).innerHTML = '<img src="'+dataUrl+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+    comprimirImagem(e.target.result, function(comp){
+      document.getElementById('img-data-'+idx).value = comp;
+      document.getElementById('prev-img-'+idx).innerHTML = '<img src="'+comp+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+    });
   };
   reader.readAsDataURL(file);
+}
+// Comprime imagem pra caber no localStorage (max 800px, qualidade 75%)
+function comprimirImagem(dataUrl, cb, maxW, q){
+  maxW = maxW || 800; q = q || 0.75;
+  var img = new Image();
+  img.onload = function(){
+    var ratio = Math.min(1, maxW/img.width);
+    var w = Math.round(img.width*ratio), h = Math.round(img.height*ratio);
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    cb(c.toDataURL('image/jpeg', q));
+  };
+  img.onerror = function(){ cb(dataUrl); };
+  img.src = dataUrl;
 }
 function usarEmojiProduto(idx) {
   var e = prompt('Cole um emoji (ex: 🔧 📦 🚿):');
