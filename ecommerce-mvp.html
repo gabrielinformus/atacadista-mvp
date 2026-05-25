@@ -1562,25 +1562,15 @@ window.BASE_ALL_PRODUCTS_SNAPSHOT = ALL_PRODUCTS.slice();
 loadCustomProducts();
 
 // ═══════════════════════════════════════════════════════════
-// FIREBASE FIRESTORE SYNC — produtos sincronizados na nuvem
-// Projeto: siscad-e737d (compartilhado com PersonalPrime)
+// SUPABASE SYNC — banco PostgreSQL + Storage de imagens
+// Projeto: vkrkirientpljlxstafm (compartilhado com SICAD)
 // ═══════════════════════════════════════════════════════════
 (function(){
-  var firebaseConfig = {
-    apiKey: "AIzaSyCVjpa0UTK_wZRMVv_S5_oDJ4ikkGYDJYw",
-    authDomain: "siscad-e737d.firebaseapp.com",
-    projectId: "siscad-e737d",
-    storageBucket: "siscad-e737d.firebasestorage.app",
-    messagingSenderId: "113131531983",
-    appId: "1:113131531983:web:0ba499fd7c739bc20351ba"
-  };
-  // KEYS_LIGHT: ficam no doc 'state' (pequenos)
-  // KEYS_HEAVY: cada um vira documento próprio (imagens grandes)
-  var KEYS_LIGHT = ['zm_deleted_products','zm_cupons','zm_fornecedores','zm_vendedores','zm_unidades','zm_buscas_perdidas','zm_logo_src','zm_logo_zoom'];
-  var KEYS_HEAVY = ['zm_destaque_media']; // cada um em /zm_atacadista_heavy/{key}
-  var TENANT = 'zm_atacadista';
-  var HEAVY_COLLECTION = 'zm_atacadista_heavy';
-  var PROD_COLLECTION = 'zm_atacadista_products';
+  var SUPA_URL = 'https://vkrkirientpljlxstafm.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrcmtpcmllbnRwbGpseHN0YWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTAyNzUsImV4cCI6MjA4ODIyNjI3NX0.Q2TT1sBSgi_Y_h5JxVZVWpVni5XpvtGzPbJHBdlbuAE';
+  var BUCKET = 'zm-photos';
+  // Chaves do localStorage que sincronizam no Supabase
+  var KEYS_SYNC = ['zm_deleted_products','zm_cupons','zm_fornecedores','zm_vendedores','zm_unidades','zm_buscas_perdidas','zm_logo_src','zm_logo_zoom','zm_destaque_media'];
   var syncing = false, pendingSync = false;
   var lastSync = null;
 
@@ -1589,68 +1579,52 @@ loadCustomProducts();
     console.log('[ZM Sync]', txt);
   }
 
-  window.__zmFirebase = { app:null, db:null, ready:false };
+  window.__zmSupabase = { ready:false, client:null };
   async function init(){
     try{
-      var fb = await import('https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js');
-      var fs = await import('https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js');
-      var app = fb.initializeApp(firebaseConfig);
-      var db = fs.getFirestore(app);
-      window.__zmFirebase = { app, db, ready:true, fs };
+      // Carrega SDK do Supabase
+      if(!window.supabase){
+        await new Promise(function(resolve, reject){
+          var s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      var client = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+      window.__zmSupabase = { client, ready:true };
       setStatus('☁ Conectado','#15803d');
-      // Primeira carga da nuvem
       await pullFromCloud();
-      // Inicia sync periódico
-      setInterval(pushToCloud, 8000);
-      // Push também quando aba fecha
+      setInterval(pushToCloud, 10000);
       window.addEventListener('beforeunload', ()=>{try{pushToCloud();}catch(e){}});
     } catch(e){
-      console.warn('Firebase offline:',e);
+      console.warn('Supabase offline:',e);
       setStatus('⚠ Offline (só local)','#b45309');
     }
   }
 
   async function pullFromCloud(){
-    if(!window.__zmFirebase.ready) return;
+    if(!window.__zmSupabase.ready) return;
     setStatus('☁ Carregando…','#0369a1');
-    var { db, fs } = window.__zmFirebase;
+    var sb = window.__zmSupabase.client;
     try {
-      // 1) Settings leves (state doc)
-      var snap = await fs.getDoc(fs.doc(db, TENANT, 'state'));
-      if(snap.exists()){
-        var data = snap.data();
-        KEYS_LIGHT.forEach(function(k){
-          if(data[k] !== undefined){
-            var v = data[k];
-            var asStr = (typeof v === 'string') ? v : JSON.stringify(v);
-            if(localStorage.getItem(k) !== asStr){
-              localStorage.setItem(k, asStr);
-            }
+      // 1) State (configs leves)
+      var { data: stateRows } = await sb.from('zm_state').select('key,value');
+      if(stateRows){
+        stateRows.forEach(function(r){
+          if(KEYS_SYNC.indexOf(r.key) >= 0){
+            var asStr = typeof r.value === 'string' ? r.value : JSON.stringify(r.value);
+            if(localStorage.getItem(r.key) !== asStr) localStorage.setItem(r.key, asStr);
           }
         });
       }
-      // 1.5) Heavy keys (cada um em doc próprio)
-      for(var hk=0; hk<KEYS_HEAVY.length; hk++){
-        var hkey = KEYS_HEAVY[hk];
-        try {
-          var hSnap = await fs.getDoc(fs.doc(db, HEAVY_COLLECTION, hkey));
-          if(hSnap.exists()){
-            var hd = hSnap.data();
-            if(hd && hd.value !== undefined){
-              var asStr = typeof hd.value === 'string' ? hd.value : JSON.stringify(hd.value);
-              if(localStorage.getItem(hkey) !== asStr) localStorage.setItem(hkey, asStr);
-            }
-          }
-        } catch(e){ console.warn('Heavy pull failed for',hkey,e); }
+      // 2) Produtos
+      var { data: produtos } = await sb.from('zm_products').select('data');
+      if(produtos && produtos.length){
+        var list = produtos.map(function(r){ return r.data; });
+        localStorage.setItem('zm_custom_products', JSON.stringify(list));
       }
-      // 2) Produtos (collection)
-      var prodSnap = await fs.getDocs(fs.collection(db, PROD_COLLECTION));
-      var produtos = [];
-      prodSnap.forEach(function(d){ produtos.push(d.data()); });
-      if(produtos.length){
-        localStorage.setItem('zm_custom_products', JSON.stringify(produtos));
-      }
-      // 3) Aplica e re-renderiza
+      // 3) Re-renderiza
       ALL_PRODUCTS = (window.BASE_ALL_PRODUCTS_SNAPSHOT || ALL_PRODUCTS).slice();
       loadCustomProducts();
       if(typeof render === 'function') render();
@@ -1664,79 +1638,60 @@ loadCustomProducts();
 
   var pushTimer = null;
   async function pushToCloud(){
-    if(!window.__zmFirebase.ready) return;
+    if(!window.__zmSupabase.ready) return;
     if(syncing){ pendingSync = true; return; }
     syncing = true;
     setStatus('☁ Salvando…','#0369a1');
-    var { db, fs } = window.__zmFirebase;
+    var sb = window.__zmSupabase.client;
     try {
-      // 1) Settings leves
-      var payload = { updatedAt: Date.now() };
-      KEYS_LIGHT.forEach(function(k){
+      // 1) State (cada chave vira uma linha)
+      var stateRows = [];
+      KEYS_SYNC.forEach(function(k){
         var raw = localStorage.getItem(k);
         if(raw){
-          try { payload[k] = JSON.parse(raw); } catch(e){ payload[k] = raw; }
+          var parsed;
+          try { parsed = JSON.parse(raw); } catch(e){ parsed = raw; }
+          stateRows.push({ key: k, value: parsed, updated_at: new Date().toISOString() });
         }
       });
-      await fs.setDoc(fs.doc(db, TENANT, 'state'), payload, { merge:false });
-      // 1.5) Heavy keys cada um em doc separado
-      for(var hk=0; hk<KEYS_HEAVY.length; hk++){
-        var hkey = KEYS_HEAVY[hk];
-        var rawH = localStorage.getItem(hkey);
-        if(rawH){
-          try {
-            var parsedH;
-            try { parsedH = JSON.parse(rawH); } catch(e){ parsedH = rawH; }
-            await fs.setDoc(fs.doc(db, HEAVY_COLLECTION, hkey), { value: parsedH, updatedAt: Date.now() });
-          } catch(e){ console.warn('Heavy push failed for',hkey,e); }
-        }
+      if(stateRows.length){
+        var { error } = await sb.from('zm_state').upsert(stateRows, { onConflict: 'key' });
+        if(error) console.warn('State upsert:',error);
       }
-      // 2) Produtos — cada um vira um doc com ID = product.id
+      // 2) Produtos (upsert em batch)
       var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
-      var batch = fs.writeBatch(db);
-      var count = 0, total = 0;
-      // Pega lista atual de IDs na nuvem pra apagar os que sumiram
-      var prodSnap = await fs.getDocs(fs.collection(db, PROD_COLLECTION));
-      var cloudIds = new Set();
-      prodSnap.forEach(function(d){ cloudIds.add(d.id); });
-      var localIds = new Set();
-      for(var i=0; i<custom.length; i++){
-        var p = custom[i];
-        localIds.add(String(p.id));
-        batch.set(fs.doc(db, PROD_COLLECTION, String(p.id)), p);
-        count++;
-        if(count >= 400){ // batch limit é 500, mantemos folga
-          await batch.commit();
-          batch = fs.writeBatch(db);
-          count = 0;
+      var rows = custom.map(function(p){
+        return { id: String(p.id), data: p, updated_at: new Date().toISOString() };
+      });
+      var localIds = new Set(rows.map(function(r){return r.id;}));
+      // Pega IDs no banco pra deletar os que sumiram localmente
+      var { data: cloudIdsResp } = await sb.from('zm_products').select('id');
+      if(cloudIdsResp){
+        var paraDeletar = cloudIdsResp.filter(function(r){return !localIds.has(r.id);}).map(function(r){return r.id;});
+        if(paraDeletar.length){
+          await sb.from('zm_products').delete().in('id', paraDeletar);
         }
       }
-      // Remove os que estavam na nuvem mas não estão mais no local
-      cloudIds.forEach(function(id){
-        if(!localIds.has(id)){
-          batch.delete(fs.doc(db, PROD_COLLECTION, id));
-          count++;
+      if(rows.length){
+        // Upsert em lotes de 100 pra evitar timeout
+        for(var i=0; i<rows.length; i+=100){
+          var batch = rows.slice(i, i+100);
+          var { error: e2 } = await sb.from('zm_products').upsert(batch, { onConflict: 'id' });
+          if(e2) console.warn('Prod upsert:',e2);
         }
-      });
-      if(count>0) await batch.commit();
+      }
       lastSync = new Date();
       setStatus('☁ Sincronizado · '+lastSync.toLocaleTimeString('pt-BR').slice(0,5),'#15803d');
     } catch(e){
       console.warn('Push failed:',e);
-      if(e.code === 'permission-denied'){
-        setStatus('⚠ Permissão negada — atualizar regras Firestore','#c53030');
-      } else if(e.message && (e.message.indexOf('exceeds')>=0 || e.message.indexOf('size')>=0)){
-        setStatus('⚠ Foto muito grande — recomprima','#c53030');
-      } else {
-        setStatus('⚠ Erro ao salvar nuvem: '+e.message,'#c53030');
-      }
+      setStatus('⚠ Erro ao salvar: '+(e.message||e),'#c53030');
     }
     syncing = false;
     if(pendingSync){ pendingSync = false; setTimeout(pushToCloud, 200); }
   }
 
   // Sobrescreve setItem pra disparar sync automático
-  var KEYS_WATCH = KEYS_LIGHT.concat(KEYS_HEAVY).concat(['zm_custom_products']);
+  var KEYS_WATCH = KEYS_SYNC.concat(['zm_custom_products']);
   var _origSetItem = Storage.prototype.setItem;
   Storage.prototype.setItem = function(k, v){
     var r = _origSetItem.apply(this, arguments);
@@ -3778,16 +3733,55 @@ function lerImagemProduto(ev, idx) {
   var reader = new FileReader();
   reader.onload = function(e) {
     comprimirImagem(e.target.result, function(comp){
-      document.getElementById('img-data-'+idx).value = comp;
-      document.getElementById('prev-img-'+idx).innerHTML = '<img src="'+comp+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+      // Mostra preview imediato (base64)
+      var prev = document.getElementById('prev-img-'+idx);
+      prev.innerHTML = '<img src="'+comp+'" style="max-width:100%;max-height:100%;object-fit:contain;opacity:.5"><div style="position:absolute;color:#0369a1;font-size:11px;font-weight:600;background:#fff;padding:4px 10px;border-radius:99px;border:1px solid #7dd3fc">📤 Enviando…</div>';
+      prev.style.position = 'relative';
+      // Faz upload pro Firebase Storage e salva a URL no campo hidden
+      uploadFotoStorage(comp, function(url){
+        if(url){
+          document.getElementById('img-data-'+idx).value = url;
+          prev.innerHTML = '<img src="'+url+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+        } else {
+          // Fallback: salva como base64 se Storage falhar
+          document.getElementById('img-data-'+idx).value = comp;
+          prev.innerHTML = '<img src="'+comp+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+        }
+      });
     });
   };
   reader.readAsDataURL(file);
 }
-// Comprime imagem pra caber no localStorage (max 800px, qualidade 75%)
-// Pinta fundo branco antes de desenhar — evita fundo preto em PNGs com transparência
+
+// Upload de imagem pro Supabase Storage. Retorna URL pública via callback.
+async function uploadFotoStorage(dataUrl, cb){
+  try {
+    if(!window.__zmSupabase || !window.__zmSupabase.ready){
+      for(var i=0; i<25 && (!window.__zmSupabase || !window.__zmSupabase.ready); i++){
+        await new Promise(r=>setTimeout(r,200));
+      }
+    }
+    if(!window.__zmSupabase || !window.__zmSupabase.ready){
+      console.warn('Supabase offline — usando base64');
+      cb(null); return;
+    }
+    var sb = window.__zmSupabase.client;
+    var resp = await fetch(dataUrl);
+    var blob = await resp.blob();
+    var ext = (blob.type||'image/jpeg').split('/')[1].split(';')[0];
+    var path = 'produtos/'+Date.now()+'_'+Math.floor(Math.random()*1e6)+'.'+ext;
+    var { data, error } = await sb.storage.from('zm-photos').upload(path, blob, { contentType: blob.type, upsert: false });
+    if(error){ console.warn('Upload Supabase falhou:', error); cb(null); return; }
+    var { data: pub } = sb.storage.from('zm-photos').getPublicUrl(path);
+    cb(pub.publicUrl);
+  } catch(e){
+    console.warn('Upload Storage falhou:', e);
+    cb(null);
+  }
+}
+// Comprime imagem antes de subir pro Firebase Storage (qualidade boa)
 function comprimirImagem(dataUrl, cb, maxW, q){
-  maxW = maxW || 800; q = q || 0.75;
+  maxW = maxW || 1000; q = q || 0.82;
   var img = new Image();
   img.onload = function(){
     var ratio = Math.min(1, maxW/img.width);
@@ -3846,11 +3840,16 @@ async function removerFundoImagem(idx){
         var c = document.createElement('canvas');
         c.width = w; c.height = h;
         c.getContext('2d').drawImage(img,0,0,w,h);
-        var finalUrl = c.toDataURL('image/png');
-        hidden.value = finalUrl;
+        var finalDataUrl = c.toDataURL('image/png');
         prev.style.background = 'repeating-conic-gradient(#f0f0f0 0% 25%,#fff 0% 50%) 50%/16px 16px';
-        prev.innerHTML = '<img src="'+finalUrl+'" style="max-width:100%;max-height:100%;object-fit:contain">';
-        toast('✓ Fundo removido!','success');
+        prev.innerHTML = '<img src="'+finalDataUrl+'" style="max-width:100%;max-height:100%;object-fit:contain;opacity:.5"><div style="position:absolute;color:#0369a1;font-size:11px;font-weight:600;background:#fff;padding:4px 10px;border-radius:99px;border:1px solid #7dd3fc">📤 Enviando…</div>';
+        prev.style.position = 'relative';
+        uploadFotoStorage(finalDataUrl, function(url){
+          var finalUrl = url || finalDataUrl;
+          hidden.value = finalUrl;
+          prev.innerHTML = '<img src="'+finalUrl+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+          toast('✓ Fundo removido!','success');
+        });
       };
       img.src = e.target.result;
     };
