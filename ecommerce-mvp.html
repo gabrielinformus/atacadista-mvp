@@ -1578,16 +1578,8 @@ loadCustomProducts();
   var lastSync = null;
 
   function setStatus(txt, color){
-    var el = document.getElementById('cloud-status');
-    if(!el){
-      el = document.createElement('div');
-      el.id = 'cloud-status';
-      el.style.cssText = 'position:fixed;bottom:14px;left:14px;background:#fff;border:1px solid #e5e7eb;border-radius:99px;padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.04em;z-index:99;display:flex;gap:6px;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.08);cursor:pointer';
-      el.title = 'Status de sincronização com a nuvem';
-      document.body.appendChild(el);
-    }
-    el.innerHTML = txt;
-    el.style.color = color || '#15803d';
+    // status silencioso — só log no console
+    console.log('[ZM Sync]', txt);
   }
 
   window.__zmFirebase = { app:null, db:null, ready:false };
