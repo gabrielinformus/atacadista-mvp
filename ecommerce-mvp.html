@@ -3095,7 +3095,6 @@ function renderAdmin() {
       {id:'fornecedores',icon:'<svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/><path d="M21 8V3h-5"/><circle cx="12" cy="12" r="3"/></svg>',label:'Fornecedores'}
     ]},
     { label: 'Fiscal', items: [
-      {id:'entradanf',icon:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',label:'Entrada por NF-e'},
       {id:'nfs',icon:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',label:'Notas Fiscais'},
       {id:'pix',icon:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg>',label:'Pix & NF-e'},
       {id:'tributacao',icon:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>',label:'Tributação'}
@@ -3238,6 +3237,9 @@ function renderAdminDash() {
 }
 
 function renderAdminProdutos() {
+  // Sub-aba: lista ou Importar NF-e
+  if (state.prodSubTab === 'nfe') return renderAdminEntradaNF(true);
+
   var f = state.adminProdFilter;
   var filtered = ALL_PRODUCTS.filter(function(p) {
     if (f.cat && p.cat !== f.cat) return false;
@@ -3248,7 +3250,7 @@ function renderAdminProdutos() {
     return true;
   });
 
-  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="abrirLimparEstoque()" title="Excluir TODO o estoque cadastrado">🗑 Limpar tudo</button><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
+  var h = '<div class="admin-header"><h2>Produtos</h2><div style="display:flex;gap:8px;align-items:center"><span style="font-size:13px;color:var(--gray-500);font-weight:600">' + filtered.length.toLocaleString('pt-BR') + ' produtos</span><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="abrirLimparEstoque()" title="Excluir TODO o estoque cadastrado">🗑 Limpar tudo</button><button class="btn btn-outline btn-sm" onclick="state.prodSubTab=\'nfe\';render()">📄 Importar NF-e</button><button class="btn btn-primary btn-sm" onclick="abrirCadastroProduto()">+ Novo Produto</button></div></div>';
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">';
   h += '<div style="padding:16px;border-bottom:1px solid var(--gray-200);display:flex;gap:12px;align-items:center">';
   h += '<input class="form-input" style="max-width:340px" placeholder="🔍 Buscar por nome, categoria ou NCM..." value="' + escHtml(f.search) + '" oninput="state.adminProdFilter.search=this.value;render();document.querySelector(\'.admin-content input.form-input[placeholder^=\\\'🔍\\\']\').focus()">';
@@ -3755,8 +3757,9 @@ function renderAdminNFs() {
 // ═════════════════════════════════════════════════════════
 // ENTRADA POR NF-e (XML + PDF anexo)
 // ═════════════════════════════════════════════════════════
-function renderAdminEntradaNF() {
-  var h = '<div class="admin-header"><h2>Entrada por NF-e</h2><span style="font-size:12px;color:var(--gray-500);font-weight:600">XML da NF-e + PDF (DANFE) opcional</span></div>';
+function renderAdminEntradaNF(dentroDeProdutos) {
+  var voltar = dentroDeProdutos ? '<button class="btn btn-outline btn-sm" onclick="state.prodSubTab=\'\';render()" style="margin-right:8px">← Produtos</button>' : '';
+  var h = '<div class="admin-header"><div style="display:flex;align-items:center;gap:8px">' + voltar + '<h2>Entrada por NF-e</h2></div><span style="font-size:12px;color:var(--gray-500);font-weight:600">XML da NF-e + PDF (DANFE) opcional</span></div>';
 
   // Upload zone
   h += '<div style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px">';
@@ -4022,7 +4025,11 @@ function abrirRevisaoNFe() {
     h += '<div><div style="font-size:9px;color:var(--gray-500);font-weight:700;letter-spacing:0.04em;margin-bottom:3px">UND/CX</div><input class="form-input" type="number" step="1" min="1" value="' + upc + '" style="padding:6px 8px;font-size:13px;width:100%;text-align:right" onchange="atualizarItemNF(' + i + ',\'undPorCaixa\',this.value)"></div>';
     h += '<div><div style="font-size:9px;color:var(--gray-500);font-weight:700;letter-spacing:0.04em;margin-bottom:3px">CUSTO BRUTO</div><input class="form-input" type="number" step="0.01" value="' + it.custoUnit.toFixed(2) + '" style="padding:6px 8px;font-size:13px;width:100%;text-align:right" onchange="atualizarItemNF(' + i + ',\'custoUnit\',this.value)"><div id="imp-unit-' + i + '" style="font-size:9px;color:#047857;text-align:right;margin-top:2px;font-weight:600">+ imp R$ ' + formatMoney(impostoUnit) + '</div></div>';
     h += '<div><div style="font-size:9px;color:var(--gray-500);font-weight:700;letter-spacing:0.04em;margin-bottom:3px">CUSTO /UNID.</div><div id="custo-unid-' + i + '" style="padding:6px 10px;background:#fff7ed;color:#9a3412;border-radius:4px;font-weight:700;text-align:right;font-size:13px">R$ ' + formatMoney(custoPorUnid) + '</div><div id="custo-liq-' + i + '" style="font-size:9px;color:var(--gray-500);text-align:right;margin-top:2px">total/cx R$ ' + formatMoney(custoTotal) + '</div></div>';
-    h += '<div><div style="font-size:9px;color:var(--gray-500);font-weight:700;letter-spacing:0.04em;margin-bottom:3px">MARGEM %</div><input class="form-input" type="number" step="1" value="' + it.margemSug + '" style="padding:6px 8px;font-size:13px;width:100%;text-align:right" onchange="atualizarItemNF(' + i + ',\'margemSug\',this.value)"></div>';
+    var margemBtns = [10,20,30,40,50,60,80,100].map(function(m){
+      var ativo = m===it.margemSug;
+      return '<button type="button" onclick="atualizarItemNF('+i+',\'margemSug\','+m+')" style="padding:5px 7px;font-size:11px;font-weight:700;border:1px solid '+(ativo?'#0f172a':'var(--gray-200)')+';background:'+(ativo?'#0f172a':'#fff')+';color:'+(ativo?'#fff':'var(--gray-700)')+';border-radius:4px;cursor:pointer;flex:1;min-width:32px">'+m+'</button>';
+    }).join('');
+    h += '<div style="grid-column:span 2;min-width:260px"><div style="font-size:9px;color:var(--gray-500);font-weight:700;letter-spacing:0.04em;margin-bottom:3px">MARGEM %</div><div style="display:flex;gap:3px;align-items:center;flex-wrap:wrap">'+margemBtns+'<input class="form-input" type="number" step="1" value="' + it.margemSug + '" style="padding:5px 6px;font-size:12px;width:60px;text-align:center" onchange="atualizarItemNF(' + i + ',\'margemSug\',this.value)"></div></div>';
     h += '<div><div style="font-size:9px;color:var(--gray-500);font-weight:700;letter-spacing:0.04em;margin-bottom:3px">PREÇO /UNID.</div><div id="pv-item-' + i + '" style="font-weight:800;color:var(--green);font-size:16px;text-align:right;padding:4px 0">R$ ' + formatMoney(precoVendaUnid) + '</div></div>';
     h += '</div></div>';
   });
