@@ -3360,11 +3360,13 @@ function abrirCadastroProduto(pid) {
     h += '</div>';
     h += '<input type="hidden" id="img-data-'+i+'" value="'+escHtml(frame||'')+'">';
     h += '<input type="file" id="img-file-'+i+'" accept="image/*" style="display:none" onchange="lerImagemProduto(event,'+i+')">';
-    h += '<div style="display:flex;gap:4px">';
-    h += '<button type="button" class="btn btn-outline btn-sm" style="flex:1;font-size:11px" onclick="document.getElementById(\'img-file-'+i+'\').click()">📁 Foto</button>';
-    h += '<button type="button" class="btn btn-outline btn-sm" style="flex:1;font-size:11px" onclick="usarEmojiProduto('+i+')">😀 Emoji</button>';
+    h += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
+    h += '<button type="button" class="btn btn-outline btn-sm" style="flex:1;font-size:11px;min-width:60px" onclick="document.getElementById(\'img-file-'+i+'\').click()">📁 Foto</button>';
+    h += '<button type="button" class="btn btn-outline btn-sm" style="flex:1;font-size:11px;min-width:60px" onclick="usarEmojiProduto('+i+')">😀 Emoji</button>';
     if (i>0) h += '<button type="button" class="btn btn-outline btn-sm" style="font-size:11px" onclick="limparImagemProduto('+i+')" title="Limpar">✕</button>';
-    h += '</div></div>';
+    h += '</div>';
+    h += '<button type="button" class="btn btn-outline btn-sm" style="width:100%;font-size:10.5px;margin-top:4px;background:#f0f9ff;border-color:#7dd3fc;color:#0369a1" onclick="removerFundoImagem('+i+')" title="Remove o fundo da foto com IA (primeiro uso baixa o modelo ~30MB)">🪄 Remover fundo (IA)</button>';
+    h += '</div>';
   }
   h += '</div>';
 
@@ -3556,6 +3558,7 @@ function lerImagemProduto(ev, idx) {
   reader.readAsDataURL(file);
 }
 // Comprime imagem pra caber no localStorage (max 800px, qualidade 75%)
+// Pinta fundo branco antes de desenhar — evita fundo preto em PNGs com transparência
 function comprimirImagem(dataUrl, cb, maxW, q){
   maxW = maxW || 800; q = q || 0.75;
   var img = new Image();
@@ -3564,12 +3567,69 @@ function comprimirImagem(dataUrl, cb, maxW, q){
     var w = Math.round(img.width*ratio), h = Math.round(img.height*ratio);
     var c = document.createElement('canvas');
     c.width = w; c.height = h;
-    c.getContext('2d').drawImage(img,0,0,w,h);
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,w,h);
+    ctx.drawImage(img,0,0,w,h);
     cb(c.toDataURL('image/jpeg', q));
   };
   img.onerror = function(){ cb(dataUrl); };
   img.src = dataUrl;
 }
+// Remove fundo da imagem usando IA (carrega lib @imgly/background-removal sob demanda)
+var _bgRemovalLib = null, _bgRemovalLoading = null;
+async function carregarBgRemoval(){
+  if(_bgRemovalLib) return _bgRemovalLib;
+  if(_bgRemovalLoading) return _bgRemovalLoading;
+  _bgRemovalLoading = (async ()=>{
+    var mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm');
+    _bgRemovalLib = mod;
+    return mod;
+  })();
+  return _bgRemovalLoading;
+}
+async function removerFundoImagem(idx){
+  var hidden = document.getElementById('img-data-'+idx);
+  var src = hidden.value;
+  if(!src || src.indexOf('data:image')!==0){ toast('Carregue uma foto primeiro.','warn'); return; }
+  var prev = document.getElementById('prev-img-'+idx);
+  prev.innerHTML = '<div style="font-size:11px;color:#0369a1;text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:6px">🪄</div>Removendo fundo…<br><small style="color:var(--gray-500)">primeiro uso baixa o modelo (~30MB)</small></div>';
+  try {
+    var lib = await carregarBgRemoval();
+    var blob = await fetch(src).then(r=>r.blob());
+    var resultBlob = await lib.removeBackground(blob, {
+      progress: (key,cur,tot)=>{
+        var pct = Math.round(cur/tot*100);
+        prev.innerHTML = '<div style="font-size:11px;color:#0369a1;text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:6px">🪄</div>Processando…<br><div style="margin-top:8px;background:#e0f2fe;height:6px;border-radius:3px;overflow:hidden"><div style="background:#0284c7;height:100%;width:'+pct+'%;transition:width .2s"></div></div><small>'+pct+'%</small></div>';
+      }
+    });
+    var reader = new FileReader();
+    reader.onload = function(e){
+      // Comprime o PNG resultante (mantém transparência)
+      var img = new Image();
+      img.onload = function(){
+        var maxW = 800;
+        var ratio = Math.min(1, maxW/img.width);
+        var w = Math.round(img.width*ratio), h = Math.round(img.height*ratio);
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        var finalUrl = c.toDataURL('image/png');
+        hidden.value = finalUrl;
+        prev.style.background = 'repeating-conic-gradient(#f0f0f0 0% 25%,#fff 0% 50%) 50%/16px 16px';
+        prev.innerHTML = '<img src="'+finalUrl+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+        toast('✓ Fundo removido!','success');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(resultBlob);
+  } catch(err) {
+    console.error(err);
+    prev.innerHTML = '<img src="'+src+'" style="max-width:100%;max-height:100%;object-fit:contain">';
+    toast('Erro ao remover fundo: '+err.message,'warn');
+  }
+}
+
 function usarEmojiProduto(idx) {
   var e = prompt('Cole um emoji (ex: 🔧 📦 🚿):');
   if (!e) return;
