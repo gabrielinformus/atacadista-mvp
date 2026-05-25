@@ -1557,6 +1557,8 @@ function deleteCustomProduct(pid) {
   if (deleted.indexOf(pid) < 0) deleted.push(pid);
   localStorage.setItem('zm_deleted_products', JSON.stringify(deleted));
 }
+// Snapshot da lista base ANTES de aplicar customs — necessário pro re-pull
+window.BASE_ALL_PRODUCTS_SNAPSHOT = ALL_PRODUCTS.slice();
 loadCustomProducts();
 
 // ═══════════════════════════════════════════════════════════
@@ -1572,8 +1574,11 @@ loadCustomProducts();
     messagingSenderId: "113131531983",
     appId: "1:113131531983:web:0ba499fd7c739bc20351ba"
   };
-  var KEYS_SYNC = ['zm_custom_products','zm_deleted_products','zm_cupons','zm_fornecedores','zm_vendedores','zm_unidades','zm_buscas_perdidas','zm_destaque_media','zm_logo_src','zm_logo_zoom'];
+  // KEYS_LIGHT: ficam no doc 'state' (pequenos)
+  // KEYS_HEAVY: cada item vira documento separado (fotos)
+  var KEYS_LIGHT = ['zm_deleted_products','zm_cupons','zm_fornecedores','zm_vendedores','zm_unidades','zm_buscas_perdidas','zm_destaque_media','zm_logo_src','zm_logo_zoom'];
   var TENANT = 'zm_atacadista';
+  var PROD_COLLECTION = 'zm_atacadista_products';
   var syncing = false, pendingSync = false;
   var lastSync = null;
 
@@ -1607,35 +1612,34 @@ loadCustomProducts();
     if(!window.__zmFirebase.ready) return;
     setStatus('☁ Carregando…','#0369a1');
     var { db, fs } = window.__zmFirebase;
-    var docRef = fs.doc(db, TENANT, 'state');
     try {
-      var snap = await fs.getDoc(docRef);
+      // 1) Settings leves (state doc)
+      var snap = await fs.getDoc(fs.doc(db, TENANT, 'state'));
       if(snap.exists()){
         var data = snap.data();
-        var alterou = false;
-        KEYS_SYNC.forEach(function(k){
+        KEYS_LIGHT.forEach(function(k){
           if(data[k] !== undefined){
             var v = data[k];
             var asStr = (typeof v === 'string') ? v : JSON.stringify(v);
-            var atual = localStorage.getItem(k);
-            if(atual !== asStr){
+            if(localStorage.getItem(k) !== asStr){
               localStorage.setItem(k, asStr);
-              alterou = true;
             }
           }
         });
-        if(alterou){
-          ALL_PRODUCTS = ALL_PRODUCTS.slice(0, BASE_PRODUCTS_LEN || ALL_PRODUCTS.length);
-          loadCustomProducts();
-          if(typeof render === 'function') render();
-        }
-        lastSync = new Date();
-        setStatus('☁ Sincronizado','#15803d');
-      } else {
-        setStatus('☁ Conectado','#15803d');
-        // Primeira vez: empurra o estado local
-        pushToCloud();
       }
+      // 2) Produtos (collection)
+      var prodSnap = await fs.getDocs(fs.collection(db, PROD_COLLECTION));
+      var produtos = [];
+      prodSnap.forEach(function(d){ produtos.push(d.data()); });
+      if(produtos.length){
+        localStorage.setItem('zm_custom_products', JSON.stringify(produtos));
+      }
+      // 3) Aplica e re-renderiza
+      ALL_PRODUCTS = (window.BASE_ALL_PRODUCTS_SNAPSHOT || ALL_PRODUCTS).slice();
+      loadCustomProducts();
+      if(typeof render === 'function') render();
+      lastSync = new Date();
+      setStatus('☁ Sincronizado','#15803d');
     } catch(e){
       console.warn('Pull failed:',e);
       setStatus('⚠ Erro nuvem','#c53030');
@@ -1649,38 +1653,68 @@ loadCustomProducts();
     syncing = true;
     setStatus('☁ Salvando…','#0369a1');
     var { db, fs } = window.__zmFirebase;
-    var payload = { updatedAt: Date.now() };
-    KEYS_SYNC.forEach(function(k){
-      var raw = localStorage.getItem(k);
-      if(raw){
-        try { payload[k] = JSON.parse(raw); } catch(e){ payload[k] = raw; }
-      }
-    });
     try {
+      // 1) Settings leves
+      var payload = { updatedAt: Date.now() };
+      KEYS_LIGHT.forEach(function(k){
+        var raw = localStorage.getItem(k);
+        if(raw){
+          try { payload[k] = JSON.parse(raw); } catch(e){ payload[k] = raw; }
+        }
+      });
       await fs.setDoc(fs.doc(db, TENANT, 'state'), payload, { merge:false });
+      // 2) Produtos — cada um vira um doc com ID = product.id
+      var custom = JSON.parse(localStorage.getItem('zm_custom_products') || '[]');
+      var batch = fs.writeBatch(db);
+      var count = 0, total = 0;
+      // Pega lista atual de IDs na nuvem pra apagar os que sumiram
+      var prodSnap = await fs.getDocs(fs.collection(db, PROD_COLLECTION));
+      var cloudIds = new Set();
+      prodSnap.forEach(function(d){ cloudIds.add(d.id); });
+      var localIds = new Set();
+      for(var i=0; i<custom.length; i++){
+        var p = custom[i];
+        localIds.add(String(p.id));
+        batch.set(fs.doc(db, PROD_COLLECTION, String(p.id)), p);
+        count++;
+        if(count >= 400){ // batch limit é 500, mantemos folga
+          await batch.commit();
+          batch = fs.writeBatch(db);
+          count = 0;
+        }
+      }
+      // Remove os que estavam na nuvem mas não estão mais no local
+      cloudIds.forEach(function(id){
+        if(!localIds.has(id)){
+          batch.delete(fs.doc(db, PROD_COLLECTION, id));
+          count++;
+        }
+      });
+      if(count>0) await batch.commit();
       lastSync = new Date();
       setStatus('☁ Sincronizado · '+lastSync.toLocaleTimeString('pt-BR').slice(0,5),'#15803d');
     } catch(e){
       console.warn('Push failed:',e);
-      if(e.message && e.message.indexOf('quota')>=0){
-        setStatus('⚠ Doc grande demais — recomprima imagens','#c53030');
-      } else if(e.code === 'permission-denied'){
+      if(e.code === 'permission-denied'){
         setStatus('⚠ Permissão negada — atualizar regras Firestore','#c53030');
+      } else if(e.message && (e.message.indexOf('exceeds')>=0 || e.message.indexOf('size')>=0)){
+        setStatus('⚠ Foto muito grande — recomprima','#c53030');
       } else {
-        setStatus('⚠ Erro ao salvar nuvem','#c53030');
+        setStatus('⚠ Erro ao salvar nuvem: '+e.message,'#c53030');
       }
     }
     syncing = false;
     if(pendingSync){ pendingSync = false; setTimeout(pushToCloud, 200); }
   }
 
-  // Sobrescreve setItem pra disparar sync automático nas chaves monitoradas
+  // Sobrescreve setItem pra disparar sync automático
+  var KEYS_WATCH = KEYS_LIGHT.concat(['zm_custom_products']);
   var _origSetItem = Storage.prototype.setItem;
   Storage.prototype.setItem = function(k, v){
     var r = _origSetItem.apply(this, arguments);
-    if(KEYS_SYNC.indexOf(k) >= 0){
+    if(KEYS_WATCH.indexOf(k) >= 0){
       clearTimeout(pushTimer);
-      pushTimer = setTimeout(pushToCloud, 1200); // debounce
+      pushTimer = setTimeout(pushToCloud, 1200);
     }
     return r;
   };
